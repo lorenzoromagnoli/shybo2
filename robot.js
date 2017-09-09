@@ -1,8 +1,11 @@
 var Cylon = require('cylon');
+
+// init serial port
 var SerialPort = require('serialport');
 var port = new SerialPort('/dev/cu.usbmodem1421', {
   baudRate: 9600
 });
+
 
 Cylon.api('http');
 
@@ -11,7 +14,8 @@ Cylon.robot({
   name: "Shybo",
 
   connections: {
-    audio: { adaptor: 'audio' }
+    audio: { adaptor: 'audio' },
+    wekinator: { adaptor: 'wekinator' }
   },
 
   devices: {

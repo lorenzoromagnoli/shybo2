@@ -3,9 +3,6 @@
   "version": "0.0.0",
   "description": "",
   "main": "robot.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -14,7 +11,7 @@
     "cylon-audio": "^0.11.0",
     "cylon-gpio": "^0.30.1",
     "cylon-i2c": "^0.26.1",
-    "osc": "2.2.0",
+    "cylon-wekinator": "file:drivers/cylon-wekinator",
     "serialport": "^5.0.0"
   }
 }
