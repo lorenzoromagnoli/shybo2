@@ -1,12 +1,5 @@
 var Cylon = require('cylon');
 
-// init serial port
-var SerialPort = require('serialport');
-var port = new SerialPort('/dev/cu.usbmodem1421', {
-  baudRate: 9600
-});
-
-
 Cylon.api('http');
 
 Cylon.robot({
@@ -15,7 +8,8 @@ Cylon.robot({
 
   connections: {
     audio: { adaptor: 'audio' },
-    wekinator: { adaptor: 'wekinator' }
+    wekinator: { adaptor: 'wekinator' },
+    myArduino: { adaptor: 'myArduino' }
   },
 
   devices: {
@@ -23,7 +17,7 @@ Cylon.robot({
   },
 
 
-  work: function(my) {
+  work: function(me) {
     constantly(function(){
       // my.stateMachine();
     });
@@ -32,34 +26,19 @@ Cylon.robot({
 
     every((1).seconds(), function() {
       if (ledstatus){
-        my.ledOff();
+        me.myArduino.digitalWrite(13,0);
         console.log("off");
+        me.wekinator.startRecording();
+
       }else {
-        my.ledOn();
+        me.myArduino.digitalWrite(13,1);
         console.log("on");
+        me.wekinator.stopRecording();
       }
       ledstatus=!ledstatus;
     });
   },
 
-
-  ledOff: function(){
-    port.write('LO'+'\r'+'\n', function(err) {
-      if (err) {
-        return console.log('Error on write: ', err.message);
-      }
-      console.log('message written');
-    });
-  },
-
-  ledOn: function(){
-    port.write('L1'+'\r'+'\n', function(err) {
-      if (err) {
-        return console.log('Error on write: ', err.message);
-      }
-      console.log('message written');
-    });
-  },
 
    stateMachine: function(){
      //console.log("stateMachine");
