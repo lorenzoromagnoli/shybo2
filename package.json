@@ -12,7 +12,8 @@
     "cylon-gpio": "^0.30.1",
     "cylon-i2c": "^0.26.1",
     "cylon-wekinator": "file:drivers/cylon-wekinator",
-    "cylon-myArduino": "file:drivers/myArduino"
+    "cylon-myArduino": "file:drivers/myArduino",
+    "cylon-microphone": "file:drivers/cylon-microphone"
 
   }
 }

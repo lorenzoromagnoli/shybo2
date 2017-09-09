@@ -9,31 +9,32 @@ Cylon.robot({
   connections: {
     audio: { adaptor: 'audio' },
     wekinator: { adaptor: 'wekinator' },
-    myArduino: { adaptor: 'myArduino' }
+    myArduino: { adaptor: 'myArduino' },
+    microphone: { adaptor: 'microphone' }
+
   },
 
   devices: {
     audio: { driver: 'audio' }
   },
 
-
-  work: function(me) {
+  work: function(my) {
     constantly(function(){
       // my.stateMachine();
     });
+
+    my.microphone.startRecording();
 
     var ledstatus=0;
 
     every((1).seconds(), function() {
       if (ledstatus){
-        me.myArduino.digitalWrite(13,0);
-        console.log("off");
-        me.wekinator.startRecording();
+        my.myArduino.digitalWrite(13,0);
+        my.wekinator.startRecording();
 
       }else {
-        me.myArduino.digitalWrite(13,1);
-        console.log("on");
-        me.wekinator.stopRecording();
+        my.myArduino.digitalWrite(13,1);
+        my.wekinator.stopRecording();
       }
       ledstatus=!ledstatus;
     });
