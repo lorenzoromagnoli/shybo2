@@ -14,7 +14,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
   this.connector=this.microphone=mic({
     rate: '16000',
     channels: '1',
-    debug: true,
+    debug: false,
     exitOnSilence: 6
   });
 
@@ -56,5 +56,11 @@ Adaptor.prototype.disconnect = function(callback) {
 };
 
 Adaptor.prototype.startRecording = function(callback) {
+  Cylon.Logger.log("start recording");
   this.microphone.start();
+};
+
+Adaptor.prototype.stopRecording = function(callback) {
+  Cylon.Logger.log("stop recording");
+  this.microphone.stop();
 };

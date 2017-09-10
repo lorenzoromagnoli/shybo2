@@ -16,3 +16,5 @@ $ wget -O - https://raw.githubusercontent.com/sdesalas/node-pi-zero/master/insta
 ##### install dependencies
 
 npm install
+
+configuring ao
