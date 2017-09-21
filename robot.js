@@ -42,10 +42,23 @@ Cylon.robot({
       my.myArduino.on('button', function(payload) {
         console.log(payload);
         if (payload.pin==9 && payload.value==0){
-          my.microphone.startRecording();
+
+			console.log(my.microphone.status);
+
+			if (my.microphone.status==0){
+				my.microphone.startRecording();
+			}else if (my.microphone.status==2){
+				my.microphone.resumeRecording();
+			}
         }else if (payload.pin==9 && payload.value==1){
-          my.microphone.stopRecording();
-          my.audio.play('./recordings/recording.mp3');
+					if (my.microphone.status==1){
+          	my.microphone.pauseRecording(()=>{
+							my.microphone.createNewFile((lastFile, newFile)=>{
+								console.log(lastFile, newFile);
+								my.audio.play(lastFile);
+							});
+						});
+					}
         }
       });
 
