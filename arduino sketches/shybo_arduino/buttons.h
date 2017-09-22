@@ -9,6 +9,10 @@ void initButtons() {
     if (registerdButtons[i] == 0) {
       break;
     }
+    Serial.print("setting pin ");
+    Serial.print(registerdButtons[i]);
+    Serial.println(" as input");
+
     pinMode(registerdButtons[i], INPUT_PULLUP);
   }
 }
@@ -20,7 +24,6 @@ void emitButtonEvent(int pin, int value) {
   Serial.print("/");
   Serial.print(value);
   Serial.println("/");
-
 }
 
 void readButtons() {

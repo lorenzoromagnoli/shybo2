@@ -36,12 +36,15 @@ Cylon.robot({
     //my.microphone.startRecording();
 
     //wait some second before sending data to the serial port
+
+		var ButtonPin=2;
+
     after((3).seconds(), function() {
-      my.myArduino.registerToButtonEvent(9);
+      my.myArduino.registerToButtonEvent(ButtonPin);
 
       my.myArduino.on('button', function(payload) {
         console.log(payload);
-        if (payload.pin==9 && payload.value==0){
+        if (payload.pin==ButtonPin && payload.value==0){
 
 			console.log(my.microphone.status);
 
@@ -50,7 +53,7 @@ Cylon.robot({
 			}else if (my.microphone.status==2){
 				my.microphone.resumeRecording();
 			}
-        }else if (payload.pin==9 && payload.value==1){
+        }else if (payload.pin==ButtonPin && payload.value==1){
 					if (my.microphone.status==1){
           	my.microphone.pauseRecording(()=>{
 							my.microphone.createNewFile((lastFile, newFile)=>{
@@ -64,23 +67,21 @@ Cylon.robot({
 
     });
 
-    var ledstatus = 0;
+		//  every((4).seconds(),function(){
+		// 	  	my.myArduino.motorWrite(1,100,1);
+		//  });
 
-    every((1).seconds(), function() {
-
-      //my.myArduino.digitalRead(9);
-
-
-      // if (ledstatus){
-      //   my.myArduino.digitalWrite(13,0);
-      //   my.wekinator.startRecording();
-      //
-      // }else {
-      //   my.myArduino.digitalWrite(13,1);
-      //   my.wekinator.stopRecording();
-      // }
-      // ledstatus=!ledstatus;
-    });
+		every((4).seconds(),function(){
+			my.myArduino.motorWrite(0,100,1);
+			my.myArduino.motorWrite(1,100,1);
+			after((1).seconds(), function() {
+				my.myArduino.motorWrite(1,100,0);
+				my.myArduino.motorWrite(0,100,0);
+				after((2).seconds(), function() {
+					my.myArduino.motorStop();
+				});
+			});
+		});
   },
 
 

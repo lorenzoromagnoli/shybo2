@@ -8,6 +8,7 @@
 #include <Adafruit_TiCoServo.h>
 #include "RunningAverage.h" // per il suono
 #include "buttons.h"
+#include "motors.h"
 
 #include "Seriale.h"
 
@@ -29,10 +30,13 @@ uint32_t spento = bodyColor.Color(0, 0, 0);
 uint32_t violone = bodyColor.Color(149, 0, 255);
 uint32_t verdeacqua = bodyColor.Color(0, 232, 209);
 
+
 void setup() {
   pinMode(13, OUTPUT);
   bodyColor.begin();
   Serial.begin(9600);
+  initButtons();
+  initMotors();
   delay (2000);
 }
 

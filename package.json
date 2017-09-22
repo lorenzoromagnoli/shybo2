@@ -6,6 +6,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "audio-analyser": "^1.0.2",
     "cylon": "^1.3.0",
     "cylon-api-http": "^0.4.1",
     "cylon-audio": "^0.11.0",
@@ -13,7 +14,6 @@
     "cylon-i2c": "^0.26.1",
     "cylon-microphone": "file:./drivers/cylon-microphone",
     "cylon-myArduino": "file:./drivers/cylon-myArduino",
-    "cylon-wekinator": "file:./drivers/cylon-wekinator",
-    "uuid": "^3.1.0"
+    "cylon-wekinator": "file:./drivers/cylon-wekinator"
   }
 }

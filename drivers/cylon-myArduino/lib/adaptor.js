@@ -83,6 +83,19 @@ Adaptor.prototype.registerToButtonEvent = function(pin) {
   Cylon.Logger.log("written " + message + " to myArduino");
 }
 
+Adaptor.prototype.motorWrite = function(motor, speed, direction) {
+  Cylon.Logger.log("writing to motor: "+motor+", speed: "+speed+", direction: "+direction );
+  var message = 'MW/' + motor + '/'+ speed +'/'+ direction +'\r' + '\n';
+  this.myArduino.write(message);
+  Cylon.Logger.log("written " + message + " to myArduino");
+}
+
+Adaptor.prototype.motorStop = function(motor, speed, direction) {
+  Cylon.Logger.log("stopping motors");
+	this.motorWrite(0,0,0);
+	this.motorWrite(1,0,0);
+}
+
 Adaptor.prototype.parseSerial = function(data) {
   var message=data.split("/");
   if (message[0]=='BE'){
@@ -91,5 +104,4 @@ Adaptor.prototype.parseSerial = function(data) {
       'value':message[2]
     });
   }
-
 }

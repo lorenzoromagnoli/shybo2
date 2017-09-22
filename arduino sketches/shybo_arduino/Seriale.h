@@ -1,6 +1,14 @@
 String inputString;
 boolean stringComplete = false;
 
+boolean debugMode=true;
+
+void debug(String message){
+  if (debugMode){
+    Serial.println(message);
+  }
+}
+
 String getValue(String data, char separator, int index)
 {
   int found = 0;
@@ -17,25 +25,35 @@ String getValue(String data, char separator, int index)
   return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
-
-
-
 void parse (String inputString) {
   String command = getValue(inputString, '/', 0);
-  if (command == "DW") {
+  debug("command:"+command);
+
+  if (command.equalsIgnoreCase("DW")) {
+    debug("digitalWrite");
     int pin = getValue(inputString, '/', 1).toInt();
     int value = getValue(inputString, '/', 2).toInt();
     digitalWrite(pin, value);
-  } else if (command = "RB") {
+
+  } else if (command.equalsIgnoreCase("RB")) {
+    debug("readButton");
     int pin = getValue(inputString, '/', 1).toInt();
     registerNewButton(pin);
-  }
-  else {
+
+  } else if (command.equalsIgnoreCase("MW")) {
+    debug("motorWrite");
+    int motor = getValue(inputString, '/', 1).toInt();
+    int speed = getValue(inputString, '/', 2).toInt();
+    int direction = getValue(inputString, '/', 3).toInt();
+    moveMotor(motor, speed, direction);
+
+  } else if (command = "MS") {
+    stopMotor();
+    
+  }else {
     Serial.println("command unknown");
   }
 }
-
-
 
 
 
