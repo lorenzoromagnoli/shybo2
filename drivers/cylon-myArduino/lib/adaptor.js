@@ -90,6 +90,13 @@ Adaptor.prototype.motorWrite = function(motor, speed, direction) {
   Cylon.Logger.log("written " + message + " to myArduino");
 }
 
+Adaptor.prototype.ledsControl = function(animation, color1, color2, steps, interval) {
+  Cylon.Logger.log("writing to ledstrip: _ , animation: "+animation+", color1: "+color1+", color2: "+color3+", steps: "+steps+", interval: "+interval );
+  var message = 'LD/' + animation + '/'+ color1 +'/'+ color2+'/'+ steps+'/'+ interval +'\r' + '\n';
+  this.myArduino.write(message);
+  Cylon.Logger.log("written " + message + " to myArduino");
+}
+
 Adaptor.prototype.motorStop = function(motor, speed, direction) {
   Cylon.Logger.log("stopping motors");
 	this.motorWrite(0,0,0);

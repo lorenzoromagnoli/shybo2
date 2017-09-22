@@ -28,6 +28,7 @@ uint32_t spento = bodyColor.Color(0, 0, 0);
 uint32_t violone = bodyColor.Color(149, 0, 255);
 uint32_t verdeacqua = bodyColor.Color(0, 232, 209);
 
+uint32_t colorArray[]={bianco, giallo, arancione,rosso, viola, azzurro, spento, violone, verdeacqua};
 
 void setup() {
   Serial.begin(9600);
@@ -38,6 +39,8 @@ void setup() {
   initMotors();
   
   delay (2000);
+
+  bodyColor.fade(giallo, azzurro, 100,10);
 }
 
 void loop() {

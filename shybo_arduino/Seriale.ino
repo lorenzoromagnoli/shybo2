@@ -52,21 +52,31 @@ void parse (String inputString) {
     int animation = getValue(inputString, '/', 1).toInt();
     debug("color");
     Serial.println(animation);
+    int color1;
+    int color2;
+    int steps;
+    int interval;
 
     switch (animation) {
-      case 1:
-        bodyColor.setFullColor(arancione);
+
+      case 1: //animation setFullColor
+        color1 = getValue(inputString, '/', 2).toInt();
+        bodyColor.setFullColor(colorArray[color1]);
         break;
 
       case 2:
-        bodyColor.setFullColor(rosso);
+        color1 = getValue(inputString, '/', 2).toInt();
+        color2 = getValue(inputString, '/', 3).toInt();
+        steps = getValue(inputString, '/', 4).toInt();
+        interval = getValue(inputString, '/', 4).toInt();
+
+        bodyColor.fade(colorArray[color1], colorArray[color2], steps, interval);
         break;
 
       case 3:
         bodyColor.setFullColor(azzurro);
         break;
     }
-
 
   } else {
     Serial.println("command unknown");

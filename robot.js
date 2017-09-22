@@ -82,6 +82,9 @@ Cylon.robot({
 				});
 			});
 		});
+
+		my.myArduino.ledsControl(0,6,3,100,10);
+
   },
 
 
