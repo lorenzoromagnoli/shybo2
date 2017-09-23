@@ -82,9 +82,12 @@ Cylon.robot({
 				});
 			});
 		});
-
-		my.myArduino.ledsControl(0,6,3,100,10);
-
+		every((4).seconds(),function(){
+			my.myArduino.ledsControl(2,6,3,100,10);
+			after((2).seconds(), function() {
+				my.myArduino.ledsControl(1,7);
+			});
+		});
   },
 
 
