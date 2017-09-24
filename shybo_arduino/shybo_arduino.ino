@@ -37,10 +37,9 @@ void setup() {
   
   initButtons();
   initMotors();
+  initColorSensor();
   
   delay (2000);
-
-  bodyColor.fade(giallo, azzurro, 100,10);
 }
 
 void loop() {

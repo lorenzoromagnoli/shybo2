@@ -47,7 +47,7 @@ void parse (String inputString) {
     int direction = getValue(inputString, '/', 3).toInt();
     moveMotor(motor, speed, direction);
 
-  } else if (command = "LD") {
+  } else if (command.equalsIgnoreCase("LD")) {
     debug("ledStrip");
     int animation = getValue(inputString, '/', 1).toInt();
     debug("color");
@@ -77,7 +77,15 @@ void parse (String inputString) {
         bodyColor.setFullColor(azzurro);
         break;
     }
-
+    
+  } else if (command.equalsIgnoreCase("RC")) {
+    debug("reding colorSensor");
+    readColor();
+    debug(getHexColor());
+    debug(String(getRedColor()));
+    debug(String(getGreenColor()));
+    debug(String(getBlueColor()));
+    
   } else {
     Serial.println("command unknown");
   }
