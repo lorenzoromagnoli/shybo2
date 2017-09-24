@@ -90,6 +90,13 @@ Adaptor.prototype.motorWrite = function(motor, speed, direction) {
   Cylon.Logger.log("written " + message + " to myArduino");
 }
 
+Adaptor.prototype.setFullColor = function(r,g,b) {
+  Cylon.Logger.log("setting color: red"+r+", green: "+g+", blue: "+b);
+  var message = 'LD/1/'+ r +'/'+ g+'/'+ g+'/'+'\r' + '\n';
+  this.myArduino.write(message);
+  Cylon.Logger.log("written " + message + " to myArduino");
+}
+
 Adaptor.prototype.ledsControl = function(animation, color1, color2, steps, interval) {
   Cylon.Logger.log("writing to ledstrip: _ , animation: "+animation+", color1: "+color1+", color2: "+color2+", steps: "+steps+", interval: "+interval );
   var message = 'LD/' + animation + '/'+ color1 +'/'+ color2+'/'+ steps+'/'+ interval +'\r' + '\n';
@@ -103,6 +110,11 @@ Adaptor.prototype.motorStop = function(motor, speed, direction) {
 	this.motorWrite(1,0,0);
 }
 
+Adaptor.prototype.readColorSensor=function(){
+	var message = 'RC/' +'\r' + '\n';
+	this.myArduino.write(message);
+}
+
 Adaptor.prototype.parseSerial = function(data) {
   var message=data.split("/");
   if (message[0]=='BE'){
@@ -110,5 +122,11 @@ Adaptor.prototype.parseSerial = function(data) {
       'pin':message[1],
       'value':message[2]
     });
-  }
+  }else if (message[0]=='CE'){
+		this.emit('color',{
+			'red':message[1],
+			'green':message[2],
+			'blue':message[3],
+		});
+	}
 }

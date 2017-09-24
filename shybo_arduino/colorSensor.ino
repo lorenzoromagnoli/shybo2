@@ -79,3 +79,12 @@ String getHexColor() {
   return hexcolor;
 }
 
+void emitColorEvent(int red, int green, int blue) {
+  Serial.print("CE/");
+  Serial.print(red);
+  Serial.print("/");
+  Serial.print(green);
+  Serial.print("/");
+  Serial.print(blue);
+  Serial.println("/");
+}

@@ -56,12 +56,18 @@ void parse (String inputString) {
     int color2;
     int steps;
     int interval;
+    int parsed_red;
+    int parsed_green;
+    int parsed_blue;
+
 
     switch (animation) {
 
       case 1: //animation setFullColor
-        color1 = getValue(inputString, '/', 2).toInt();
-        bodyColor.setFullColor(colorArray[color1]);
+        parsed_red = getValue(inputString, '/', 2).toInt();
+        parsed_green = getValue(inputString, '/', 3).toInt();
+        parsed_blue = getValue(inputString, '/', 4).toInt();
+        bodyColor.setFullColor(bodyColor.Color(parsed_red, parsed_green, parsed_blue));
         break;
 
       case 2:
@@ -77,15 +83,16 @@ void parse (String inputString) {
         bodyColor.setFullColor(azzurro);
         break;
     }
-    
+
   } else if (command.equalsIgnoreCase("RC")) {
     debug("reding colorSensor");
     readColor();
-    debug(getHexColor());
-    debug(String(getRedColor()));
-    debug(String(getGreenColor()));
-    debug(String(getBlueColor()));
-    
+    emitColorEvent(getRedColor(), getGreenColor(), getBlueColor());
+    //    debug(getHexColor());
+    //    debug(String(getRedColor()));
+    //    debug(String(getGreenColor()));
+    //    debug(String(getBlueColor()));
+
   } else {
     Serial.println("command unknown");
   }
