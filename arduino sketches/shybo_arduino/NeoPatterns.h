@@ -7,6 +7,8 @@ enum  direction { FORWARD, REVERSE };
 
 
 
+
+
 class NeoPatterns : public Adafruit_NeoPixel
 {
   public:
@@ -35,7 +37,7 @@ class NeoPatterns : public Adafruit_NeoPixel
 
 
     // Update the pattern
-    void Update()
+    void update()
     {
       if ((millis() - lastUpdate) > Interval) // time to update
       {
@@ -44,22 +46,22 @@ class NeoPatterns : public Adafruit_NeoPixel
         switch (ActivePattern)
         {
           case RAINBOW_CYCLE:
-            RainbowCycleUpdate();
+            rainbowCycleUpdate();
             break;
           case THEATER_CHASE:
-            TheaterChaseUpdate();
+            theaterChaseUpdate();
             break;
           case COLOR_WIPE:
-            ColorWipeUpdate();
+            colorWipeUpdate();
             break;
           case SCANNER:
-            ScannerUpdate();
+            scannerUpdate();
             break;
           case FADE:
-            FadeUpdate();
+            fadeUpdate();
             break;
           case FADETO:
-            FadeUpdate();
+            fadeUpdate();
             break;
           case BLINK_RED:
             blinkRedUpdate();
@@ -71,7 +73,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     }
 
     // Increment the Index and reset at the end
-    void Increment()
+    void increment()
     {
       if (Direction == FORWARD)
       {
@@ -100,7 +102,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     }
 
     // Reverse pattern direction
-    void Reverse()
+    void reverse()
     {
       if (Direction == FORWARD)
       {
@@ -116,7 +118,7 @@ class NeoPatterns : public Adafruit_NeoPixel
 
 
     // Initialize for a RainbowCycle
-    void RainbowCycle(uint8_t interval, direction dir = FORWARD)
+    void rainbowCycle(uint8_t interval, direction dir = FORWARD)
     {
       ActivePattern = RAINBOW_CYCLE;
       Interval = interval;
@@ -126,18 +128,18 @@ class NeoPatterns : public Adafruit_NeoPixel
     }
 
     // Update the Rainbow Cycle Pattern
-    void RainbowCycleUpdate()
+    void rainbowCycleUpdate()
     {
       for (int i = 0; i < numPixels(); i++)
       {
         setPixelColor(i, Wheel(((i * 256 / numPixels()) + Index) & 255));
       }
       show();
-      Increment();
+      increment();
     }
 
     // Initialize for a Theater Chase
-    void TheaterChase(uint32_t color1, uint32_t color2, uint8_t interval, direction dir = FORWARD)
+    void theaterChase(uint32_t color1, uint32_t color2, uint8_t interval, direction dir = FORWARD)
     {
       ActivePattern = THEATER_CHASE;
       Interval = interval;
@@ -150,7 +152,7 @@ class NeoPatterns : public Adafruit_NeoPixel
 
 
     // Update the Theater Chase Pattern
-    void TheaterChaseUpdate()
+    void theaterChaseUpdate()
     {
       for (int i = 0; i < numPixels(); i++)
       {
@@ -164,12 +166,12 @@ class NeoPatterns : public Adafruit_NeoPixel
         }
       }
       show();
-      Increment();
+      increment();
     }
 
     // Initialize for a Blink Red
     void blinkRed(uint8_t interval)  {
-      SetFullColor(Color(0, 0, 0));
+      setFullColor(Color(0, 0, 0));
       ActivePattern = BLINK_RED;
       Interval = interval;
       Index = 0;
@@ -210,7 +212,7 @@ class NeoPatterns : public Adafruit_NeoPixel
 
 
     // Initialize for a ColorWipe
-    void ColorWipe(uint32_t color, uint8_t interval, direction dir = FORWARD)
+    void colorWipe(uint32_t color, uint8_t interval, direction dir = FORWARD)
     {
       ActivePattern = COLOR_WIPE;
       Interval = interval;
@@ -221,15 +223,15 @@ class NeoPatterns : public Adafruit_NeoPixel
     }
 
     // Update the Color Wipe Pattern
-    void ColorWipeUpdate()
+    void colorWipeUpdate()
     {
       setPixelColor(Index, Color1);
       show();
-      Increment();
+      increment();
     }
 
     // Initialize for a SCANNNER
-    void Scanner(uint32_t color1, uint8_t interval)
+    void scanner(uint32_t color1, uint8_t interval)
     {
       ActivePattern = SCANNER;
       Interval = interval;
@@ -239,7 +241,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     }
 
     // Update the Scanner Pattern
-    void ScannerUpdate()
+    void scannerUpdate()
     {
       for (int i = 0; i < numPixels(); i++)
       {
@@ -253,15 +255,15 @@ class NeoPatterns : public Adafruit_NeoPixel
         }
         else // Fading tail
         {
-          setPixelColor(i, DimColor(getPixelColor(i)));
+          setPixelColor(i, dimColor(getPixelColor(i)));
         }
       }
       show();
-      Increment();
+      increment();
     }
 
     // Initialize for a Fade
-    void Fade(uint32_t color1, uint32_t color2, uint16_t steps, uint8_t interval, direction dir = FORWARD)
+    void fade(uint32_t color1, uint32_t color2, uint16_t steps, uint8_t interval, direction dir = FORWARD)
     {
       ActivePattern = FADE;
       Interval = interval;
@@ -274,7 +276,7 @@ class NeoPatterns : public Adafruit_NeoPixel
 
     // Set all pixels to a color (synchronously)
     // Initialize for a Fade
-    void FadeToColor(uint32_t color, uint16_t steps, uint8_t interval, direction dir = FORWARD)
+    void fadeToColor(uint32_t color, uint16_t steps, uint8_t interval, direction dir = FORWARD)
     {
       ActivePattern = FADETO;
       Interval = interval;
@@ -286,7 +288,7 @@ class NeoPatterns : public Adafruit_NeoPixel
 
 
     // Update the Fade Pattern
-    void FadeUpdate()
+    void fadeUpdate()
     {
       // Calculate linear interpolation between Color1 and Color2
       // Optimise order of operations to minimize truncation error
@@ -294,13 +296,13 @@ class NeoPatterns : public Adafruit_NeoPixel
       uint8_t green = ((Green(Color1) * (TotalSteps - Index)) + (Green(Color2) * Index)) / TotalSteps;
       uint8_t blue = ((Blue(Color1) * (TotalSteps - Index)) + (Blue(Color2) * Index)) / TotalSteps;
 
-      ColorSet(Color(red, green, blue));
+      colorSet(Color(red, green, blue));
       show();
-      Increment();
+      increment();
     }
 
     // Calculate 50% dimmed version of a color (used by ScannerUpdate)
-    uint32_t DimColor(uint32_t color)
+    uint32_t dimColor(uint32_t color)
     {
       // Shift R, G and B components one bit to the right
       uint32_t dimColor = Color(Red(color) >> 1, Green(color) >> 1, Blue(color) >> 1);
@@ -308,7 +310,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     }
 
     // Set all pixels to a color (synchronously)
-    void ColorSet(uint32_t color)
+    void colorSet(uint32_t color)
     {
       for (int i = 0; i < numPixels(); i++)
       {
@@ -318,7 +320,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     }
 
     // Set all pixels to a color (synchronously)
-    void SetFullColor(uint32_t color)
+    void setFullColor(uint32_t color)
     {
       ActivePattern = NONE;
       for (int i = 0; i < numPixels(); i++)
@@ -328,8 +330,8 @@ class NeoPatterns : public Adafruit_NeoPixel
       show();
     }
 
-
-
+    
+    
 
 
 

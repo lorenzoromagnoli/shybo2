@@ -1,4 +1,11 @@
 var Cylon = require('cylon');
+var express = require('express')
+var app = express()
+
+// respond with "hello world" when a GET request is made to the homepage
+app.get('/', function (req, res) {
+  res.send('hello world')
+})
 
 Cylon.api('http',{
 	ssl: false // serve unsecured, over HTTP

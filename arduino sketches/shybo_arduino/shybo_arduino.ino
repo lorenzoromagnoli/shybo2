@@ -3,17 +3,15 @@
 #include <avr/power.h>
 #endif
 #include "NeoPatterns.h"
-#include "Variables.h"
-#include "Funzioni.h"
 #include <Adafruit_TiCoServo.h>
 #include "RunningAverage.h" // per il suono
 #include "buttons.h"
 #include "motors.h"
 
-#include "Seriale.h"
 
 
 // luce del corpo
+int bodyColorPin=6;
 void bodyColorComplete();
 NeoPatterns bodyColor (30, bodyColorPin, NEO_GRB + NEO_KHZ800, & bodyColorComplete);
 
@@ -30,19 +28,25 @@ uint32_t spento = bodyColor.Color(0, 0, 0);
 uint32_t violone = bodyColor.Color(149, 0, 255);
 uint32_t verdeacqua = bodyColor.Color(0, 232, 209);
 
+uint32_t colorArray[]={bianco, giallo, arancione,rosso, viola, azzurro, spento, violone, verdeacqua};
 
 void setup() {
-  pinMode(13, OUTPUT);
-  bodyColor.begin();
   Serial.begin(9600);
+  
+  bodyColor.begin();
+  
   initButtons();
   initMotors();
+  initColorSensor();
+  
   delay (2000);
 }
 
 void loop() {
   readSerial();
   readButtons();
+  
+  bodyColor.update();
 }
 
 
@@ -59,7 +63,7 @@ void bodyColorComplete() {
     bodyColor.Color1 = bodyColor.Color2;
     bodyColor.ActivePattern = NONE;
   } else if (bodyColor.ActivePattern == FADE) {
-    bodyColor.Reverse();
+    bodyColor.reverse();
   }
 }
 

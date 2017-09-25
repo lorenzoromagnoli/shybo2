@@ -1,5 +1,3 @@
-int STBY = 10; //standby
-
 //Motor A
 int PWMA = 3; //Speed control
 int AIN1 = 9; //Direction
@@ -11,7 +9,6 @@ int BIN1 = 11; //Direction
 int BIN2 = 12; //Direction
 
 void initMotors() {
-  pinMode(STBY, OUTPUT);
 
   pinMode(PWMA, OUTPUT);
   pinMode(AIN1, OUTPUT);
@@ -28,7 +25,6 @@ void moveMotor(int motor, int speed, int direction) {
   //speed: 0 is off, and 255 is full speed
   //direction: 0 clockwise, 1 counter-clockwise
 
-  digitalWrite(STBY, HIGH); //disable standby
 
   boolean inPin1 = LOW;
   boolean inPin2 = HIGH;
@@ -47,10 +43,5 @@ void moveMotor(int motor, int speed, int direction) {
     digitalWrite(BIN2, inPin2);
     analogWrite(PWMB, speed);
   }
-}
-
-void stopMotor() {
-  //enable standby
-  digitalWrite(STBY, LOW);
 }
 
