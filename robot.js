@@ -24,7 +24,7 @@ Cylon.api('socketio', {
 	host: '0.0.0.0',
 	port: '3001',
 	auth: false,
-	CORS: allowedOrigins,
+	CORS: '*:*',
 
 });
 
