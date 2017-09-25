@@ -148,6 +148,26 @@ Cylon.robot({
 
 	},
 
+	startRecording: function(){
+		console.log("start recording");
+		if (this.microphone.status == 0) {
+			this.microphone.startRecording();
+		} else if (this.microphone.status == 2) {
+			this.microphone.resumeRecording();
+		}
+	},
+
+	stopRecording: function(){
+		console.log("stop recording");
+		if (this.microphone.status == 1) {
+			this.microphone.pauseRecording(() => {
+				this.microphone.createNewFile((lastFile, newFile) => {
+					console.log(lastFile, newFile);
+					this.audio.play(lastFile);
+				});
+			});
+		}
+	},
 
 	turnOn: function() {
 		this.emit('turned_on', {
