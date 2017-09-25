@@ -5,7 +5,13 @@ window.onload = function() {
 	console.log('Setting up socket connections:');
 	// Once we have a list of available robots we can use
 	// any of them and connect to their socket.
-	robot = io('shybo.local:3001/api/robots/Shybo');
+
+	url=window.location.href ;
+	splitted=url.split(':');
+	wsUrl=splitted[0]+':'+splitted[1]+':3001';
+	console.log(wsUrl);
+
+	robot = io(wsUrl+'/api/robots/Shybo');
 	robot.on('message', function(payload) {
 
 		if (payload.name=='fft'){
