@@ -1,6 +1,14 @@
 var Cylon = require('cylon');
 
-Cylon.api('http');
+Cylon.api('http',{
+	ssl: false // serve unsecured, over HTTP
+});
+
+Cylon.api('socketio',
+{
+  host: '0.0.0.0',
+  port: '3000'
+});
 
 Cylon.robot({
 

@@ -42,14 +42,14 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	//setup audio analyser
 	this.analyser = new Analyser({
 		// Magnitude diapasone, in dB
-		minDecibels: -100,
+		minDecibels: -1000,
 		maxDecibels: 0,
 
 		// Number of time samples to transform to frequency
-		fftSize: 1024,
+		fftSize: 256,
 
 		// Number of frequencies, twice less than fftSize
-		frequencyBinCount: 1024 / 2,
+		frequencyBinCount: 256 / 2,
 
 		// Smoothing, or the priority of the old data over the new data
 		smoothingTimeConstant: 0.2,
@@ -61,9 +61,9 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		bufferSize: 44100,
 
 		// Windowing function for fft, https://github.com/scijs/window-functions
-		applyWindow: function(sampleNumber, totalSamples) {
-			//console.log(sampleNumber, totalSamples);
-		},
+		// applyWindow: function(sampleNumber, totalSamples) {
+		// 	//console.log(sampleNumber, totalSamples);
+		// },
 
 		//...pcm-stream params, if required
 		'pcm-stream': {
