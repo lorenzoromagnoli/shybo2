@@ -15,8 +15,9 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	this.connector = this.microphone = mic({
 		rate: '16000',
 		channels: '1',
-		debug: false,
-		exitOnSilence: 6
+		debug: true,
+		exitOnSilence: 6,
+		buffer:500,
 	});
 
 	this.events=['started','stopped', 'recorded', 'fftData' ];
@@ -98,7 +99,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	this.micInputStream.pipe(this.analyser);
 
 	this.micInputStream.on('data', (data) => {
-		//console.log("Recieved Input Stream: " + data.length);
+		console.log("Recieved Input Stream: " + data.length);
 	});
 
 };
