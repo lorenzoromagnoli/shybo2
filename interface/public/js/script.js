@@ -5,13 +5,13 @@ window.onload = function() {
 	console.log('Setting up socket connections:');
 	// Once we have a list of available robots we can use
 	// any of them and connect to their socket.
-	robot = io('http://127.0.0.1:3001/api/robots/Shybo');
+	robot = io('shybo.local:3001/api/robots/Shybo');
 	robot.on('message', function(payload) {
 
 		if (payload.name=='fft'){
 			if (payload.data){
 				fftData=payload.data;
-				drawchart();	
+				drawchart();
 			}
 
 		}else{
