@@ -15,13 +15,11 @@ var Adaptor = module.exports = function Adaptor(opts) {
   this.connector = this.wekinator = new Wekinator();
 };
 
-
 Cylon.Utils.subclass(Adaptor, Cylon.Adaptor);
-
 
 Adaptor.prototype.connect = function(callback) {
   Cylon.Logger.log("Connecting to wekinator...");
-	var wekinator = child_process.spawn('java',[ '-jar', './utils/wekinator/WekiMini.jar', './wek/testProject/WekinatorProject/WekinatorProject.wekproj']);
+	var wekinator = child_process.spawn('java',[ '-jar', './utils/wekinator/WekiMini.jar', './assets/wek/test/WekinatorProject/WekinatorProject.wekproj']);
 
 	wekinator.stdout.on('data', (data) => {
 		console.log(`stdout: ${data}`);
