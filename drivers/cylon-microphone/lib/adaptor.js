@@ -19,13 +19,17 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		exitOnSilence: 6
 	});
 
+	this.events=['started','stopped', 'recorded', 'fftData' ];
+
 	this.status = 0;
 	// 0->off
 	// 1->recording
 	// 2->paused
 
 	this.lastrecordingPath = './recordings/recording.mp3';
-	this.newRecordingPath = ""
+	this.newRecordingPath = "";
+
+	this.fftData;
 
 	this.encoder = new lame.Encoder({
 		// input
@@ -94,9 +98,9 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	this.micInputStream.pipe(this.analyser);
 
 	this.micInputStream.on('data', (data) => {
-		console.log("Recieved Input Stream: " + data.length);
-		console.log(this.analyser.getFrequencyData());
+		//console.log("Recieved Input Stream: " + data.length);
 	});
+
 };
 
 Cylon.Utils.subclass(Adaptor, Cylon.Adaptor);
@@ -122,7 +126,6 @@ Adaptor.prototype.pauseRecording = function(callback) {
 	callback();
 };
 
-
 Adaptor.prototype.stopRecording = function(callback) {
 	Cylon.Logger.log("stop recording");
 	this.microphone.stop();
@@ -134,6 +137,11 @@ Adaptor.prototype.resumeRecording = function(callback) {
 	this.microphone.resume();
 	this.status = 1;
 };
+
+Adaptor.prototype.getFFTData=function(){
+	this.fftData=this.analyser.getFrequencyData();
+	return(this.fftData);
+}
 
 Adaptor.prototype.createNewFile = function(callback) {
 	//clode the previous file

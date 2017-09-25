@@ -1,20 +1,31 @@
 var Cylon = require('cylon');
 var express = require('express')
 var app = express()
+var path = require("path");
+var cors = require('cors')
 
-// respond with "hello world" when a GET request is made to the homepage
-app.get('/', function (req, res) {
-  res.send('hello world')
+app.get('/', function(req, res) {
+	res.sendFile(path.join(__dirname + '/interface/index.html'));
 })
 
-Cylon.api('http',{
+app.use('/', express.static(path.join(__dirname, '/interface/public')))
+
+// app.use(cors());
+app.listen(4000);
+
+Cylon.api('http', {
 	ssl: false // serve unsecured, over HTTP
 });
 
-Cylon.api('socketio',
-{
-  host: '0.0.0.0',
-  port: '3000'
+var allowedOrigins = "http://localhost:* http://127.0.0.1:*";
+
+Cylon.api('socketio', {
+	name: 'socketio',
+	host: '0.0.0.0',
+	port: '3001',
+	auth: false,
+	CORS: allowedOrigins,
+
 });
 
 Cylon.robot({
@@ -42,6 +53,14 @@ Cylon.robot({
 			driver: 'audio'
 		}
 	},
+
+	events: [
+		'turned_on',
+		'turned_off',
+		'color_changed',
+		'fft',
+	],
+
 
 	work: function(my) {
 		constantly(function() {
@@ -84,15 +103,24 @@ Cylon.robot({
 			//when receive a new color from the sensor, copy it to the ledstrip
 			my.myArduino.on('color', function(payload) {
 				console.log(payload);
-				my.myArduino.setFullColor(payload.red,payload.green,payload.blue)
+				my.myArduino.setFullColor(payload.red, payload.green, payload.blue)
+				my.emit('color_changed');
+			});
+
+			//when I receive fft event from the microphone module reemit it
+			my.myArduino.on('fft', function(payload) {
+				console.log("got fft");
+				console.log(payload.data);
+			});
+
+			//when I receive fft event from the microphone module reemit it
+			my.myArduino.on('event', function(payload) {
+				console.log("event");
+				console.log(payload);
 			});
 
 
 		});
-
-		//  every((4).seconds(),function(){
-		// 	  	my.myArduino.motorWrite(1,100,1);
-		//  });
 
 		// every((4).seconds(), function() {
 		// 	my.myArduino.motorWrite(0, 100, 1);
@@ -111,8 +139,26 @@ Cylon.robot({
 		// 		my.myArduino.ledsControl(1, 7);
 		// 	});
 		// });
+
+		 every((.02).seconds(), function() {
+			 var fftData=my.microphone.getFFTData();
+			 my.emit('fft',fftData);
+		 });
+
 	},
 
+
+	turnOn: function() {
+		this.emit('turned_on', {
+			data: 'pass some data to the listener'
+		});
+	},
+
+	turnOff: function() {
+		this.emit('turned_off', {
+			data: 'pass some data to the listener'
+		});
+	},
 
 	stateMachine: function() {
 		//console.log("stateMachine");
