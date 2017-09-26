@@ -16,7 +16,6 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		rate: '16000',
 		channels: '1',
 		debug: true,
-		exitOnSilence: 6,
 		buffer:500,
 	});
 
