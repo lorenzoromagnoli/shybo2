@@ -74,7 +74,6 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		'pcm-stream': {
 			channels: 1,
 			sampleRate: 8000,
-			bitDepth: 8,
 			byteOrder: 'LE',
 			max: 32767,
 			min: -32768,
