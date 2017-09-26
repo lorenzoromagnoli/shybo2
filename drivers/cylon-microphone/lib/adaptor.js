@@ -15,9 +15,10 @@ var Adaptor = module.exports = function Adaptor(opts) {
 
 	// Start live transmission from the default input device to the default output device at 22kHz
 	this.connector = this.engine = new soundengine.engine({
-		sampleRate: 44100,
+		sampleRate: 16000,
 		bufferSize: 1024
 	})
+
 	this.engine.setMute(true);
 	this.events = ['started', 'stopped', 'recorded', 'fftData'];
 
@@ -50,23 +51,25 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		channel: 1,
 
 		// Size of time data to buffer
-		bufferSize: 1024,
+		//bufferSize: 1024,
 
 		// Windowing function for fft, https://github.com/scijs/window-functions
 		// applyWindow: function(sampleNumber, totalSamples) {
 		// 	//console.log(sampleNumber, totalSamples);
 		// },
 
-		//	...pcm-stream params, if required
-		// 'pcm-stream': {
-		// 	channels: 1,
-		// 	sampleRate: 44100,
-		// 	bitDepth: 16,
-		// 	byteOrder: 'BE',
-		// 	max: 32767,
-		// 	min: -32768,
-		// 	samplesPerFrame: 1024,
-		// }
+		//...pcm-stream params, if required
+		'pcm-stream': {
+			channels: 1,
+			sampleRate: 16000,
+			bitDepth: 32,
+			float: false,
+			signed: true,
+			byteOrder: 'BE',
+			max: 32767,
+			min: -32768,
+			samplesPerFrame: 1024,
+		}
 
 	});
 
@@ -87,7 +90,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	//when I get the data I can pipe in to the stream
 
 	this.engine.on('data', (data) => {
-		console.log(data);
+		//console.log(data.toString('utf8'));
 		this.audioStream.push(data.toString('utf8'));
 		return data;
 	});
