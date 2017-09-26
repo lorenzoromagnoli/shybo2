@@ -17,7 +17,6 @@
     "cylon-microphone": "file:./drivers/cylon-microphone",
     "cylon-myArduino": "file:./drivers/cylon-myArduino",
     "cylon-wekinator": "file:./drivers/cylon-wekinator",
-		"cylon-wekinator": "file:./drivers/mic",
     "express": "^4.15.5",
     "install": "^0.10.1",
     "path": "^0.12.7"

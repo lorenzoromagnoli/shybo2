@@ -2,7 +2,7 @@
 
 var Cylon = require("cylon");
 var fs = require('fs');
-var mic = require('mic');
+var mic = require('./mic.js');
 var lame = require('lame');
 var uuid = require('uuid');
 var Analyser = require('audio-analyser');
