@@ -140,11 +140,11 @@ Cylon.robot({
 		// 	});
 		// });
 
-		 every((.02).seconds(), function() {
-			 var fftData=my.microphone.getFFTData();
-			 my.emit('fft',fftData);
-			 my.wekinator.inputs(fftData);
-		 });
+		//  every((.02).seconds(), function() {
+		// 	 var fftData=my.microphone.getFFTData();
+		// 	 my.emit('fft',fftData);
+		// 	 my.wekinator.inputs(fftData);
+		//  });
 
 	},
 
