@@ -20,6 +20,7 @@
     "express": "^4.15.5",
     "install": "^0.10.1",
     "path": "^0.12.7",
-    "soundengine": "^1.3.1"
+    "soundengine": "^1.3.1",
+		"node-core-audio": "git://github.com/metrasynth/node-core-audio.git#033e571ea43987ace5f2511a10a04fe7f199123f"
   }
 }

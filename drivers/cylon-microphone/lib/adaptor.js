@@ -5,7 +5,7 @@ var fs = require('fs');
 var lame = require('lame');
 var uuid = require('uuid');
 var Analyser = require('audio-analyser');
-var soundengine = require('soundengine')
+const coreAudio = require("node-core-audio")
 var stream = require('stream');
 
 
@@ -14,12 +14,10 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	opts = opts || {};
 
 	// Start live transmission from the default input device to the default output device at 22kHz
-	this.connector = this.engine = new soundengine.engine({
-		sampleRate: 8000,
-		bufferSize: 1024
-	})
+	this.connector = this.engine = coreAudio.createNewAudioEngine()
 
-	this.engine.setMute(true);
+
+	//this.engine.setMute(true);
 	this.events = ['started', 'stopped', 'recorded', 'fftData'];
 
 	this.status = 0;
@@ -72,32 +70,43 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	});
 
 
-	// Apply a beep to the output when recording has stopped
-	this.engine.on('recording_stopped', () => {
-		this.engine.saveRecording(this.lastrecordingPath);
-		this.engine.beep({
-			frequency: 300
-		})
-	})
-
-	this.engine.on('recording_saved', () => {
-		this.emit('recording_saved', this.lastrecordingPath);
-	})
+	// // Apply a beep to the output when recording has stopped
+	// this.engine.on('recording_stopped', () => {
+	// 	this.engine.saveRecording(this.lastrecordingPath);
+	// 	this.engine.beep({
+	// 		frequency: 300
+	// 	})
+	// })
+	//
+	// this.engine.on('recording_saved', () => {
+	// 	this.emit('recording_saved', this.lastrecordingPath);
+	// })
+	// this.engine.on('playback_finished', () => {
+	// 	//console.log(data);
+	// 	this.engine.setMute(true);
+	// 	this.enableMicrophone();
+	// })
+	// this.engine.on('data', (data) => {
+	// 	//console.log(data.toString('utf8'));
+	// 	//this.audioStream.push(data.toString('utf8'));
+	// 	return data;
+	// });
 
 	this.audioStream = new stream.PassThrough();
 	//when I get the data I can pipe in to the stream
 
-	this.engine.on('data', (data) => {
-		//console.log(data.toString('utf8'));
-		//this.audioStream.push(data.toString('utf8'));
-		return data;
-	});
+	function processAudio( inputBuffer ) {
+		for (var channel = 0; channel < inputBuffer.length; ++channel) {
+			console.log(`Channel ${channel} has ${inputBuffer[channel].length} samples`)
+			// Even though all channels should have the same ammount of samples...
+		}
+		return inputBuffer;
+	}
 
-	this.engine.on('playback_finished', () => {
-		//console.log(data);
-		this.engine.setMute(true);
-		this.enableMicrophone();
-	})
+	this.engine.addAudioCallback(processAudio)
+
+
+
 	//throw the stream in the encoder
 	this.audioStream.pipe(this.analyser);
 };
@@ -113,25 +122,25 @@ Adaptor.prototype.disconnect = function(callback) {
 };
 
 Adaptor.prototype.startRecording = function(callback) {
-	this.enableMicrophone();
-	this.engine.setMute(true);
+	//this.enableMicrophone();
+	//this.engine.setMute(true);
 	Cylon.Logger.log("start recording");
-	this.engine.startRecording();
+	//this.engine.startRecording();
 	this.status = 1;
 };
 
 Adaptor.prototype.stopRecording = function(callback) {
 	Cylon.Logger.log("stop recording");
-	this.engine.stopRecording();
+	//this.engine.stopRecording();
 	this.status = 0;
-	this.disableMicrophone();
+	//this.disableMicrophone();
 };
 
 Adaptor.prototype.playback = function(file) {
-	this.disableMicrophone();
-	this.engine.setMute(false);
-	this.engine.loadRecording(file);
-	this.engine.startPlayback();
+	// this.disableMicrophone();
+	// this.engine.setMute(false);
+	// this.engine.loadRecording(file);
+	// this.engine.startPlayback();
 };
 
 Adaptor.prototype.getFFTData = function() {
