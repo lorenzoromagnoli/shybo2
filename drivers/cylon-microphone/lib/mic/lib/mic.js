@@ -59,7 +59,7 @@ var mic = function mic(options) {
             else {
 							var buffer_time=(buffer/rate)*1000000;
               audioProcess = spawn('arecord', ['-c', channels, '-r', rate, '-f',
-                                   format, '-D', device, '--B', buffer_time], audioProcessOptions);
+                                   format, '-D', device], audioProcessOptions);
             }
 						if(debug)console.log(audioProcess);
 
