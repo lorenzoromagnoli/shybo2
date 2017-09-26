@@ -16,7 +16,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	// Start live transmission from the default input device to the default output device at 22kHz
 	this.connector = this.engine = new soundengine.engine({
 		sampleRate: 8000,
-		bufferSize: 1024
+		bufferSize: 2048
 	})
 
 	this.engine.setMute(true);
@@ -90,8 +90,8 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	this.engine.on('data', (data) => {
 
 		console.log(data.toString('utf8'));
-		this.audioStream.push(data.toString('utf8'));
-		this.engine.synchronize();
+		// this.audioStream.push(data.toString('utf8'));
+		// this.engine.synchronize();
 		return data;
 	});
 
