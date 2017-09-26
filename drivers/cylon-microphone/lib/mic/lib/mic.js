@@ -58,8 +58,10 @@ var mic = function mic(options) {
             }
             else {
 							var buffer_time=(buffer/rate)*1000000;
-              audioProcess = spawn('arecord', ['-c', channels, '-r', rate, '-f',
-                                   format, '-D', device], audioProcessOptions);
+              audioProcess = spawn('sox', ['-b', bitwidth, '--endian', endian,
+                                   '-c', channels, '-r', rate, '-e', encoding,
+                                   '-t', '--buffer', buffer , 'waveaudio', 'default', '-p'],
+                                    audioProcessOptions);
             }
 						if(debug)console.log(audioProcess);
 
