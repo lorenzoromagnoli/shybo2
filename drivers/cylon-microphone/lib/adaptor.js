@@ -13,7 +13,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	opts = opts || {};
 
 	this.connector = this.microphone = mic({
-		rate: '16000',
+		rate: '8000',
 		channels: '1',
 		debug: true,
 		buffer:500,
@@ -35,11 +35,11 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		// input
 		channels: 1, // 2 channels (left and right)
 		bitDepth: 16, // 16-bit samples
-		sampleRate: 16000, // 44,100 Hz sample rate
+		sampleRate: 8000, // 44,100 Hz sample rate
 
 		// output
 		bitRate: 128,
-		outSampleRate: 22050,
+		outSampleRate: 16000,
 		mode: lame.STEREO // STEREO (default), JOINTSTEREO, DUALCHANNEL or MONO
 	});
 
@@ -62,7 +62,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		channel: 1,
 
 		// Size of time data to buffer
-		bufferSize: 44100,
+		bufferSize: 22050,
 
 		// Windowing function for fft, https://github.com/scijs/window-functions
 		// applyWindow: function(sampleNumber, totalSamples) {
@@ -72,7 +72,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		//...pcm-stream params, if required
 		'pcm-stream': {
 			channels: 1,
-			sampleRate: 16000,
+			sampleRate: 8000,
 			bitDepth: 16,
 			byteOrder: 'LE',
 			max: 32767,
