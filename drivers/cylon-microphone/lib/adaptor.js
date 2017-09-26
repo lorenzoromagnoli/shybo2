@@ -6,11 +6,33 @@ var mic = require('mic');
 var lame = require('lame');
 var uuid = require('uuid');
 var Analyser = require('audio-analyser');
+var soundengine = require('soundengine')
 
 
 var Adaptor = module.exports = function Adaptor(opts) {
 	Adaptor.__super__.constructor.apply(this, arguments);
 	opts = opts || {};
+
+
+	// Start live transmission from the default input device to the default output device at 22kHz
+	var engine = new soundengine.engine({sampleRate: 22050})
+
+	// Start recording
+	engine.startRecording()
+
+	// Apply a beep to the output when recording has stopped
+	engine.on('recording_stopped', () => {
+	    engine.beep({frequency: 300})
+	})
+
+	// Stop recording after 5 seconds
+	setTimeout(() => {
+	    // Stop the recording
+	    engine.stopRecording()
+
+	    // Playback of the recording
+	    engine.startPlayback()
+	}, 5000)
 
 	this.connector = this.microphone = mic({
 		rate: '16000',
