@@ -14,7 +14,6 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	opts = opts || {};
 
 	// Start live transmission from the default input device to the default output device at 22kHz
-	this.connector = this.engine = coreAudio.createNewAudioEngine()
 
 
 	//this.engine.setMute(true);
@@ -86,28 +85,27 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	// 	this.engine.setMute(true);
 	// 	this.enableMicrophone();
 	// })
-	// this.engine.on('data', (data) => {
-	// 	//console.log(data.toString('utf8'));
-	// 	//this.audioStream.push(data.toString('utf8'));
-	// 	return data;
-	// });
+
 
 	this.audioStream = new stream.PassThrough();
 	//when I get the data I can pipe in to the stream
 
-	function processAudio( inputBuffer ) {
-		for (var channel = 0; channel < inputBuffer.length; ++channel) {
-			console.log(`Channel ${channel} has ${inputBuffer[channel].length} samples`)
-			// Even though all channels should have the same ammount of samples...
-		}
+	this.processAudio =function ( inputBuffer ) {
+		console.log(inputBuffer[0][0])
+
 		return inputBuffer;
 	}
 
-	this.engine.addAudioCallback(processAudio)
+	this.connector = this.engine = coreAudio.createNewAudioEngine()
+	this.engine.addAudioCallback(this.processAudio)
+
+	//this.engine.setSampleRate( 100 );
 
 
-
-	//throw the stream in the encoder
+	// this.engine.setFFTCallback((channel, samples) => {
+	//     console.log(channel);
+	// })
+	// //throw the stream in the encoder
 	this.audioStream.pipe(this.analyser);
 };
 
