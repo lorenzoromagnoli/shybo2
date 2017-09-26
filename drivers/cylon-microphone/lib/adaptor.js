@@ -89,8 +89,8 @@ var Adaptor = module.exports = function Adaptor(opts) {
 
 	this.engine.on('data', (data) => {
 
-		console.log(data.toString('utf8'));
-		 this.audioStream.push(data.toString('utf8'));
+		//console.log(data.toString('utf8'));
+		this.audioStream.push(data.toString('utf8'));
 		// this.engine.synchronize();
 		return data;
 	});
@@ -101,7 +101,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		this.enableMicrophone();
 	})
 	//throw the stream in the encoder
-	this.audioStream.pipe(this.analyser);
+	//this.audioStream.pipe(this.analyser);
 };
 
 Cylon.Utils.subclass(Adaptor, Cylon.Adaptor);
