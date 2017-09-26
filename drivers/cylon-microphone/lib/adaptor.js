@@ -6,37 +6,15 @@ var lame = require('lame');
 var uuid = require('uuid');
 var Analyser = require('audio-analyser');
 var soundengine = require('soundengine')
+var stream = require('stream');
 
 
 var Adaptor = module.exports = function Adaptor(opts) {
 	Adaptor.__super__.constructor.apply(this, arguments);
 	opts = opts || {};
 
-
 	// Start live transmission from the default input device to the default output device at 22kHz
-	var engine = new soundengine.engine({sampleRate: 16000, outputDevice:-1})
-
-	// Start recording
-	engine.startRecording()
-
-	// Apply a beep to the output when recording has stopped
-	engine.on('recording_stopped', () => {
-	    engine.beep({frequency: 300})
-	})
-
-	engine.on('data', (data)=>{
-		console.log(data);
-		return data;
-	})
-
-	// Stop recording after 5 seconds
-	setTimeout(() => {
-	    // Stop the recording
-	    engine.stopRecording()
-
-	    // Playback of the recording
-	    engine.startPlayback()
-	}, 5000)
+	this.connector=this.engine = new soundengine.engine({sampleRate: 16000, outputDevice:-1})
 
 	this.events=['started','stopped', 'recorded', 'fftData' ];
 
@@ -102,23 +80,42 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	});
 
 
-	// this.micInputStream = this.microphone.getAudioStream();
+
+	// Start recording
+	this.engine.startRecording()
+
+
+	// Apply a beep to the output when recording has stopped
+	this.engine.on('recording_stopped', () => {
+	    engine.beep({frequency: 300})
+	})
+	this.audioStream = new stream.PassThrough();
+
+	// this.audioStream._read = function () {
 	//
-	// //when open the stream pipe it to the filewriter
-	// this.outputFileStream = fs.WriteStream(this.lastrecordingPath);
-	//
-	// // the generated MP3 file gets piped to stdout
-	// this.encoder.pipe(this.outputFileStream);
-	//
-	// //pipe the analyser
-	// this.analyser.pipe(this.encoder);
-	//
-	// //throw the stream in the encoder
-	// this.micInputStream.pipe(this.analyser);
-	//
-	// this.micInputStream.on('data', (data) => {
-	// 	console.log("Recieved Input Stream: " + data.length);
-	// });
+	// }
+	this.engine.on('data', (data)=>{
+		//console.log(data);
+		this.audioStream.push(data.toString('utf8'));
+		return data;
+	})
+
+	//when open the stream pipe it to the filewriter
+	this.outputFileStream = fs.WriteStream(this.lastrecordingPath);
+
+	// the generated MP3 file gets piped to stdout
+	this.encoder.pipe(this.outputFileStream);
+
+	//pipe the analyser
+	this.analyser.pipe(this.encoder);
+
+	this.analyser.on('data', (chunk) => {
+  console.log(`Received ${chunk.length} bytes of data.`);
+	//console.log(chunk);
+	});
+
+	//throw the stream in the encoder
+	this.audioStream.pipe(this.analyser);
 
 };
 
@@ -157,23 +154,25 @@ Adaptor.prototype.disconnect = function(callback) {
 // 	this.status = 1;
 // };
 //
-// Adaptor.prototype.getFFTData=function(){
-// 	this.fftData=this.analyser.getFrequencyData();
-// 	return(this.fftData);
-// }
-//
-// Adaptor.prototype.createNewFile = function(callback) {
-// 	//clode the previous file
-// 	this.outputFileStream.end();
-//
-// 	this.newRecordingPath = './recordings/recording' + uuid.v1() + '.mp3'
-// 	var newFIle = this.newRecordingPath;
-//
-// 	//create a new file
-// 	this.outputFileStream = fs.WriteStream(this.newRecordingPath);
-// 	// repipe the encoder to the new file
-// 	this.encoder.pipe(this.outputFileStream);
-// 	// return the filename in a callback
-// 	callback(this.lastrecordingPath, this.newRecordingPath);
-// 	this.lastrecordingPath = this.newRecordingPath;
-// };
+ Adaptor.prototype.getFFTData=function(){
+	 console.log("fft");
+ 	this.fftData=this.analyser.getFrequencyData();
+	console.log("data:",this.fftData);
+	return(this.fftData);
+ }
+
+Adaptor.prototype.createNewFile = function(callback) {
+	//clode the previous file
+	this.outputFileStream.end();
+
+	this.newRecordingPath = './recordings/recording' + uuid.v1() + '.mp3'
+	var newFIle = this.newRecordingPath;
+
+	//create a new file
+	this.outputFileStream = fs.WriteStream(this.newRecordingPath);
+	// repipe the encoder to the new file
+	this.encoder.pipe(this.outputFileStream);
+	// return the filename in a callback
+	callback(this.lastrecordingPath, this.newRecordingPath);
+	this.lastrecordingPath = this.newRecordingPath;
+};

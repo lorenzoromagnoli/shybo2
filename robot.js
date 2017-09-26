@@ -73,6 +73,13 @@ Cylon.robot({
 
 		var ButtonPin = 2;
 
+		every((.1).seconds(), function() {
+			console.log("getting fft");
+			var fftData=my.microphone.getFFTData();
+			my.emit('fft',fftData);
+			my.wekinator.inputs(fftData);
+		});
+
 		after((3).seconds(), function() {
 			my.myArduino.registerToButtonEvent(ButtonPin);
 
@@ -140,11 +147,6 @@ Cylon.robot({
 		// 	});
 		// });
 
-		//  every((.02).seconds(), function() {
-		// 	 var fftData=my.microphone.getFFTData();
-		// 	 my.emit('fft',fftData);
-		// 	 my.wekinator.inputs(fftData);
-		//  });
 
 	},
 
