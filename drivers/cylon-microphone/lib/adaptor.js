@@ -90,7 +90,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	this.engine.on('data', (data) => {
 		//console.log(data.toString('utf8'));
 		//this.audioStream.push(data.toString('utf8'));
-		//return data;
+		return data;
 	});
 
 	this.engine.on('playback_finished', () => {
