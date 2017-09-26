@@ -17,6 +17,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		channels: '1',
 		debug: true,
 		buffer:500,
+		bitwidth:8,
 	});
 
 	this.events=['started','stopped', 'recorded', 'fftData' ];
@@ -73,7 +74,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		'pcm-stream': {
 			channels: 1,
 			sampleRate: 8000,
-			bitDepth: 16,
+			bitDepth: 8,
 			byteOrder: 'LE',
 			max: 32767,
 			min: -32768,
