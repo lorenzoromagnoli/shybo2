@@ -15,7 +15,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	this.connector = this.microphone = mic({
 		rate: '16000',
 		channels: '1',
-		debug: false,
+		debug: true,
 		exitOnSilence: 6,
 		buffer:500,
 	});
