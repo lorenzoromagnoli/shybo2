@@ -88,8 +88,10 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	//when I get the data I can pipe in to the stream
 
 	this.engine.on('data', (data) => {
-		//console.log(data.toString('utf8'));
+
+		console.log(data.toString('utf8'));
 		this.audioStream.push(data.toString('utf8'));
+		this.engine.synchronize();
 		return data;
 	});
 
