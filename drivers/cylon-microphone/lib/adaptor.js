@@ -57,8 +57,8 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		// applyWindow: function(sampleNumber, totalSamples) {
 		// 	//console.log(sampleNumber, totalSamples);
 		// },
+//pcm-stream params, if required
 
-		...pcm-stream params, if required
 		'pcm-stream': {
 			channels: 1,
 			sampleRate: 8000,
