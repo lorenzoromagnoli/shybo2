@@ -74,9 +74,8 @@ Cylon.robot({
 		var ButtonPin = 2;
 
 		every((.1).seconds(), function() {
-			console.log("getting fft");
-			var fftData=my.microphone.getFFTData();
-			my.emit('fft',fftData);
+			var fftData = my.microphone.getFFTData();
+			my.emit('fft', fftData);
 			my.wekinator.inputs(fftData);
 		});
 
@@ -85,26 +84,16 @@ Cylon.robot({
 
 			my.myArduino.on('button', function(payload) {
 				console.log(payload);
+
 				if (payload.pin == ButtonPin && payload.value == 0) {
-
 					console.log(my.microphone.status);
-
-					if (my.microphone.status == 0) {
-						my.microphone.startRecording();
-					} else if (my.microphone.status == 2) {
-						my.microphone.resumeRecording();
-					}
+					my.microphone.startRecording();
 				} else if (payload.pin == ButtonPin && payload.value == 1) {
-					if (my.microphone.status == 1) {
-						my.microphone.pauseRecording(() => {
-							my.microphone.createNewFile((lastFile, newFile) => {
-								console.log(lastFile, newFile);
-								my.audio.play(lastFile);
-							});
-						});
-					}
+					my.microphone.stopRecording();
 				}
+
 				my.myArduino.readColorSensor();
+
 			});
 
 			//when receive a new color from the sensor, copy it to the ledstrip
@@ -126,6 +115,11 @@ Cylon.robot({
 				console.log(payload);
 			});
 
+			//when I receive fft event from the microphone module reemit it
+			my.microphone.on('recording_saved', function(file) {
+				my.microphone.playback(file);
+				console.log(file);
+			});
 
 		});
 
@@ -150,7 +144,7 @@ Cylon.robot({
 
 	},
 
-	startRecording: function(){
+	startRecording: function() {
 		console.log("start recording");
 		if (this.microphone.status == 0) {
 			this.microphone.startRecording();
@@ -159,7 +153,7 @@ Cylon.robot({
 		}
 	},
 
-	stopRecording: function(){
+	stopRecording: function() {
 		console.log("stop recording");
 		if (this.microphone.status == 1) {
 			this.microphone.pauseRecording(() => {

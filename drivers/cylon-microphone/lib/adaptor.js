@@ -14,36 +14,27 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	opts = opts || {};
 
 	// Start live transmission from the default input device to the default output device at 22kHz
-	this.connector=this.engine = new soundengine.engine({sampleRate: 16000, outputDevice:-1})
-
-	this.events=['started','stopped', 'recorded', 'fftData' ];
+	this.connector = this.engine = new soundengine.engine({
+		sampleRate: 44100,
+		bufferSize: 1024
+	})
+	this.engine.setMute(true);
+	this.events = ['started', 'stopped', 'recorded', 'fftData'];
 
 	this.status = 0;
 	// 0->off
 	// 1->recording
 	// 2->paused
 
-	this.lastrecordingPath = './recordings/recording.mp3';
+	this.lastrecordingPath = './recordings/recording.wav';
 	this.newRecordingPath = "";
 
 	this.fftData;
 
-	this.encoder = new lame.Encoder({
-		// input
-		channels: 1, // 2 channels (left and right)
-		bitDepth: 16, // 16-bit samples
-		sampleRate: 16000, // 44,100 Hz sample rate
-
-		// output
-		bitRate: 128,
-		outSampleRate: 22050,
-		mode: lame.STEREO // STEREO (default), JOINTSTEREO, DUALCHANNEL or MONO
-	});
-
 	//setup audio analyser
 	this.analyser = new Analyser({
 		// Magnitude diapasone, in dB
-		minDecibels: -1000,
+		minDecibels: -100,
 		maxDecibels: 0,
 
 		// Number of time samples to transform to frequency
@@ -59,64 +50,55 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		channel: 1,
 
 		// Size of time data to buffer
-		bufferSize: 44100,
+		bufferSize: 1024,
 
 		// Windowing function for fft, https://github.com/scijs/window-functions
 		// applyWindow: function(sampleNumber, totalSamples) {
 		// 	//console.log(sampleNumber, totalSamples);
 		// },
 
-		//...pcm-stream params, if required
-		'pcm-stream': {
-			channels: 1,
-			sampleRate: 16000,
-			bitDepth: 16,
-			byteOrder: 'LE',
-			max: 32767,
-			min: -32768,
-			samplesPerFrame: 1024,
-		}
+		//	...pcm-stream params, if required
+		// 'pcm-stream': {
+		// 	channels: 1,
+		// 	sampleRate: 44100,
+		// 	bitDepth: 16,
+		// 	byteOrder: 'BE',
+		// 	max: 32767,
+		// 	min: -32768,
+		// 	samplesPerFrame: 1024,
+		// }
 
 	});
-
-
-
-	// Start recording
-	this.engine.startRecording()
 
 
 	// Apply a beep to the output when recording has stopped
 	this.engine.on('recording_stopped', () => {
-	    engine.beep({frequency: 300})
+		this.engine.saveRecording(this.lastrecordingPath);
+		this.engine.beep({
+			frequency: 300
+		})
 	})
-	this.audioStream = new stream.PassThrough();
 
-	// this.audioStream._read = function () {
-	//
-	// }
-	this.engine.on('data', (data)=>{
-		//console.log(data);
+	this.engine.on('recording_saved', () => {
+		this.emit('recording_saved', this.lastrecordingPath);
+	})
+
+	this.audioStream = new stream.PassThrough();
+	//when I get the data I can pipe in to the stream
+
+	this.engine.on('data', (data) => {
+		console.log(data);
 		this.audioStream.push(data.toString('utf8'));
 		return data;
-	})
-
-	//when open the stream pipe it to the filewriter
-	this.outputFileStream = fs.WriteStream(this.lastrecordingPath);
-
-	// the generated MP3 file gets piped to stdout
-	this.encoder.pipe(this.outputFileStream);
-
-	//pipe the analyser
-	this.analyser.pipe(this.encoder);
-
-	this.analyser.on('data', (chunk) => {
-  console.log(`Received ${chunk.length} bytes of data.`);
-	//console.log(chunk);
 	});
 
+	this.engine.on('playback_finished', () => {
+		//console.log(data);
+		this.engine.setMute(true);
+		this.enableMicrophone();
+	})
 	//throw the stream in the encoder
 	this.audioStream.pipe(this.analyser);
-
 };
 
 Cylon.Utils.subclass(Adaptor, Cylon.Adaptor);
@@ -129,50 +111,41 @@ Adaptor.prototype.disconnect = function(callback) {
 	callback();
 };
 
-// Adaptor.prototype.startRecording = function(callback) {
-// 	Cylon.Logger.log("start recording");
-// 	this.microphone.start();
-// 	this.status = 1;
-// };
-//
-// Adaptor.prototype.pauseRecording = function(callback) {
-// 	Cylon.Logger.log("pause recording");
-// 	this.microphone.pause();
-// 	this.status = 2;
-// 	callback();
-// };
-//
-// Adaptor.prototype.stopRecording = function(callback) {
-// 	Cylon.Logger.log("stop recording");
-// 	this.microphone.stop();
-// 	this.status = 0;
-// };
-//
-// Adaptor.prototype.resumeRecording = function(callback) {
-// 	Cylon.Logger.log("resuming recording");
-// 	this.microphone.resume();
-// 	this.status = 1;
-// };
-//
- Adaptor.prototype.getFFTData=function(){
-	 console.log("fft");
- 	this.fftData=this.analyser.getFrequencyData();
-	console.log("data:",this.fftData);
-	return(this.fftData);
- }
-
-Adaptor.prototype.createNewFile = function(callback) {
-	//clode the previous file
-	this.outputFileStream.end();
-
-	this.newRecordingPath = './recordings/recording' + uuid.v1() + '.mp3'
-	var newFIle = this.newRecordingPath;
-
-	//create a new file
-	this.outputFileStream = fs.WriteStream(this.newRecordingPath);
-	// repipe the encoder to the new file
-	this.encoder.pipe(this.outputFileStream);
-	// return the filename in a callback
-	callback(this.lastrecordingPath, this.newRecordingPath);
-	this.lastrecordingPath = this.newRecordingPath;
+Adaptor.prototype.startRecording = function(callback) {
+	this.enableMicrophone();
+	this.engine.setMute(true);
+	Cylon.Logger.log("start recording");
+	this.engine.startRecording();
+	this.status = 1;
 };
+
+Adaptor.prototype.stopRecording = function(callback) {
+	Cylon.Logger.log("stop recording");
+	this.engine.stopRecording();
+	this.status = 0;
+	this.disableMicrophone();
+};
+
+Adaptor.prototype.playback = function(file) {
+	this.disableMicrophone();
+	this.engine.setMute(false);
+	this.engine.loadRecording(file);
+	this.engine.startPlayback();
+};
+
+Adaptor.prototype.getFFTData = function() {
+	this.fftData = this.analyser.getFrequencyData();
+	return (this.fftData);
+}
+
+Adaptor.prototype.disableMicrophone = function() {
+	this.engine.setOptions({
+		'inputDevice': -1
+	})
+}
+
+Adaptor.prototype.enableMicrophone = function() {
+	this.engine.setOptions({
+		'inputDevice': 0
+	})
+}
