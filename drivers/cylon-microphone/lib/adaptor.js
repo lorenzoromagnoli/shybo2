@@ -58,16 +58,16 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		// 	//console.log(sampleNumber, totalSamples);
 		// },
 
-		//...pcm-stream params, if required
-		// 'pcm-stream': {
-		// 	channels: 1,
-		// 	sampleRate: 44000,
-		// 	bitDepth: 32,
-		// 	float: true,
-		// 	signed: true,
-		// 	byteOrder: 'BE',
-		// 	samplesPerFrame: 1024,
-		// }
+		...pcm-stream params, if required
+		'pcm-stream': {
+			channels: 1,
+			sampleRate: 8000,
+			bitDepth: 32,
+			float: true,
+			signed: true,
+			byteOrder: 'BE',
+			samplesPerFrame: 1024,
+		}
 
 	});
 
