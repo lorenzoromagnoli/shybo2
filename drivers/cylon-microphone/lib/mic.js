@@ -57,11 +57,9 @@ var mic = function mic(options) {
                                     '-t', fileType, '--buffer', buffer , '-'], audioProcessOptions)
             }
             else {
-							var buffer_time=(buffer/rate)*1000000;
-              audioProcess = spawn('sox', ['-b', bitwidth, '--endian', endian,
-                                   '-c', channels, '-r', rate, '-e', encoding,
-                                   '-t', '--buffer', buffer , 'waveaudio', 'default', '-p'],
-                                    audioProcessOptions);
+							audioProcess = spawn('rec', ['-b', bitwidth, '--endian', endian,
+                                    '-c', channels, '-r', rate, '-e', encoding,
+                                    '-t', fileType, '--buffer', buffer , '-'], audioProcessOptions)
             }
 						if(debug)console.log(audioProcess);
 
