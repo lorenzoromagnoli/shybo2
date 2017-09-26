@@ -17,7 +17,6 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		channels: '1',
 		debug: true,
 		buffer:500,
-		bitwidth:8,
 	});
 
 	this.events=['started','stopped', 'recorded', 'fftData' ];
