@@ -15,7 +15,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 
 	// Start live transmission from the default input device to the default output device at 22kHz
 	this.connector = this.engine = new soundengine.engine({
-		sampleRate: 16000,
+		sampleRate: 8000,
 		bufferSize: 1024
 	})
 
@@ -51,7 +51,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		channel: 1,
 
 		// Size of time data to buffer
-		//bufferSize: 1024,
+		bufferSize: 1024,
 
 		// Windowing function for fft, https://github.com/scijs/window-functions
 		// applyWindow: function(sampleNumber, totalSamples) {
@@ -59,17 +59,15 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		// },
 
 		//...pcm-stream params, if required
-		'pcm-stream': {
-			channels: 1,
-			sampleRate: 16000,
-			bitDepth: 32,
-			float: false,
-			signed: true,
-			byteOrder: 'BE',
-			max: 32767,
-			min: -32768,
-			samplesPerFrame: 1024,
-		}
+		// 'pcm-stream': {
+		// 	channels: 1,
+		// 	sampleRate: 44000,
+		// 	bitDepth: 32,
+		// 	float: true,
+		// 	signed: true,
+		// 	byteOrder: 'BE',
+		// 	samplesPerFrame: 1024,
+		// }
 
 	});
 
