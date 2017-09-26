@@ -51,7 +51,9 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		channel: 1,
 
 		// Size of time data to buffer
-		bufferSize: 1024,
+		bufferSize: 2048,
+
+		sampleRate: 8000,
 
 		// Windowing function for fft, https://github.com/scijs/window-functions
 		// applyWindow: function(sampleNumber, totalSamples) {
@@ -66,7 +68,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 			float: true,
 			signed: true,
 			byteOrder: 'BE',
-			samplesPerFrame: 1024,
+			samplesPerFrame: 2048,
 		}
 
 	});
@@ -101,7 +103,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		this.enableMicrophone();
 	})
 	//throw the stream in the encoder
-	//this.audioStream.pipe(this.analyser);
+	this.audioStream.pipe(this.analyser);
 };
 
 Cylon.Utils.subclass(Adaptor, Cylon.Adaptor);
