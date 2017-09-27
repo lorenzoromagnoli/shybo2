@@ -95,7 +95,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	var readEvery=20;
 
 	this.engine.on('data', (data) => {
-		//console.log(data.toString('utf8'));
+		console.log(data.toString('utf8'));
 		if (cycle==0){
 			this.audioStream.push(data.toString('utf8'));
 			this.engine.synchronize();
