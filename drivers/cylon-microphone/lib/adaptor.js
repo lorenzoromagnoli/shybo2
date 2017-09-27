@@ -103,7 +103,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		this.enableMicrophone();
 	})
 	//throw the stream in the encoder
-	this.audioStream.pipe(this.analyser);
+	//this.audioStream.pipe(this.analyser);
 };
 
 Cylon.Utils.subclass(Adaptor, Cylon.Adaptor);
