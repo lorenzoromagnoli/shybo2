@@ -10,6 +10,6 @@
   },
   "dependencies": {
     "cylon": "1.2.0",
-    "wekinator":""
+    "wekinator": ""
   }
 }
