@@ -19,7 +19,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		bufferSize: 2048,
 	})
 
-	this.engine.setMute(true);
+	//this.engine.setMute(true);
 	this.events = ['started', 'stopped', 'recorded', 'fftData'];
 
 	this.status = 0;
@@ -99,7 +99,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 
 	this.engine.on('playback_finished', () => {
 		//console.log(data);
-		this.engine.setMute(true);
+		//this.engine.setMute(true);
 		this.enableMicrophone();
 	})
 	//throw the stream in the encoder
@@ -118,7 +118,7 @@ Adaptor.prototype.disconnect = function(callback) {
 
 Adaptor.prototype.startRecording = function(callback) {
 	this.enableMicrophone();
-	this.engine.setMute(true);
+	//this.engine.setMute(true);
 	Cylon.Logger.log("start recording");
 	this.engine.startRecording();
 	this.status = 1;
@@ -133,7 +133,7 @@ Adaptor.prototype.stopRecording = function(callback) {
 
 Adaptor.prototype.playback = function(file) {
 	this.disableMicrophone();
-	this.engine.setMute(false);
+	//this.engine.setMute(false);
 	this.engine.loadRecording(file);
 	this.engine.startPlayback();
 };
@@ -144,13 +144,13 @@ Adaptor.prototype.getFFTData = function() {
 }
 
 Adaptor.prototype.disableMicrophone = function() {
-	this.engine.setOptions({
-		'inputDevice': -1
-	})
+	// this.engine.setOptions({
+	// 	'inputDevice': -1
+	// })
 }
 
 Adaptor.prototype.enableMicrophone = function() {
-	this.engine.setOptions({
-		'inputDevice': 1
-	})
+	// this.engine.setOptions({
+	// 	'inputDevice': 1
+	// })
 }
