@@ -16,7 +16,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	// Start live transmission from the default input device to the default output device at 22kHz
 	this.connector = this.engine = new soundengine.engine({
 		sampleRate: 8000,
-		bufferSize: 1024,
+		bufferSize: 500,
 	})
 
 	console.log(this.connector.getOptions());
