@@ -16,8 +16,10 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	// Start live transmission from the default input device to the default output device at 22kHz
 	this.connector = this.engine = new soundengine.engine({
 		sampleRate: 8000,
-		bufferSize: 2048,
+		bufferSize: 1024,
 	})
+
+	console.log(this.connector.getOptions());
 
 	//this.engine.setMute(true);
 	this.events = ['started', 'stopped', 'recorded', 'fftData'];
@@ -51,7 +53,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		channel: 1,
 
 		// Size of time data to buffer
-		bufferSize: 2048,
+		bufferSize: 1024,
 
 		sampleRate: 8000,
 
@@ -68,7 +70,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 			float: true,
 			signed: true,
 			byteOrder: 'BE',
-			samplesPerFrame: 2048,
+			samplesPerFrame: 1024,
 		}
 
 	});
@@ -90,7 +92,6 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	//when I get the data I can pipe in to the stream
 
 	this.engine.on('data', (data) => {
-
 		//console.log(data.toString('utf8'));
 		this.audioStream.push(data.toString('utf8'));
 		// this.engine.synchronize();
