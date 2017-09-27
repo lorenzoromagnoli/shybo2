@@ -119,13 +119,13 @@ Cylon.robot({
 
 		});
 
-		every((.02).seconds(), function() {
+		every((.05).seconds(), function() {
 			var fftData = my.microphone.getFFTData();
 			my.emit('fft', fftData);
 			my.wekinator.inputs(fftData);
 		});
 
-		
+
 		// every((4).seconds(), function() {
 		// 	my.myArduino.motorWrite(0, 100, 1);
 		// 	my.myArduino.motorWrite(1, 100, 1);
