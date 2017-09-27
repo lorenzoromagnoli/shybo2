@@ -55,6 +55,6 @@ function drawchart(){
 	var barwidth=width/256;
 	for (var i=0; i<256; i++){
 		fill(0);
-		rect(i*barwidth,height+fftData[i],i*barwidth,-fftData[i]);
+		rect(i*barwidth,height+fftData[i]*10,i*barwidth,-fftData[i]*10);
 	}
 }
