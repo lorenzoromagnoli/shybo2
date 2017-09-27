@@ -91,10 +91,21 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	this.audioStream = new stream.PassThrough();
 	//when I get the data I can pipe in to the stream
 
+	var cycle=0;
+	var readEvery=10;
+
 	this.engine.on('data', (data) => {
 		//console.log(data.toString('utf8'));
-		this.audioStream.push(data.toString('utf8'));
-		// this.engine.synchronize();
+		if (cycle==0){
+			this.audioStream.push(data.toString('utf8'));
+			this.engine.synchronize();
+		}else{
+			if (cycle==readEvery){
+				cycle=0;
+			}else{
+				cycle++;
+			}
+		}
 		return data;
 	});
 
@@ -104,7 +115,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		this.enableMicrophone();
 	})
 	//throw the stream in the encoder
-	//this.audioStream.pipe(this.analyser);
+	this.audioStream.pipe(this.analyser);
 };
 
 Cylon.Utils.subclass(Adaptor, Cylon.Adaptor);
