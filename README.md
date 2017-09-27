@@ -18,3 +18,12 @@ $ wget -O - https://raw.githubusercontent.com/sdesalas/node-pi-zero/master/insta
 npm install
 
 configuring ao
+
+
+#set usb soud card as default
+pcm.!default  {
+ type hw card 1
+}
+ctl.!default {
+ type hw card 1
+}
