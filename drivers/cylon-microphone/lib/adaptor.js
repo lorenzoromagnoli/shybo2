@@ -7,6 +7,7 @@ var uuid = require('uuid');
 var Analyser = require('audio-analyser');
 var soundengine = require('soundengine')
 var stream = require('stream');
+const FFT = require('fft.js');
 
 
 var Adaptor = module.exports = function Adaptor(opts) {
@@ -35,46 +36,51 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	this.fftData;
 
 	//setup audio analyser
-	this.analyser = new Analyser({
-		// Magnitude diapasone, in dB
-		minDecibels: -100,
-		maxDecibels: 0,
+// 	this.analyser = new Analyser({
+// 		// Magnitude diapasone, in dB
+// 		minDecibels: -100,
+// 		maxDecibels: 0,
+//
+// 		// Number of time samples to transform to frequency
+// 		fftSize: 256,
+//
+// 		// Number of frequencies, twice less than fftSize
+// 		frequencyBinCount: 256 / 2,
+//
+// 		// Smoothing, or the priority of the old data over the new data
+// 		smoothingTimeConstant: 0.2,
+//
+// 		// Number of channel to analyse
+// 		channel: 1,
+//
+// 		// Size of time data to buffer
+// 		bufferSize: 1024,
+//
+// 		sampleRate: 8000,
+//
+// 		// Windowing function for fft, https://github.com/scijs/window-functions
+// 		// applyWindow: function(sampleNumber, totalSamples) {
+// 		// 	//console.log(sampleNumber, totalSamples);
+// 		// },
+// //pcm-stream params, if required
+//
+// 		'pcm-stream': {
+// 			channels: 1,
+// 			sampleRate: 8000,
+// 			bitDepth: 32,
+// 			float: true,
+// 			signed: true,
+// 			byteOrder: 'BE',
+// 			samplesPerFrame: 1024,
+// 		}
+//
+// 	});
 
-		// Number of time samples to transform to frequency
-		fftSize: 256,
+	const f = new FFT(64);
 
-		// Number of frequencies, twice less than fftSize
-		frequencyBinCount: 256 / 2,
+	this.fftOut = f.createComplexArray();
 
-		// Smoothing, or the priority of the old data over the new data
-		smoothingTimeConstant: 0.2,
-
-		// Number of channel to analyse
-		channel: 1,
-
-		// Size of time data to buffer
-		bufferSize: 1024,
-
-		sampleRate: 8000,
-
-		// Windowing function for fft, https://github.com/scijs/window-functions
-		// applyWindow: function(sampleNumber, totalSamples) {
-		// 	//console.log(sampleNumber, totalSamples);
-		// },
-//pcm-stream params, if required
-
-		'pcm-stream': {
-			channels: 1,
-			sampleRate: 8000,
-			bitDepth: 32,
-			float: true,
-			signed: true,
-			byteOrder: 'BE',
-			samplesPerFrame: 1024,
-		}
-
-	});
-
+	var realInput = new Array(f.size);
 
 	// Apply a beep to the output when recording has stopped
 	this.engine.on('recording_stopped', () => {
@@ -88,24 +94,17 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		this.emit('recording_saved', this.lastrecordingPath);
 	})
 
-	this.audioStream = new stream.PassThrough();
+	//this.audioStream = new stream.PassThrough();
 	//when I get the data I can pipe in to the stream
 
 	var cycle=0;
 	var readEvery=20;
 
 	this.engine.on('data', (data) => {
-		console.log(data.toString('utf8'));
-		if (cycle==0){
-			this.audioStream.push(data.toString('utf8'));
-			this.engine.synchronize();
-		}else{
-			if (cycle==readEvery){
-				cycle=0;
-			}else{
-				cycle++;
-			}
-		}
+		//console.log(data.toString('utf8'));
+		realInput=data;
+		f.realTransform(this.fftOut, realInput);
+		//console.log(out);
 		return data;
 	});
 
@@ -115,7 +114,7 @@ var Adaptor = module.exports = function Adaptor(opts) {
 		this.enableMicrophone();
 	})
 	//throw the stream in the encoder
-	this.audioStream.pipe(this.analyser);
+	//this.audioStream.pipe(this.analyser);
 };
 
 Cylon.Utils.subclass(Adaptor, Cylon.Adaptor);
@@ -151,8 +150,7 @@ Adaptor.prototype.playback = function(file) {
 };
 
 Adaptor.prototype.getFFTData = function() {
-	this.fftData = this.analyser.getFrequencyData();
-	return (this.fftData);
+	return (this.fftOut);
 }
 
 Adaptor.prototype.disableMicrophone = function() {
