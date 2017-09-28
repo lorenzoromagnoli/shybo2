@@ -6,7 +6,9 @@
 
 body {
 	font: 13px Helvetica, Arial;
+	padding: 10px;
 }
+
 
 form {
 	background: #000;
@@ -34,6 +36,8 @@ form button {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
+	max-height: 200px;
+	overflow-y:scroll;
 }
 
 #messages li {
@@ -42,4 +46,22 @@ form button {
 
 #messages li:nth-child(odd) {
 	background: #eee;
+}
+
+section{
+	width: 33%;
+	padding: 20px 0px;
+	min-height: 100px;
+	display: inline-table;
+}
+
+.section-title{
+	border-bottom: 1px solid black;
+	margin-bottom: 10px;
+	margin-right: 20px;
+}
+.colorviewer{
+	width: 20px;
+	height: 20px;
+	border: 1px solid grey
 }

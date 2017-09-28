@@ -34,7 +34,6 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	this.fftOut = f.createComplexArray();
 
 	this.engine.on('data', (data) => {
-		console.log (frame);
 		f.realTransform(this.fftOut, data);
 		return data;
 	});

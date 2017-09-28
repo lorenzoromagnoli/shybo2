@@ -10,9 +10,59 @@
 
 
 <body>
+	<div id="title">
+		<h2 clas="title">shybo-controls</h2>
+	</div>
 	<div id="viz">
 
 	</div>
+	<div id="interface">
+		<section class="colorSensor">
+			<h5 class="section-title">color sensor</h5>
+			<button id="getColor" onclick="getColorSensor()">readColor</button>
+			<div class="colorviewer"></button>
+
+		</section>
+		<section class="bodyColor">
+			<h5 class="section-title">body Color</h5>
+			<input type="range" min="0" max="180">
+			<input type="range" min="0" max="180">
+			<input type="range" min="0" max="180">
+			<button id="setColor">setColor</button>
+		</section>
+		<section class="eyeColor">
+			<h5 class="section-title">eye Color</h5>
+			<input type="range" min="0" max="180">
+			<input type="range" min="0" max="180">
+			<input type="range" min="0" max="180">
+			<button id="setColor">setColor</button>
+		</section>
+		<section class="motors">
+			<h5 class="section-title">motors</h5>
+			<button id="left">left</button>
+			<button id="right">right</button>
+			<button id="front">front</button>
+			<button id="back">back</button>
+			<button id="back">stop</button>
+		</section>
+		<section class="microphone">
+			<h5 class="section-title">microphone</h5>
+			<button id="stopRec">stop recording</button>
+			<button id="startRec">start recording</button>
+			<button id="playLastRecording">play recording</button>
+		</section>
+		<section class="wekinator">
+			<h5 class="section-title">wekinator</h5>
+			<button id="stopRec">stop recording</button>
+			<button id="startRec">stop recording</button>
+			<button id="playLastRecording">start recognizing</button>
+		</section>
+		<section class="servomotor">
+			<h5 class="section-title">servomotor</h5>
+			<input type="range" min="0" max="180">
+		</section>
+	</div>
+
 	<div id="log">
 		<ul id="messages"></ul>
 	</div>

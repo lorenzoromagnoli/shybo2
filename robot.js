@@ -63,17 +63,15 @@ Cylon.robot({
 
 
 	work: function(my) {
-		constantly(function() {
-			// my.stateMachine();
-		});
+		// constantly(function() {
+		// 	// my.stateMachine();
+		// });
 
 		//my.microphone.startRecording();
 
 		//wait some second before sending data to the serial port
 
 		var ButtonPin = 2;
-
-
 
 		after((3).seconds(), function() {
 			my.myArduino.registerToButtonEvent(ButtonPin);
@@ -89,14 +87,13 @@ Cylon.robot({
 				}
 
 				my.myArduino.readColorSensor();
-
 			});
 
 			//when receive a new color from the sensor, copy it to the ledstrip
 			my.myArduino.on('color', function(payload) {
 				console.log(payload);
 				my.myArduino.setFullColor(payload.red, payload.green, payload.blue)
-				my.emit('color_changed');
+				my.emit('color_changed', payload);
 			});
 
 			//when I receive fft event from the microphone module reemit it
@@ -166,6 +163,10 @@ Cylon.robot({
 				});
 			});
 		}
+	},
+
+	getColorSensor: function() {
+		this.myArduino.readColorSensor();
 	},
 
 	turnOn: function() {
