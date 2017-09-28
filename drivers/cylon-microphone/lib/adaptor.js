@@ -13,8 +13,8 @@ var Adaptor = module.exports = function Adaptor(opts) {
 
 	// Start live transmission from the default input device to the default output device at 22kHz
 	this.connector = this.engine = new soundengine.engine({
-		sampleRate: 16000,
-		bufferSize: 1024,
+		sampleRate: 8000,
+		bufferSize: 512,
 	})
 
 	console.log(this.connector.getOptions());
@@ -33,15 +33,8 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	const f = new FFT(64);
 	this.fftOut = f.createComplexArray();
 
-	this.engine.on('recording_stopped', () => {
-		this.engine.saveRecording(this.lastrecordingPath);
-	})
-
-	this.engine.on('recording_saved', () => {
-		this.emit('recording_saved', this.lastrecordingPath);
-	})
-
 	this.engine.on('data', (data) => {
+		console.log (frame);
 		f.realTransform(this.fftOut, data);
 		return data;
 	});
@@ -49,6 +42,14 @@ var Adaptor = module.exports = function Adaptor(opts) {
 	this.engine.on('playback_finished', () => {
 		this.engine.setMute(true);
 		this.enableMicrophone();
+	})
+
+	this.engine.on('recording_stopped', () => {
+		this.engine.saveRecording(this.lastrecordingPath);
+	})
+
+	this.engine.on('recording_saved', () => {
+		this.emit('recording_saved', this.lastrecordingPath);
 	})
 
 };

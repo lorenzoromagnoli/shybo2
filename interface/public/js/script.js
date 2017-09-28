@@ -1,5 +1,5 @@
 var robot;
-var fftData;
+var fftData=new Array(256);
 
 window.onload = function() {
 	console.log('Setting up socket connections:');
@@ -17,9 +17,8 @@ window.onload = function() {
 		if (payload.name=='fft'){
 			if (payload.data){
 				fftData=payload.data;
-				drawchart();
+				//drawchart();
 			}
-
 		}else{
 			console.log('On Robot');
 			console.log('  Name:', payload.name);
@@ -43,10 +42,14 @@ function setup(){
 	canvas.parent('viz');
 	//background(255,0,2);
 
+	rSlider = createSlider(0, 255, 100);
+	rSlider.position(20, 20);
+
+
 }
 
 function draw(){
-
+drawchart();
 }
 
 
@@ -55,6 +58,6 @@ function drawchart(){
 	var barwidth=width/256;
 	for (var i=0; i<256; i++){
 		fill(0);
-		rect(i*barwidth,height+fftData[i]*10,i*barwidth,-fftData[i]*10);
+		rect(i*barwidth,height+fftData[i]*1000,i*barwidth,-fftData[i]*1000);
 	}
 }
