@@ -120,6 +120,7 @@ Cylon.robot({
 			var fftData = my.microphone.getFFTData();
 			my.emit('fft', fftData);
 			my.wekinator.inputs(fftData);
+			console.log("emitting fft")
 		});
 
 
