@@ -59,6 +59,7 @@ Cylon.robot({
 		'turned_off',
 		'color_changed',
 		'fft',
+		'mode_changed',
 	],
 
 
@@ -74,7 +75,7 @@ Cylon.robot({
 		var ButtonPin = 2;
 
 		var teach_color_mode_Pin = 7;
-		var teach_sound_mode_Pin = 10;
+		var teach_sound_mode_Pin = 4;
 		var play_mode_Pin = 13;
 
 
@@ -93,15 +94,17 @@ Cylon.robot({
 				} else if (payload.pin == ButtonPin && payload.value == 1) {
 					my.microphone.stopRecording();
 				}
-
-				else if (payload.pin==teach_color_mode_Pin&& payload.value==1){
+				else if (payload.pin==teach_color_mode_Pin&& payload.value==0){
 					console.log("entering teach color mode");
+					my.emit('mode_changed', 'teach_color');
 				}
-				else if (payload.pin==teach_sound_mode_Pin&& payload.value==1){
+				else if (payload.pin==teach_sound_mode_Pin&& payload.value==0){
 					console.log("entering teach sound mode");
+					my.emit('mode_changed', 'teach_sound');
 				}
-				else if (payload.pin==play_mode_Pin&& payload.value==1){
+				else if (payload.pin==play_mode_Pin&& payload.value==0){
 					console.log("entering play mode");
+					my.emit('mode_changed', 'play');
 				}
 
 				//my.myArduino.readColorSensor();

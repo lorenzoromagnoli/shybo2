@@ -27,6 +27,19 @@ window.onload = function() {
 				colorviewer.css("background-color", "rgb("+payload.data.red+','+payload.data.green+','+payload.data.blue+')')
 			}
 			logEvent(payload);
+		}else if (payload.name == 'mode_changed') {
+			if (payload.data=="teach_color"){
+				$('input:radio[name=mode]')[0].checked = true;
+
+			}else if(payload.data=="teach_sound"){
+				$('input:radio[name=mode]')[1].checked = true;
+			}
+			else if(payload.data=="play"){
+				$('input:radio[name=mode]')[2].checked = true;
+			}
+			// $('.mode .colorviewer');
+
+
 		}else {
 
 		}
@@ -40,7 +53,6 @@ function getColorSensor() {
 }
 
 function moveServo(angle) {
-	console.log("you are moving the servo");
 	robot.emit('moveServo',angle);
 }
 
