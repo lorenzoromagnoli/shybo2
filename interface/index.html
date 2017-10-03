@@ -21,7 +21,6 @@
 			<h5 class="section-title">color sensor</h5>
 			<button id="getColor" onclick="getColorSensor()">readColor</button>
 			<div class="colorviewer"></button>
-
 		</section>
 		<section class="bodyColor">
 			<h5 class="section-title">body Color</h5>
@@ -59,7 +58,7 @@
 		</section>
 		<section class="servomotor">
 			<h5 class="section-title">servomotor</h5>
-			<input type="range" min="0" max="180">
+			<input type="range" min="0" max="180" onchange="moveServo(this.value)">
 		</section>
 	</div>
 

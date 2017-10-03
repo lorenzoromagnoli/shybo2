@@ -92,7 +92,12 @@ void parse (String inputString) {
     //    debug(String(getGreenColor()));
     //    debug(String(getBlueColor()));
 
-  } else {
+  }else if (command.equalsIgnoreCase("SW")) {
+    debug("writing servo");
+    int angle = getValue(inputString, '/', 1).toInt();
+    moveServo(angle);
+ 
+  }else {
     Serial.println("command unknown");
   }
 }

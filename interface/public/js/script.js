@@ -39,6 +39,10 @@ function getColorSensor() {
 	robot.emit('getColorSensor');
 }
 
+function moveServo(angle) {
+	console.log("you are moving the servo");
+	robot.emit('moveServo',angle);
+}
 
 function setup() {
 	var canvas = createCanvas(window.innerWidth, 100);

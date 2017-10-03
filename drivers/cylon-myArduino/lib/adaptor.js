@@ -110,6 +110,13 @@ Adaptor.prototype.motorStop = function(motor, speed, direction) {
 	this.motorWrite(1,0,0);
 }
 
+Adaptor.prototype.servoWrite = function(angle) {
+  Cylon.Logger.log("writing to servo");
+	var message = 'SW/' + angle + '\r' + '\n';
+  this.myArduino.write(message);
+  Cylon.Logger.log("written " + message + " to myArduino");
+}
+
 Adaptor.prototype.readColorSensor=function(){
 	var message = 'RC/' +'\r' + '\n';
 	this.myArduino.write(message);

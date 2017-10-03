@@ -73,8 +73,16 @@ Cylon.robot({
 
 		var ButtonPin = 2;
 
+		var teach_color_mode_Pin = 7;
+		var teach_sound_mode_Pin = 10;
+		var play_mode_Pin = 13;
+
+
 		after((3).seconds(), function() {
 			my.myArduino.registerToButtonEvent(ButtonPin);
+			my.myArduino.registerToButtonEvent(teach_color_mode_Pin);
+			my.myArduino.registerToButtonEvent(teach_sound_mode_Pin);
+			my.myArduino.registerToButtonEvent(play_mode_Pin);
 
 			my.myArduino.on('button', function(payload) {
 				console.log(payload);
@@ -86,7 +94,17 @@ Cylon.robot({
 					my.microphone.stopRecording();
 				}
 
-				my.myArduino.readColorSensor();
+				else if (payload.pin==teach_color_mode_Pin&& payload.value==1){
+					console.log("entering teach color mode");
+				}
+				else if (payload.pin==teach_sound_mode_Pin&& payload.value==1){
+					console.log("entering teach sound mode");
+				}
+				else if (payload.pin==play_mode_Pin&& payload.value==1){
+					console.log("entering play mode");
+				}
+
+				//my.myArduino.readColorSensor();
 			});
 
 			//when receive a new color from the sensor, copy it to the ledstrip
@@ -167,6 +185,11 @@ Cylon.robot({
 
 	getColorSensor: function() {
 		this.myArduino.readColorSensor();
+	},
+
+	moveServo: function(angle) {
+		console.log("moveServo");
+		this.myArduino.servoWrite(angle);
 	},
 
 	turnOn: function() {
