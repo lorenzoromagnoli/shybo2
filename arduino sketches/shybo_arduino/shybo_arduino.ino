@@ -4,7 +4,6 @@
 #endif
 #include "NeoPatterns.h"
 #include <Adafruit_TiCoServo.h>
-#include "RunningAverage.h" // per il suono
 #include "buttons.h"
 
 

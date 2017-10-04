@@ -1,13 +1,14 @@
-
 //Motor A
-int PWMA = 3; //Speed control
-int AIN1 = 9; //Direction
-int AIN2 = 8; //Direction
+int PWMA = 5; //Speed control
+int AIN1 = 2; //Direction
+int AIN2 = 4; //Direction
 
 //Motor B
-int PWMB = 5; //Speed control
-int BIN1 = 11; //Direction
-int BIN2 = 12; //Direction
+int PWMB = 6; //Speed control
+int BIN1 = 7; //Direction
+int BIN2 = 8; //Direction
+
+int motorstandby = 9;
 
 //servomotor
 Adafruit_TiCoServo servo;
@@ -34,6 +35,7 @@ void moveMotor(int motor, int speed, int direction) {
   //motor: 0 for B 1 for A
   //speed: 0 is off, and 255 is full speed
   //direction: 0 clockwise, 1 counter-clockwise
+      digitalWrite(motorstandby, HIGH);
 
   boolean inPin1 = LOW;
   boolean inPin2 = HIGH;
