@@ -19,19 +19,19 @@ Cylon.Utils.subclass(Adaptor, Cylon.Adaptor);
 
 Adaptor.prototype.connect = function(callback) {
   Cylon.Logger.log("Connecting to wekinator...");
-	var wekinator = child_process.spawn('java',[ '-jar', './utils/wekinator/WekiMini.jar', './assets/wek/test/WekinatorProject/WekinatorProject.wekproj']);
-
-	wekinator.stdout.on('data', (data) => {
-		console.log(`stdout: ${data}`);
-	});
-
-	wekinator.stderr.on('data', (data) => {
-		console.log(`stderr: ${data}`);
-	});
-
-	wekinator.on('close', (code) => {
-		console.log(`child process exited with code ${code}`);
-	});
+	// var wekinator = child_process.spawn('java',[ '-jar', './utils/wekinator/WekiMini.jar', './assets/wek/test/WekinatorProject/WekinatorProject.wekproj']);
+	//
+	// wekinator.stdout.on('data', (data) => {
+	// 	console.log(`stdout: ${data}`);
+	// });
+	//
+	// wekinator.stderr.on('data', (data) => {
+	// 	console.log(`stderr: ${data}`);
+	// });
+	//
+	// wekinator.on('close', (code) => {
+	// 	console.log(`child process exited with code ${code}`);
+	// });
 
   this.proxyMethods(Commands, this.wekinator, this);
 

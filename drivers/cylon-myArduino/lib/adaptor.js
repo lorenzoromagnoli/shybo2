@@ -27,6 +27,10 @@ Adaptor.prototype.connect = function(callback) {
       if (port.comName.indexOf('/dev/tty.usbmodem') > -1) {
         this.SerialPortName = port.comName;
       }
+			//if connected via usb
+      else if (port.comName.indexOf('/dev/tty.Re') > -1) {
+        this.SerialPortName = port.comName;
+      }
       //if connected via usb
       else if (port.comName.indexOf('/dev/ttyACM') > -1) {
         this.SerialPortName = port.comName;

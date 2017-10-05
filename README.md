@@ -28,6 +28,10 @@ ctl.!default {
  type hw card 1
 }
 
+install forever globally
+
+sudo -i npm install forever -g
+
 
 useful command to talk to the serial port from terminal
 '''
