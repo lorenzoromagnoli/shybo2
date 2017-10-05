@@ -2,6 +2,7 @@ String inputString;
 boolean stringComplete = false;
 
 boolean debugMode = true;
+boolean echo=true;
 
 void debug(String message) {
   if (debugMode) {
@@ -110,7 +111,10 @@ void readSerial() {
     char inChar = Serial.read();
     if (inChar == '\n') {
       parse(inputString);
-      //Serial.println(inputString);
+      if (echo){
+        Serial.print("->");
+        Serial.println(inputString);
+      }
       inputString = "";
     } else {
       inputString += inChar;

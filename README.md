@@ -27,3 +27,10 @@ pcm.!default  {
 ctl.!default {
  type hw card 1
 }
+
+
+useful command to talk to the serial port from terminal
+'''
+picocom --omap crlf,delbs --emap crcrlf /dev/tty.Repleo-PL2303-00001014 9600 --echo
+picocom --omap crlf,delbs --emap crcrlf /dev/ttyAMA0 9600 --echo
+'''
