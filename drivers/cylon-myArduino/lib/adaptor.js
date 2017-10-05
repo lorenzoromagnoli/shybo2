@@ -36,7 +36,7 @@ Adaptor.prototype.connect = function(callback) {
         this.SerialPortName = port.comName;
       }
 			//if connected on default raspi serial port on gpio
-      else if (port.comName.indexOf('/dev/serial0') > -1) {
+      else if (port.comName.indexOf('/dev/AMA') > -1) {
         this.SerialPortName = port.comName;
       }
     });
