@@ -40,3 +40,6 @@ picocom --omap crlf,delbs --emap crcrlf /dev/serial0 9600 --echo
 '''
 
 copy the file shybo.init.sh to the /etc/init.d folder
+
+configure the global module folder
+https://github.com/nodeschool/discussions/wiki/Installing-global-node-modules-(Linux-and-Mac)

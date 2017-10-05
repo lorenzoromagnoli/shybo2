@@ -8,5 +8,8 @@ export DISPLAY=":1"
 #open wekinator
 java -jar ./utils/wekinator/WekiMini.jar ./assets/wek/test/WekinatorProject/WekinatorProject.wekproj
 
-#louch robot
+#louch robot forever
 forever start ./robot.js -o ./log/output.log -e ./log/error.log
+
+#louch robot
+node ./robot.js
