@@ -6,10 +6,10 @@ sudo Xvfb :1 -screen 0 1024x768x24 </dev/null &
 export DISPLAY=":1"
 
 #open wekinator
-java -jar ./utils/wekinator/WekiMini.jar ./assets/wek/test/WekinatorProject/WekinatorProject.wekproj
+java -jar ./utils/wekinator/WekiMini.jar ./assets/wek/test/WekinatorProject/WekinatorProject.wekproj &
 
 #louch robot forever
-forever start ./robot.js -o ./log/output.log -e ./log/error.log
+#forever start ./robot.js -o ./log/output.log -e ./log/error.log
 
 #louch robot
-node ./robot.js
+node ./robot.js &
