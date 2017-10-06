@@ -5,12 +5,7 @@ enum  pattern { NONE, RAINBOW_CYCLE, THEATER_CHASE, COLOR_WIPE, SCANNER, FADE, B
 // Patern directions supported:
 enum  direction { FORWARD, REVERSE };
 
-
-
-
-
-class NeoPatterns : public Adafruit_NeoPixel
-{
+class NeoPatterns : public Adafruit_NeoPixel{
   public:
 
     // Member Variables:
@@ -36,12 +31,12 @@ class NeoPatterns : public Adafruit_NeoPixel
     }
 
 
+
     // Update the pattern
     void update()
     {
       if ((millis() - lastUpdate) > Interval) // time to update
       {
-
         lastUpdate = millis();
         switch (ActivePattern)
         {
@@ -329,12 +324,6 @@ class NeoPatterns : public Adafruit_NeoPixel
       }
       show();
     }
-
-    
-    
-
-
-
 
 
     // Returns the Red component of a 32-bit color

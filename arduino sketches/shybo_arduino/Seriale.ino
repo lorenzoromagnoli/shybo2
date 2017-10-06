@@ -2,7 +2,7 @@ String inputString;
 boolean stringComplete = false;
 
 boolean debugMode = true;
-boolean echo=true;
+boolean echo = true;
 
 void debug(String message) {
   if (debugMode) {
@@ -10,12 +10,10 @@ void debug(String message) {
   }
 }
 
-String getValue(String data, char separator, int index)
-{
+String getValue(String data, char separator, int index) {
   int found = 0;
   int strIndex[] = {0, -1};
   int maxIndex = data.length() - 1;
-
   for (int i = 0; i <= maxIndex && found <= index; i++) {
     if (data.charAt(i) == separator || i == maxIndex) {
       found++;
@@ -49,40 +47,79 @@ void parse (String inputString) {
     moveMotor(motor, speed, direction);
 
   } else if (command.equalsIgnoreCase("LD")) {
-    debug("ledStrip");
-    int animation = getValue(inputString, '/', 1).toInt();
-    debug("color");
-    Serial.println(animation);
-    int color1;
-    int color2;
-    int steps;
-    int interval;
+
+    // LD/1/STATIC/255/255/255 -> set first ledstrip to full red
+    // LD/2/STATIC/255/255/255 -> set second ledstrip to full red
+    // LD/1/FADE/255/255/255/0/0/0/10/10 -> set first ledstrip to animation, first color is 255 255 255, second color is 0 0 0, 10 steps, 10ms interval between steps.
+
+    String animation = getValue(inputString, '/', 2);
+    int ledStripIndex = getValue(inputString, '/', 1).toInt();
+
+    debug ("set animation: " + animation + " to ledstrip: " + ledStripIndex);
+
     int parsed_red;
     int parsed_green;
     int parsed_blue;
+    int parsed_red2;
+    int parsed_green2;
+    int parsed_blue2;
+    uint32_t color1;
+    uint32_t color2;
+    int interval;
+    int steps;
 
-    switch (animation) {
+    if (animation.equalsIgnoreCase("STATIC")) {
+      parsed_red = getValue(inputString, '/', 3).toInt();
+      parsed_green = getValue(inputString, '/', 4).toInt();
+      parsed_blue = getValue(inputString, '/', 5).toInt();
+      ledStrips[ledStripIndex].setFullColor(newColor(parsed_red, parsed_green, parsed_blue));
+    } else {
 
-      case 1: //animation setFullColor
-        parsed_red = getValue(inputString, '/', 2).toInt();
-        parsed_green = getValue(inputString, '/', 3).toInt();
-        parsed_blue = getValue(inputString, '/', 4).toInt();
-        bodyColor.setFullColor(bodyColor.Color(parsed_red, parsed_green, parsed_blue));
-        break;
+      parsed_red = getValue(inputString, '/', 3).toInt();
+      parsed_green = getValue(inputString, '/', 4).toInt();
+      parsed_blue = getValue(inputString, '/', 5).toInt();
 
-      case 2:
-        color1 = getValue(inputString, '/', 2).toInt();
-        color2 = getValue(inputString, '/', 3).toInt();
-        steps = getValue(inputString, '/', 4).toInt();
-        interval = getValue(inputString, '/', 4).toInt();
+      parsed_red2 = getValue(inputString, '/', 6).toInt();
+      parsed_green2 = getValue(inputString, '/', 7).toInt();
+      parsed_blue2 = getValue(inputString, '/', 8).toInt();
 
-        bodyColor.fade(colorArray[color1], colorArray[color2], steps, interval);
-        break;
+      color1 = newColor(parsed_red, parsed_green, parsed_blue);
+      color2 = newColor(parsed_red2, parsed_green2, parsed_blue2);
 
-      case 3:
-        bodyColor.setFullColor(azzurro);
-        break;
+      interval = getValue(inputString, '/', 9).toInt();
+      steps = getValue(inputString, '/', 10).toInt();
+
+      debug ("interval: " + String(interval) + " steps: " + String(steps));
+
+      if (animation.equalsIgnoreCase("FADE")) {
+        ledStrips[ledStripIndex].fade(color1,  color2,  steps,  interval,  FORWARD);
+        debug("starting fade animation");
+      } else if (animation.equalsIgnoreCase("BLINK")) {
+        ledStrips[ledStripIndex].blinkRed(interval);
+        debug("starting blink animation");
+      } else {
+        debug("didn't recognize animation");
+      }
+
     }
+
+
+    //      case 1: //animation setFullColor
+    //
+    //        break;
+    //
+    //      case 2:
+    //        color1 = getValue(inputString, '/', 2).toInt();
+    //        color2 = getValue(inputString, '/', 3).toInt();
+    //        steps = getValue(inputString, '/', 4).toInt();
+    //        interval = getValue(inputString, '/', 4).toInt();
+    //        bodyLeds.fade(colorArray[color1], colorArray[color2], steps, interval);
+    //        break;
+    //
+    //      case 3:
+    //        bodyLeds.setFullColor(azzurro);
+    //        break;
+
 
   } else if (command.equalsIgnoreCase("RC")) {
     debug("reding colorSensor");
@@ -93,17 +130,15 @@ void parse (String inputString) {
     //    debug(String(getGreenColor()));
     //    debug(String(getBlueColor()));
 
-  }else if (command.equalsIgnoreCase("SW")) {
+  } else if (command.equalsIgnoreCase("SW")) {
     debug("writing servo");
     int angle = getValue(inputString, '/', 1).toInt();
     moveServo(angle);
- 
-  }else {
+
+  } else {
     Serial.println("command unknown");
   }
 }
-
-
 
 
 void readSerial() {
@@ -111,7 +146,7 @@ void readSerial() {
     char inChar = Serial.read();
     if (inChar == '\n') {
       parse(inputString);
-      if (echo){
+      if (echo) {
         Serial.print("->");
         Serial.println(inputString);
       }
