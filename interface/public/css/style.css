@@ -65,3 +65,10 @@ section{
 	height: 20px;
 	border: 1px solid grey
 }
+
+#zone_joystick{
+	background-color: #eee;
+	position: relative;
+	width: 200px;
+	height: 200px;
+}

@@ -80,35 +80,35 @@ Cylon.robot({
 
 
 		after((3).seconds(), function() {
-			my.myArduino.registerToButtonEvent(ButtonPin);
-			my.myArduino.registerToButtonEvent(teach_color_mode_Pin);
-			my.myArduino.registerToButtonEvent(teach_sound_mode_Pin);
-			my.myArduino.registerToButtonEvent(play_mode_Pin);
+			// my.myArduino.registerToButtonEvent(ButtonPin);
+			// my.myArduino.registerToButtonEvent(teach_color_mode_Pin);
+			// my.myArduino.registerToButtonEvent(teach_sound_mode_Pin);
+			// my.myArduino.registerToButtonEvent(play_mode_Pin);
 
-			my.myArduino.on('button', function(payload) {
-				console.log(payload);
-
-				if (payload.pin == ButtonPin && payload.value == 0) {
-					console.log(my.microphone.status);
-					my.microphone.startRecording();
-				} else if (payload.pin == ButtonPin && payload.value == 1) {
-					my.microphone.stopRecording();
-				}
-				else if (payload.pin==teach_color_mode_Pin&& payload.value==0){
-					console.log("entering teach color mode");
-					my.emit('mode_changed', 'teach_color');
-				}
-				else if (payload.pin==teach_sound_mode_Pin&& payload.value==0){
-					console.log("entering teach sound mode");
-					my.emit('mode_changed', 'teach_sound');
-				}
-				else if (payload.pin==play_mode_Pin&& payload.value==0){
-					console.log("entering play mode");
-					my.emit('mode_changed', 'play');
-				}
-
-				//my.myArduino.readColorSensor();
-			});
+			// my.myArduino.on('button', function(payload) {
+			// 	console.log(payload);
+			//
+			// 	if (payload.pin == ButtonPin && payload.value == 0) {
+			// 		console.log(my.microphone.status);
+			// 		my.microphone.startRecording();
+			// 	} else if (payload.pin == ButtonPin && payload.value == 1) {
+			// 		my.microphone.stopRecording();
+			// 	}
+			// 	else if (payload.pin==teach_color_mode_Pin&& payload.value==0){
+			// 		console.log("entering teach color mode");
+			// 		my.emit('mode_changed', 'teach_color');
+			// 	}
+			// 	else if (payload.pin==teach_sound_mode_Pin&& payload.value==0){
+			// 		console.log("entering teach sound mode");
+			// 		my.emit('mode_changed', 'teach_sound');
+			// 	}
+			// 	else if (payload.pin==play_mode_Pin&& payload.value==0){
+			// 		console.log("entering play mode");
+			// 		my.emit('mode_changed', 'play');
+			// 	}
+			//
+			// 	//my.myArduino.readColorSensor();
+			// });
 
 			//when receive a new color from the sensor, copy it to the ledstrip
 			my.myArduino.on('color', function(payload) {
@@ -164,6 +164,12 @@ Cylon.robot({
 
 
 	},
+	controlLedsAnimation:function(data){
+		this.myArduino.ledsControl(data.ledStripIndex, data.animation, data.color1, data.color2, data.steps, data.interval);
+	},
+	controlLeds:function(data){
+		this.myArduino.setFullColor(data.ledStripIndex, data.color1);
+	},
 
 	startRecording: function() {
 		console.log("start recording");
@@ -218,5 +224,14 @@ Cylon.robot({
 	doAThing: function() {
 		console.log("I did a thing!");
 	},
+
+	move:function(data){
+		this.myArduino.motorWrite(1,data.motor1,data.motor1dir);
+		this.myArduino.motorWrite(2,data.motor2,data.motor2dir);
+	},
+	stop:function(){
+		this.myArduino.motorStop();
+
+	}
 
 }).start();

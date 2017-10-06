@@ -1,11 +1,12 @@
-
 <!doctype html>
 <html>
 <meta charset="utf-8">
 
 <head>
 	<title>Example For Robot Generic Message Event</title>
+	<link rel="stylesheet" type="text/css" href="./libs/spectrum/spectrum.css">
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
+
 </head>
 
 
@@ -19,28 +20,39 @@
 	<div id="interface">
 		<section class="mode">
 			<h5 class="section-title">shyboMode</h5>
-			  <input type="radio" name="mode" value="teach_color" checked> tech color mode<br>
-			  <input type="radio" name="mode" value="teach_sound"> teach sound mode<br>
-			  <input type="radio" name="mode" value="play"> play<br><br>
+			<input type="radio" name="mode" value="teach_color" checked> tech color mode<br>
+			<input type="radio" name="mode" value="teach_sound"> teach sound mode<br>
+			<input type="radio" name="mode" value="play"> play<br><br>
 		</section>
 		<section class="colorSensor">
 			<h5 class="section-title">color sensor</h5>
 			<button id="getColor" onclick="getColorSensor()">readColor</button>
-			<div class="colorviewer"></button>
+			<div class="colorviewer">
+				</button>
 		</section>
 		<section class="bodyColor">
 			<h5 class="section-title">body Color</h5>
-			<input type="range" min="0" max="180">
-			<input type="range" min="0" max="180">
-			<input type="range" min="0" max="180">
-			<button id="setColor">setColor</button>
+			color 1: <input id='colorpicker1' class="colorpicker" /> color 2: <input id='colorpicker2' class="colorpicker" />
+			<br /> interval: <br />
+			<input type="range" id="bodyColorAnimationInterval" min="0" max="1000">
+			<br /> steps: <br />
+			<input type="range" id="bodyColorAnimationSteps"min="0" max="180">
+			<br />
+			<input type="radio" name="bodyColorAnimation" value="static" checked> static<br>
+			<input type="radio" name="bodyColorAnimation" value="fade"> fade <br>
+			<input type="radio" name="bodyColorAnimation" value="blink"> blink <br><br>
 		</section>
-		<section class="eyeColor">
-			<h5 class="section-title">eye Color</h5>
-			<input type="range" min="0" max="180">
-			<input type="range" min="0" max="180">
-			<input type="range" min="0" max="180">
-			<button id="setColor">setColor</button>
+		<section class="frontColor">
+			<h5 class="section-title">front Color</h5>
+			color 1: <input id='colorpicker1' class="colorpicker" /> color 2: <input id='colorpicker2' class="colorpicker" />
+			<br /> interval: <br />
+			<input type="range" id="frontColorAnimationInterval" min="1" max="1000">
+			<br /> steps: <br />
+			<input type="range" id="frontColorAnimationSteps"min="1" max="180">
+			<br />
+			<input type="radio" name="frontColorAnimation" value="static" checked> static<br>
+			<input type="radio" name="frontColorAnimation" value="fade"> fade <br>
+			<input type="radio" name="frontColorAnimation" value="blink"> blink <br><br>
 		</section>
 		<section class="motors">
 			<h5 class="section-title">motors</h5>
@@ -49,6 +61,8 @@
 			<button id="front">front</button>
 			<button id="back">back</button>
 			<button id="back">stop</button>
+			<div id="zone_joystick">
+			</div>
 		</section>
 		<section class="microphone">
 			<h5 class="section-title">microphone</h5>
@@ -66,11 +80,11 @@
 			<h5 class="section-title">servomotor</h5>
 			<input type="range" min="0" max="180" onchange="moveServo(this.value)">
 		</section>
-	</div>
+		</div>
 
-	<div id="log">
-		<ul id="messages"></ul>
-	</div>
+		<div id="log">
+			<ul id="messages"></ul>
+		</div>
 </body>
 
 
@@ -79,6 +93,10 @@
 
 <script src="./js/p5.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.6/addons/p5.dom.js"></script>
+
+<script src="./libs/spectrum/spectrum.js"></script>
+
+<script src="./libs/nipplejs/dist/nipplejs.min.js"></script>
 
 <script src="./js/script.js"></script>
 

@@ -98,24 +98,24 @@ Adaptor.prototype.motorWrite = function(motor, speed, direction) {
   Cylon.Logger.log("written " + message + " to myArduino");
 }
 
-Adaptor.prototype.setFullColor = function(r,g,b) {
-  Cylon.Logger.log("setting color: red"+r+", green: "+g+", blue: "+b);
-  var message = 'LD/1/'+ r +'/'+ g+'/'+ g+'/'+'\r' + '\n';
-  this.myArduino.write(message);
-  Cylon.Logger.log("written " + message + " to myArduino");
-}
-
-Adaptor.prototype.ledsControl = function(animation, color1, color2, steps, interval) {
-  Cylon.Logger.log("writing to ledstrip: _ , animation: "+animation+", color1: "+color1+", color2: "+color2+", steps: "+steps+", interval: "+interval );
-  var message = 'LD/' + animation + '/'+ color1 +'/'+ color2+'/'+ steps+'/'+ interval +'\r' + '\n';
-  this.myArduino.write(message);
-  Cylon.Logger.log("written " + message + " to myArduino");
-}
-
-Adaptor.prototype.motorStop = function(motor, speed, direction) {
+Adaptor.prototype.motorStop = function() {
   Cylon.Logger.log("stopping motors");
 	this.motorWrite(0,0,0);
 	this.motorWrite(1,0,0);
+}
+
+Adaptor.prototype.setFullColor = function(ledStripIndex,color) {
+  Cylon.Logger.log("setting color: red"+hexToRgb(color).r+", green: "+hexToRgb(color).g+", blue: "+hexToRgb(color).b);
+  var message = 'LD/'+ ledStripIndex +'/'+'static/'+ hexToRgb(color).r +'/'+ hexToRgb(color).g+'/'+ hexToRgb(color).b+'/'+'\r' + '\n';
+  this.myArduino.write(message);
+  Cylon.Logger.log("written " + message + " to myArduino");
+}
+
+Adaptor.prototype.ledsControl = function(ledStripIndex, animation, color1, color2, steps, interval) {
+  Cylon.Logger.log("writing to ledstrip: _ , animation: "+animation+", color1: "+color1+", color2: "+color2+", steps: "+steps+", interval: "+interval );
+  var message = 'LD/'+ ledStripIndex +'/' + animation + '/'+ hexToRgb(color1).r +'/'+ hexToRgb(color1).g +'/'+ hexToRgb(color1).b +'/'+ hexToRgb(color2).r +'/'+ hexToRgb(color1).g +'/'+ hexToRgb(color1).b+ '/' + steps + '/'+ interval +'\r' + '\n';
+  this.myArduino.write(message);
+  Cylon.Logger.log("written " + message + " to myArduino");
 }
 
 Adaptor.prototype.servoWrite = function(angle) {
@@ -144,4 +144,22 @@ Adaptor.prototype.parseSerial = function(data) {
 			'blue':message[3],
 		});
 	}
+}
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
 }
