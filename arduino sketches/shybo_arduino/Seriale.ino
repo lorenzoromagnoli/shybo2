@@ -30,18 +30,18 @@ void parse (String inputString) {
   //debug("command:" + command);
 
   if (command.equalsIgnoreCase("DW")) {
-    debug("digitalWrite");
+    //debug("digitalWrite");
     int pin = getValue(inputString, '/', 1).toInt();
     int value = getValue(inputString, '/', 2).toInt();
     digitalWrite(pin, value);
 
   } else if (command.equalsIgnoreCase("RB")) {
-    debug("readButton");
+    //debug("readButton");
     int pin = getValue(inputString, '/', 1).toInt();
     registerNewButton(pin);
 
   } else if (command.equalsIgnoreCase("MW")) {
-    debug("motorWrite");
+    //debug("motorWrite");
     int motor = getValue(inputString, '/', 1).toInt();
     int speed = getValue(inputString, '/', 2).toInt();
     int direction = getValue(inputString, '/', 3).toInt();
@@ -56,7 +56,7 @@ void parse (String inputString) {
     String animation = getValue(inputString, '/', 2);
     int ledStripIndex = getValue(inputString, '/', 1).toInt();
 
-    debug ("set animation: " + animation + " to ledstrip: " + ledStripIndex);
+    //debug ("set animation: " + animation + " to ledstrip: " + ledStripIndex);
 
     int parsed_red;
     int parsed_green;
@@ -90,19 +90,19 @@ void parse (String inputString) {
       interval = getValue(inputString, '/', 9).toInt();
       steps = getValue(inputString, '/', 10).toInt();
 
-      debug ("interval: " + String(interval) + " steps: " + String(steps));
+      //debug ("interval: " + String(interval) + " steps: " + String(steps));
 
       if (animation.equalsIgnoreCase("FADE")) {
         ledStrips[ledStripIndex].fade(color1,  color2,  steps,  interval,  FORWARD);
-        debug("starting fade animation");
+        //debug("starting fade animation");
       } else if (animation.equalsIgnoreCase("BLINK")) {
         ledStrips[ledStripIndex].blinkRed(interval);
-        debug("starting blink animation");
+        //debug("starting blink animation");
       }else if (animation.equalsIgnoreCase("SCANNER")) {
         ledStrips[ledStripIndex].scanner(color1,interval);
-        debug("starting blink animation");
+        //debug("starting blink animation");
       } else {
-        debug("didn't recognize animation");
+        //debug("didn't recognize animation");
       }
 
     }
@@ -126,7 +126,7 @@ void parse (String inputString) {
 
 
   } else if (command.equalsIgnoreCase("RC")) {
-    debug("reding colorSensor");
+    //debug("reding colorSensor");
     readColor();
     emitColorEvent(getRedColor(), getGreenColor(), getBlueColor());
     //    debug(getHexColor());
@@ -135,7 +135,7 @@ void parse (String inputString) {
     //    debug(String(getBlueColor()));
 
   } else if (command.equalsIgnoreCase("SW")) {
-    debug("writing servo");
+    //debug("writing servo");
     int angle = getValue(inputString, '/', 1).toInt();
     moveServo(angle);
 
@@ -151,7 +151,6 @@ void parse (String inputString) {
     debug("command unknown");
   }
   Serial.println("ok");
-
 }
 
 

@@ -184,6 +184,7 @@ Adaptor.prototype.readColorSensor = function() {
 Adaptor.prototype.parseSerial = function(data) {
 	if (data.indexOf('ok') != -1) {
 		this.processQueue();
+		console.log('-');
 	} else {
 		var message = data.split("/");
 		console.log(data);
