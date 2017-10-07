@@ -6,7 +6,6 @@
 #endif
 
 #include "NeoPatterns.h"
-#include "buttons.h"
 
 // luce del corpo
 int bodyLedsPin=12;
@@ -47,7 +46,7 @@ uint32_t verdeacqua = newColor(0, 232, 209);
 uint32_t colorArray[]={ bianco, giallo, arancione,rosso, viola, azzurro, spento, violone, verdeacqua };
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(57600);
   
   bodyLeds.begin();
   frontLeds.begin();
@@ -66,6 +65,7 @@ void loop() {
   readButtons();
   ledStrips[0].update();
   ledStrips[1].update();
+  servoUpdate();
 }
 
 //------------------------------------------------------------

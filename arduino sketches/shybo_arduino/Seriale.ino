@@ -6,6 +6,7 @@ boolean echo = true;
 
 void debug(String message) {
   if (debugMode) {
+    Serial.print("->");
     Serial.println(message);
   }
 }
@@ -26,7 +27,7 @@ String getValue(String data, char separator, int index) {
 
 void parse (String inputString) {
   String command = getValue(inputString, '/', 0);
-  debug("command:" + command);
+  //debug("command:" + command);
 
   if (command.equalsIgnoreCase("DW")) {
     debug("digitalWrite");
@@ -138,9 +139,19 @@ void parse (String inputString) {
     int angle = getValue(inputString, '/', 1).toInt();
     moveServo(angle);
 
-  } else {
-    Serial.println("command unknown");
+  }else if (command.equalsIgnoreCase("SS")) {
+    int status = getValue(inputString, '/', 1).toInt();
+    if (status==0){
+      stopShaking();
+    }else if (status==1){
+      startShaking();
+    }
+
+  }else {
+    debug("command unknown");
   }
+  Serial.println("ok");
+
 }
 
 
@@ -148,11 +159,11 @@ void readSerial() {
   if (Serial.available()) {
     char inChar = Serial.read();
     if (inChar == '\n') {
-      parse(inputString);
       if (echo) {
         Serial.print("->");
         Serial.println(inputString);
       }
+      parse(inputString);
       inputString = "";
     } else {
       inputString += inChar;

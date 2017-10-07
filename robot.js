@@ -77,17 +77,17 @@ Cylon.robot({
 		var off_button_pin = 17;
 		var teach_color_mode_Pin = 15;
 		var teach_sound_mode_Pin = 14;
-		var play_mode_Pin = 9; 			 
+		var play_mode_Pin = 9;
 
 		my.state = 0;
 
 
 		after((3).seconds(), function() {
-			 my.myArduino.registerToButtonEvent(ButtonPin);
-			 my.myArduino.registerToButtonEvent(off_button_pin);
-			 my.myArduino.registerToButtonEvent(teach_color_mode_Pin);
-			 my.myArduino.registerToButtonEvent(teach_sound_mode_Pin);
-			 my.myArduino.registerToButtonEvent(play_mode_Pin);
+			my.myArduino.registerToButtonEvent(ButtonPin);
+			my.myArduino.registerToButtonEvent(off_button_pin);
+			my.myArduino.registerToButtonEvent(teach_color_mode_Pin);
+			my.myArduino.registerToButtonEvent(teach_sound_mode_Pin);
+			my.myArduino.registerToButtonEvent(play_mode_Pin);
 
 			my.myArduino.on('button', function(payload) {
 				console.log(payload);
@@ -97,22 +97,22 @@ Cylon.robot({
 					my.microphone.startRecording();
 				} else if (payload.pin == ButtonPin && payload.value == 1) {
 					my.microphone.stopRecording();
-				}
-				else if (payload.pin==off_button_pin&& payload.value==0){
+				} else if (payload.pin == off_button_pin && payload.value == 0) {
 					console.log("bye bye");
 					my.emit('mode_changed', 'off');
-				}
-				else if (payload.pin==teach_color_mode_Pin&& payload.value==0){
+					my.goToState(0);
+				} else if (payload.pin == teach_color_mode_Pin && payload.value == 0) {
 					console.log("entering teach color mode");
 					my.emit('mode_changed', 'teach_color');
-				}
-				else if (payload.pin==teach_sound_mode_Pin&& payload.value==0){
+					my.goToState(3);
+				} else if (payload.pin == teach_sound_mode_Pin && payload.value == 0) {
 					console.log("entering teach sound mode");
 					my.emit('mode_changed', 'teach_sound');
-				}
-				else if (payload.pin==play_mode_Pin&& payload.value==0){
+					my.goToState(2);
+				} else if (payload.pin == play_mode_Pin && payload.value == 0) {
 					console.log("entering play mode");
 					my.emit('mode_changed', 'play');
+					my.goToState(1);
 				}
 
 				//my.myArduino.readColorSensor();
@@ -183,7 +183,13 @@ Cylon.robot({
 			case 0:
 
 				break;
-			case 1:
+			case 1: //shybo listen to wek
+				if (this.microphone.getSoundLevel() > 200) {
+					this.goToState(2);
+				}
+				break;
+			case 2: //shybo is scared
+
 
 				break;
 			default:
@@ -192,18 +198,34 @@ Cylon.robot({
 	},
 
 	goToState: function(state) {
-		this.state = state;
-
-		switch (this.state) {
-			case 0:
-				this.reset();
-				this.myArduino.ledsControl(1, 'scanner', '#0000ff', '#000000', 100, 100);
-				break;
-			case 1:
-				this.reset();
-				this.myArduino.ledsControl(1, 'blink', '#0000ff', '#000000', 100, 1000);
-				break;
+		console.log("going to state" + state);
+		if (this.state != state) {
+			this.state = state;
+			switch (this.state) {
+				case 0: //the robot is off
+					this.reset();
+					this.myArduino.servoShakeStop();
+					this.myArduino.ledsControl(1, 'scanner', '#0000ff', '#000000', 100, 100);
+					break;
+				case 1: //the robot is calm
+					this.myArduino.servoShakeStop();
+					this.myArduino.servoWrite(20);
+					this.myArduino.ledsControl(0, 'fade', '#ffffff', '#000000', 100, 30);
+					this.myArduino.setFullColor(1, '#000000');
+					this.wekinator.startRunning();
+					break;
+				case 2: //shybo gets scared and start shaking
+					this.myArduino.servoShakeStart();
+					this.myArduino.ledsControl(0, 'fade', '#ff0000', '#000000', 50, 30);
+					after((2).seconds(), ()=> {
+						this.goToState(1);
+					});
+					break;
+				case 3:
+					break;
+			}
 		}
+
 	},
 
 	reset: function() {

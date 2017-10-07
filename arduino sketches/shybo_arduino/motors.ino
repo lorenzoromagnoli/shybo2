@@ -10,11 +10,20 @@ int BIN2 = 8; //Direction
 
 int motorstandby = 9;
 
+int cappelloChiuso=76;
+int cappelloQuasiChiuso=60;
+int cappelloAperto=46;
+
+boolean shaking=false;
+boolean shakeStatus;
+
 //servomotor
 Adafruit_TiCoServo servo;
 int SERVO_PIN=10;
 #define SERVO_MIN 750 // 1 ms pulse
 #define SERVO_MAX 3000 // 2 ms pulse
+
+int servoPosition;
 
 void initMotors() {
 
@@ -59,5 +68,45 @@ void moveMotor(int motor, int speed, int direction) {
 void moveServo(int angle){
   int pulse = map(angle, 0, 180, SERVO_MIN, SERVO_MAX);    // Scale to servo range
   servo.write(pulse);  
+}
+
+void moveServoTo (int angle, int d) {
+  servoPosition = servo.read();
+
+  if (servoPosition != angle) {
+
+    if (servoPosition < angle) {
+      for (int pos = servoPosition; pos <= angle; pos += 1) {
+        servo.write(pos);
+        //delay(d);
+      }
+    } else {
+      for (int pos = servoPosition; pos >= angle; pos -= 1) {
+        servo.write(pos);
+        //delay(d);
+      }
+    }
+  }
+}
+
+void servoUpdate(){
+  if (shaking){
+    shake();
+  }
+}
+void shake() {
+  if (shakeStatus) {
+    moveServoTo (cappelloChiuso, 2);
+  } else {
+    moveServoTo (cappelloQuasiChiuso, 2);
+  }
+  shakeStatus = !shakeStatus;
+}
+
+void startShaking(){
+  shaking=true;
+}
+void stopShaking(){
+  shaking=false;
 }
 

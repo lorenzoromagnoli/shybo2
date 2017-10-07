@@ -9,10 +9,7 @@ void initButtons() {
     if (registerdButtons[i] == 0) {
       break;
     }
-    Serial.print("setting pin ");
-    Serial.print(registerdButtons[i]);
-    Serial.println(" as input");
-
+    debug("setting pin "+String(registerdButtons[i])+" as input");
     pinMode(registerdButtons[i], INPUT_PULLUP);
   }
 }

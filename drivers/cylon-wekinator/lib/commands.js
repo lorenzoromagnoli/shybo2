@@ -3,5 +3,6 @@
 module.exports = [
 "startRecording",
 "stopRecording",
+"startRunning",
 "inputs"
 ];
