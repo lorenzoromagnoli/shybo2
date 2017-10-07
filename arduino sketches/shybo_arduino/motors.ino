@@ -1,6 +1,6 @@
 //Motor A
 int PWMA = 5; //Speed control
-int AIN1 = 2; //Direction
+int AIN1 = 3; //Direction
 int AIN2 = 4; //Direction
 
 //Motor B

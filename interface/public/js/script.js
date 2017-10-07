@@ -125,8 +125,8 @@ $(document).ready(function() {
 			robot.emit('move', {
 				'motor1' : 120,
 				'motor2' : 120,
-				'motor1dir' : 1,
-				'motor2dir' : 0,
+				'motor1dir' : 0,
+				'motor2dir' : 1,
 			});
 			console.log("left");
 
@@ -135,8 +135,8 @@ $(document).ready(function() {
 			robot.emit('move', {
 				'motor1' : 120,
 				'motor2' : 120,
-				'motor1dir' : 0,
-				'motor2dir' : 1,
+				'motor1dir' : 1,
+				'motor2dir' : 0,
 			});
 			console.log("right");
 

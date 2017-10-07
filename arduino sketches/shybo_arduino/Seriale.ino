@@ -97,6 +97,9 @@ void parse (String inputString) {
       } else if (animation.equalsIgnoreCase("BLINK")) {
         ledStrips[ledStripIndex].blinkRed(interval);
         debug("starting blink animation");
+      }else if (animation.equalsIgnoreCase("SCANNER")) {
+        ledStrips[ledStripIndex].scanner(color1,interval);
+        debug("starting blink animation");
       } else {
         debug("didn't recognize animation");
       }
