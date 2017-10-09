@@ -123,6 +123,20 @@ Adaptor.prototype.registerToButtonEvent = function(pin) {
 	Cylon.Logger.log("written " + message + " to myArduino");
 }
 
+Adaptor.prototype.setInput = function(pin) {
+	Cylon.Logger.log("setting" + pin+ " as input");
+	var message = 'RI/' + pin + '\r' + '\n';
+	this.send(message);
+	Cylon.Logger.log("written " + message + " to myArduino");
+}
+
+Adaptor.prototype.readAnalogue = function(pin) {
+	//Cylon.Logger.log("reading analogue value from pin"+ pin);
+	var message = 'AR/' + pin + '\r' + '\n';
+	this.send(message);
+	//Cylon.Logger.log("written " + message + " to myArduino");
+}
+
 Adaptor.prototype.motorWrite = function(motor, speed, direction) {
 	Cylon.Logger.log("writing to motor: " + motor + ", speed: " + speed + ", direction: " + direction);
 	var message = 'MW/' + motor + '/' + speed + '/' + direction + '\r' + '\n';
@@ -149,6 +163,14 @@ Adaptor.prototype.ledsControl = function(ledStripIndex, animation, color1, color
 	this.send(message);
 	Cylon.Logger.log("written " + message + " to myArduino");
 }
+
+Adaptor.prototype.colorwheel = function(ledStripIndex, offset) {
+	Cylon.Logger.log("writing to ledstrip: "+ offset +" , standardColorwheel offsetBy" + offset);
+	var message = 'LD/' + ledStripIndex + '/COLORWHEEL/' + offset + '\r' + '\n';
+	this.send(message);
+	Cylon.Logger.log("written " + message + " to myArduino");
+}
+
 
 Adaptor.prototype.servoWrite = function(angle) {
 	Cylon.Logger.log("writing to servo");
@@ -198,6 +220,11 @@ Adaptor.prototype.parseSerial = function(data) {
 				'red': message[1],
 				'green': message[2],
 				'blue': message[3],
+			});
+		} else if (message[0] == 'AR') {
+			this.emit('analogue', {
+				'pin': message[1],
+				'value': message[2],
 			});
 		}
 	}

@@ -1,5 +1,6 @@
 var robot;
 var fftData = new Array(256);
+var loudness=0;
 
 window.onload = function() {
 	console.log('Setting up socket connections:');
@@ -21,6 +22,11 @@ window.onload = function() {
 				fftData = payload.data;
 				//drawchart();
 			}
+		} else if (payload.name == 'loudness') {
+			if (payload.data) {
+				loudness = payload.data;
+				//drawchart();
+			}
 		} else if (payload.name == 'color_changed') {
 			if (payload.data) {
 				colorviewer = $('.colorSensor .colorviewer');
@@ -30,15 +36,12 @@ window.onload = function() {
 		} else if (payload.name == 'mode_changed') {
 			if (payload.data == "teach_color") {
 				$('input:radio[name=mode]')[0].checked = true;
-
 			} else if (payload.data == "teach_sound") {
 				$('input:radio[name=mode]')[1].checked = true;
 			} else if (payload.data == "play") {
 				$('input:radio[name=mode]')[2].checked = true;
 			}
 			// $('.mode .colorviewer');
-
-
 		} else {
 
 		}
@@ -97,7 +100,6 @@ $(document).ready(function() {
 	var options = {
 		zone: document.getElementById('zone_joystick'),
 		color: '#ff0000'
-
 	};
 	var manager = nipplejs.create(options);
 
@@ -119,7 +121,6 @@ $(document).ready(function() {
 				'motor2dir' : 0,
 			});
 			console.log("down");
-
 		});
 		nipple.on('dir:left', function(evt) {
 			robot.emit('move', {
@@ -149,11 +150,7 @@ $(document).ready(function() {
 	}).on('removed', function(evt, nipple) {
 		nipple.off('start move end dir plain');
 	});
-
-
-
 });
-
 
 function setLedColorColorAnimation(data) {
 	if (data.animation == "static") {
@@ -190,6 +187,7 @@ function setup() {
 
 function draw() {
 	drawchart();
+	drawAxis();
 }
 
 function logEvent(payload) {
@@ -209,8 +207,23 @@ function drawchart() {
 	background(255);
 	var barwidth = width / 256 * 2;
 	fill(0);
+	strokeWeight(2)
 	stroke(150);
 	for (var i = 0; i < 256; i++) {
 		line(i * barwidth, height + fftData[i] * 500, i * barwidth, height);
+	}
+	if (loudness>200){
+		stroke(255,0,0)
+	}else{
+		stroke(0,200,0)
+	}
+	strokeWeight(10)
+	line(0, height-loudness/3, 0, height);
+}
+
+function drawAxis(){
+	noStroke(0);
+	for (var i=0; i<20; i++){
+		text (i*20*3, 0, height-i*20);
 	}
 }

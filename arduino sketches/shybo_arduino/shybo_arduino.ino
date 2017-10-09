@@ -44,6 +44,7 @@ uint32_t violone = newColor(149, 0, 255);
 uint32_t verdeacqua = newColor(0, 232, 209);
 
 uint32_t colorArray[]={ bianco, giallo, arancione,rosso, viola, azzurro, spento, violone, verdeacqua };
+uint32_t colorwheel8[] = {verde, verdeacqua, azzurro, violone, viola, rosso, arancione, giallo};
 
 void setup() {
   Serial.begin(57600);

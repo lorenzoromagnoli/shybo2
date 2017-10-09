@@ -60,6 +60,7 @@ Cylon.robot({
 		'color_changed',
 		'fft',
 		'mode_changed',
+		'loudness'
 	],
 
 
@@ -72,31 +73,43 @@ Cylon.robot({
 
 		//wait some second before sending data to the serial port
 
-		var ButtonPin = 2;
+		var record_button_Pin = 2;
 
 		var off_button_pin = 17;
 		var teach_color_mode_Pin = 15;
 		var teach_sound_mode_Pin = 14;
 		var play_mode_Pin = 9;
 
+		my.pot_pin = 16;
+		my.potValue=0;
+
 		my.state = 0;
 
+		my.recordButtonStatus=0;
+
+		my.wekinatorClass=0;
+		my.wekinatorOldClass=0;
+
+		my.colorwheel=['#15af00','#00e8d1', '#0073c8', '#9500ff', '#7d007d', '#ff0000', '#e15a00', '#e1e600']
 
 		after((3).seconds(), function() {
-			my.myArduino.registerToButtonEvent(ButtonPin);
+			my.myArduino.registerToButtonEvent(record_button_Pin);
 			my.myArduino.registerToButtonEvent(off_button_pin);
 			my.myArduino.registerToButtonEvent(teach_color_mode_Pin);
 			my.myArduino.registerToButtonEvent(teach_sound_mode_Pin);
 			my.myArduino.registerToButtonEvent(play_mode_Pin);
+			my.myArduino.setInput(my.pot_pin);
 
 			my.myArduino.on('button', function(payload) {
 				console.log(payload);
 
-				if (payload.pin == ButtonPin && payload.value == 0) {
-					console.log(my.microphone.status);
-					my.microphone.startRecording();
-				} else if (payload.pin == ButtonPin && payload.value == 1) {
-					my.microphone.stopRecording();
+				if (payload.pin == record_button_Pin && payload.value == 0) {
+					my.recordButtonStatus=1;
+				// 	console.log(my.microphone.status);
+				// 	my.microphone.startRecording();
+				 } else if (payload.pin == record_button_Pin && payload.value == 1) {
+					 my.recordButtonStatus=0;
+				// 	my.microphone.stopRecording();
 				} else if (payload.pin == off_button_pin && payload.value == 0) {
 					console.log("bye bye");
 					my.emit('mode_changed', 'off');
@@ -104,18 +117,23 @@ Cylon.robot({
 				} else if (payload.pin == teach_color_mode_Pin && payload.value == 0) {
 					console.log("entering teach color mode");
 					my.emit('mode_changed', 'teach_color');
-					my.goToState(3);
+					//my.goToState(3);
 				} else if (payload.pin == teach_sound_mode_Pin && payload.value == 0) {
 					console.log("entering teach sound mode");
 					my.emit('mode_changed', 'teach_sound');
-					my.goToState(2);
+					my.goToState(3);
 				} else if (payload.pin == play_mode_Pin && payload.value == 0) {
 					console.log("entering play mode");
 					my.emit('mode_changed', 'play');
 					my.goToState(1);
 				}
-
 				//my.myArduino.readColorSensor();
+			});
+
+			my.myArduino.on('analogue', function(payload) {
+				if (payload.pin==my.pot_pin){
+					my.potValue=payload.value;
+				}
 			});
 
 			//when receive a new color from the sensor, copy it to the ledstrip
@@ -146,7 +164,9 @@ Cylon.robot({
 
 		every((.05).seconds(), function() {
 			var fftData = my.microphone.getFFTData();
+			var loudness = my.microphone.getSoundLevel();
 			my.emit('fft', fftData);
+			my.emit('loudness', loudness);
 			my.wekinator.inputs(fftData);
 		});
 
@@ -192,13 +212,35 @@ Cylon.robot({
 
 
 				break;
+			case 3: //shybo in training sound mode
+				this.myArduino.readAnalogue(this.pot_pin);
+				this.wekinatorClass=Math.floor((this.potValue/1024)*8);
+				if (this.wekinatorClass!=this.wekinatorOldClass){
+					this.wekinator.outputs([this.wekinatorClass+1]);
+					this.myArduino.colorwheel(1,this.wekinatorClass);
+					this.myArduino.setFullColor(0,this.colorwheel[this.wekinatorClass]);
+					this.wekinatorOldClass=this.wekinatorClass;
+
+				}
+				if (this.recordButtonStatus){
+					this.goToState(4)
+				}
+				break;
+			case 4: //shybo is recording sound
+				if (!this.recordButtonStatus){
+					this.goToState(3)
+				}
+				break;
 			default:
 
 		}
 	},
 
 	goToState: function(state) {
+		console.log("_________________");
 		console.log("going to state" + state);
+		console.log("_________________");
+
 		if (this.state != state) {
 			this.state = state;
 			switch (this.state) {
@@ -217,11 +259,15 @@ Cylon.robot({
 				case 2: //shybo gets scared and start shaking
 					this.myArduino.servoShakeStart();
 					this.myArduino.ledsControl(0, 'fade', '#ff0000', '#000000', 50, 30);
-					after((2).seconds(), ()=> {
+					after((2).seconds(), () => {
 						this.goToState(1);
 					});
 					break;
-				case 3:
+				case 3: //shybo await the user for selecting a class to be associated with the sound
+					this.wekinator.stopRecording();
+					break;
+				case 4: // goes into recording mode, trigger wekinator start
+					this.wekinator.startRecording();
 					break;
 			}
 		}

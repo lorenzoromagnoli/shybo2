@@ -35,7 +35,19 @@ void parse (String inputString) {
     int value = getValue(inputString, '/', 2).toInt();
     digitalWrite(pin, value);
 
-  } else if (command.equalsIgnoreCase("RB")) {
+  } 
+  else if (command.equalsIgnoreCase("RI")) { //set analog pin as input
+    //debug("readButton");
+    int pin = getValue(inputString, '/', 1).toInt();
+    pinMode(pin, INPUT);
+  }
+  else if (command.equalsIgnoreCase("AR")) { //analogue read
+    //debug("readButton");
+    int pin = getValue(inputString, '/', 1).toInt();
+    int val=analogRead(pin);
+    emitAnalogEvent(pin,val);
+  }
+  else if (command.equalsIgnoreCase("RB")) {
     //debug("readButton");
     int pin = getValue(inputString, '/', 1).toInt();
     registerNewButton(pin);
@@ -68,12 +80,16 @@ void parse (String inputString) {
     uint32_t color2;
     int interval;
     int steps;
+    int index;
 
     if (animation.equalsIgnoreCase("STATIC")) {
       parsed_red = getValue(inputString, '/', 3).toInt();
       parsed_green = getValue(inputString, '/', 4).toInt();
       parsed_blue = getValue(inputString, '/', 5).toInt();
       ledStrips[ledStripIndex].setFullColor(newColor(parsed_red, parsed_green, parsed_blue));
+    } else if (animation.equalsIgnoreCase("COLORWHEEL")) {
+      index = getValue(inputString, '/', 3).toInt();
+      ledStrips[ledStripIndex].colorWheel(colorwheel8,8,index);
     } else {
 
       parsed_red = getValue(inputString, '/', 3).toInt();
@@ -169,3 +185,12 @@ void readSerial() {
     }
   }
 }
+
+void emitAnalogEvent(int pin, int value) {
+  Serial.print("AR/");
+  Serial.print(pin);
+  Serial.print("/");
+  Serial.print(value);
+  Serial.println("/");
+}
+
