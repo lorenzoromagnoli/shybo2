@@ -204,6 +204,19 @@ class NeoPatterns : public Adafruit_NeoPixel{
       show();
     }
 
+    // Count
+    void countTo(uint32_t color1, uint32_t color2,  int n)  {
+      ActivePattern = NONE;
+      for (int i = 0; i < numPixels(); i++) {
+        if (i<n){
+         setPixelColor(i, color1); 
+        }else{
+         setPixelColor(i, color2); 
+        }
+      }
+      show();
+    }
+
 
 
     // Initialize for a ColorWipe

@@ -13,34 +13,34 @@ app.get('/', function(req, res) {
 app.use(fileUpload());
 
 app.post('/upload', function(req, res) {
-  if (!req.files){
+	if (!req.files) {
 		return res.status(400).send('No files were uploaded.');
-	}else{
+	} else {
 		//console.log(req.files);
-			// let files=[];
-	  // // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-		 for (var i=0; i<8; i++){
-			 if (req.files['sound'+i]){
-				 	console.log( i,req.files['sound'+i].name);
-					req.files['sound'+i].mv('./assets/sound/sound'+i+'.mp3', function(err) {
-				    if (err){
-							console.log(err);
-							return res.status(500).send(err);
-						}
-				  });
-			 }
-		 }
+		// let files=[];
+		// // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+		for (var i = 0; i < 8; i++) {
+			if (req.files['sound' + i]) {
+				console.log(i, req.files['sound' + i].name);
+				req.files['sound' + i].mv('./assets/sound/sound' + i + '.mp3', function(err) {
+					if (err) {
+						console.log(err);
+						return res.status(500).send(err);
+					}
+				});
+			}
+		}
 		res.send('File uploaded!');
 
 		// console.log(req.files.1);
 		//
-	  // // Use the mv() method to place the file somewhere on your server
-	  // sampleFile.mv('/assets/sound/'+sampleFile+'.jpg', function(err) {
-	  //   if (err)
-	  //     return res.status(500).send(err);
+		// // Use the mv() method to place the file somewhere on your server
+		// sampleFile.mv('/assets/sound/'+sampleFile+'.jpg', function(err) {
+		//   if (err)
+		//     return res.status(500).send(err);
 		//
-	  //   res.send('File uploaded!');
-	  // });
+		//   res.send('File uploaded!');
+		// });
 	}
 });
 
@@ -117,25 +117,29 @@ Cylon.robot({
 		var play_mode_Pin = 9;
 
 		my.pot_pin = 16;
-		my.potValue=0;
+		my.potValue = 0;
 
 		my.state = 0;
 
-		my.recordButtonStatus=0;
+		my.recordButtonStatus = 0;
 
-		my.wekinatorClass=0;
-		my.wekinatorOldClass=0;
+		my.wekinatorClass = 0;
+		my.wekinatorOldClass = 0;
 
-		my.noiseLevel=200;
-		my.minimumSoundLevel=1;
+		my.soundClass = 0;
+		my.soundOldClass = 0;
 
-		my.colorwheel=['#15af00','#00e8d1', '#0073c8', '#9500ff', '#7d007d', '#ff0000', '#e15a00', '#e1e600']
+		my.noiseLevel = 200;
+		my.minimumSoundLevel = 1;
 
 
-		my.audio.on("complete", function(){
-	       console.log("Done playing this nice sound.");
-				 my.microphone.enableInput();
-	   });
+		my.colorwheel = ['#15af00', '#00e8d1', '#0073c8', '#9500ff', '#7d007d', '#ff0000', '#e15a00', '#e1e600']
+
+
+		my.audio.on("complete", function() {
+			// console.log("Done playing this nice sound.");
+			my.microphone.enableInput();
+		});
 
 		after((3).seconds(), function() {
 			my.myArduino.registerToButtonEvent(record_button_Pin);
@@ -149,12 +153,12 @@ Cylon.robot({
 				console.log(payload);
 
 				if (payload.pin == record_button_Pin && payload.value == 0) {
-					my.recordButtonStatus=1;
-				// 	console.log(my.microphone.status);
-				// 	my.microphone.startRecording();
-				 } else if (payload.pin == record_button_Pin && payload.value == 1) {
-					 my.recordButtonStatus=0;
-				// 	my.microphone.stopRecording();
+					my.recordButtonStatus = 1;
+					// 	console.log(my.microphone.status);
+					// 	my.microphone.startRecording();
+				} else if (payload.pin == record_button_Pin && payload.value == 1) {
+					my.recordButtonStatus = 0;
+					// 	my.microphone.stopRecording();
 				} else if (payload.pin == off_button_pin && payload.value == 0) {
 					console.log("bye bye");
 					my.emit('mode_changed', 'off');
@@ -162,7 +166,7 @@ Cylon.robot({
 				} else if (payload.pin == teach_color_mode_Pin && payload.value == 0) {
 					console.log("entering teach color mode");
 					my.emit('mode_changed', 'teach_color');
-					//my.goToState(3);
+					my.goToState(5);
 				} else if (payload.pin == teach_sound_mode_Pin && payload.value == 0) {
 					console.log("entering teach sound mode");
 					my.emit('mode_changed', 'teach_sound');
@@ -176,13 +180,13 @@ Cylon.robot({
 			});
 
 			my.myArduino.on('analogue', function(payload) {
-				if (payload.pin==my.pot_pin){
-					my.potValue=payload.value;
+				if (payload.pin == my.pot_pin) {
+					my.potValue = payload.value;
 				}
 			});
 
 			my.wekinator.on('wek_class', function(payload) {
-				my.wekinatorClass=payload;
+				my.wekinatorClass = payload;
 			});
 
 			//when receive a new color from the sensor, copy it to the ledstrip
@@ -216,7 +220,7 @@ Cylon.robot({
 			var loudness = my.microphone.getSoundLevel();
 			my.emit('fft', fftData);
 			my.emit('loudness', loudness);
-			if (loudness>my.minimumSoundLevel){
+			if (loudness > my.minimumSoundLevel) {
 				my.wekinator.inputs(fftData);
 			}
 		});
@@ -237,10 +241,10 @@ Cylon.robot({
 			case 1: //shybo listen to wek
 				if (this.microphone.getSoundLevel() > this.noiseLevel) {
 					this.goToState(2);
-				}else{
-					if (this.wekinatorClass!=this.wekinatorOldClass){
-						this.myArduino.setFullColor(0,this.colorwheel[this.wekinatorClass]);
-						this.wekinatorOldClass=this.wekinatorClass;
+				} else {
+					if (this.wekinatorClass != this.wekinatorOldClass) {
+						this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass]);
+						this.wekinatorOldClass = this.wekinatorClass;
 					}
 				}
 				break;
@@ -248,24 +252,38 @@ Cylon.robot({
 				break;
 			case 3: //shybo in training sound mode
 				this.myArduino.readAnalogue(this.pot_pin);
-				this.wekinatorClass=Math.floor((this.potValue/1024)*8);
-				if (this.wekinatorClass!=this.wekinatorOldClass){
-					this.wekinator.outputs([this.wekinatorClass+1]);
-					this.myArduino.colorwheel(1,this.wekinatorClass);
-					this.myArduino.setFullColor(0,this.colorwheel[this.wekinatorClass]);
-					this.wekinatorOldClass=this.wekinatorClass;
+				this.wekinatorClass = Math.floor((this.potValue / 1024) * 8);
+				if (this.wekinatorClass != this.wekinatorOldClass) {
+					this.wekinator.outputs([this.wekinatorClass + 1]);
+					this.myArduino.colorwheel(1, this.wekinatorClass);
+					this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass]);
+					this.wekinatorOldClass = this.wekinatorClass;
 				}
-				if (this.recordButtonStatus){
+				if (this.recordButtonStatus) {
 					this.goToState(4)
 				}
 				break;
 			case 4: //shybo is recording sound
-				if (!this.recordButtonStatus){
+				if (!this.recordButtonStatus) {
 					this.goToState(3)
 				}
 				break;
-			default:
+			case 5: //shybo is in train sound Mode
+				this.myArduino.readAnalogue(this.pot_pin);
+				this.soundClass = Math.floor((this.potValue / 1024) * 8);
+				if (this.soundClass != this.soundOldClass) {
+					this.myArduino.ledCount(1, '#ff0000', '#0000ff',this.soundClass);
+					this.playSound(this.soundClass);
+					this.soundOldClass = this.soundClass;
+				}
+				break;
+			case 6: //shybo should be reading colors
+				if (!this.recordButtonStatus) {
+					this.goToState(6)
+				}
+				break;
 
+			default:
 		}
 	},
 
@@ -308,6 +326,13 @@ Cylon.robot({
 					this.wekinator.startRecording();
 					this.wekinator.stopRunning();
 					break;
+				case 5:
+					this.myArduino.setFullColor(0, '#00ff00');
+					break;
+				case 6:
+
+					break;
+
 			}
 		}
 
@@ -348,10 +373,10 @@ Cylon.robot({
 		}
 	},
 
-	changeSoundLevels:function(data){
+	changeSoundLevels: function(data) {
 		console.log("changing sound level");
-		this.noiseLevel=data.min;
-		this.minimumSoundLevel=data.max;
+		this.noiseLevel = data.min;
+		this.minimumSoundLevel = data.max;
 	},
 
 	getColorSensor: function() {
@@ -377,7 +402,7 @@ Cylon.robot({
 
 	playSound: function(index) {
 		this.microphone.enableOutput();
-		this.audio.play('./assets/sound/sound'+index+'.mp3');
+		this.audio.play('./assets/sound/sound' + index + '.mp3');
 	},
 
 	doAThing: function() {

@@ -158,7 +158,7 @@ Adaptor.prototype.setFullColor = function(ledStripIndex, color) {
 }
 
 Adaptor.prototype.ledsControl = function(ledStripIndex, animation, color1, color2, steps, interval) {
-	Cylon.Logger.log("writing to ledstrip: _ , animation: " + animation + ", color1: " + color1 + ", color2: " + color2 + ", steps: " + steps + ", interval: " + interval);
+	Cylon.Logger.log("writing to ledstrip: "+ledStripIndex+", animation: " + animation + ", color1: " + color1 + ", color2: " + color2 + ", steps: " + steps + ", interval: " + interval);
 	var message = 'LD/' + ledStripIndex + '/' + animation + '/' + hexToRgb(color1).r + '/' + hexToRgb(color1).g + '/' + hexToRgb(color1).b + '/' + hexToRgb(color2).r + '/' + hexToRgb(color2).g + '/' + hexToRgb(color2).b + '/' + steps + '/' + interval + '\r' + '\n';
 	this.send(message);
 	Cylon.Logger.log("written " + message + " to myArduino");
@@ -167,6 +167,13 @@ Adaptor.prototype.ledsControl = function(ledStripIndex, animation, color1, color
 Adaptor.prototype.colorwheel = function(ledStripIndex, offset) {
 	Cylon.Logger.log("writing to ledstrip: "+ offset +" , standardColorwheel offsetBy" + offset);
 	var message = 'LD/' + ledStripIndex + '/COLORWHEEL/' + offset + '\r' + '\n';
+	this.send(message);
+	Cylon.Logger.log("written " + message + " to myArduino");
+}
+
+Adaptor.prototype.ledCount = function(ledStripIndex, color1, color2, number) {
+	Cylon.Logger.log("writing to ledstrip: "+ledStripIndex+" , animation: count, color1: " + color1 + ", color2: " + color2 + ", number: " + number);
+	var message = 'LD/' + ledStripIndex + '/COUNT/' + hexToRgb(color1).r + '/' + hexToRgb(color1).g + '/' + hexToRgb(color1).b + '/' + hexToRgb(color2).r + '/' + hexToRgb(color2).g + '/' + hexToRgb(color2).b + '/' + number + '\r' + '\n';
 	this.send(message);
 	Cylon.Logger.log("written " + message + " to myArduino");
 }

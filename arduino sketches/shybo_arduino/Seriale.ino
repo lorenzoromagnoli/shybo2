@@ -117,7 +117,11 @@ void parse (String inputString) {
       }else if (animation.equalsIgnoreCase("SCANNER")) {
         ledStrips[ledStripIndex].scanner(color1,interval);
         //debug("starting blink animation");
-      } else {
+      }else if (animation.equalsIgnoreCase("COUNT")) {
+        ledStrips[ledStripIndex].countTo(color1,color2,interval);
+        //debug("starting blink animation");
+      }
+      else {
         //debug("didn't recognize animation");
       }
 
