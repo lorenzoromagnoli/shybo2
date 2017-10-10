@@ -4,6 +4,8 @@ module.exports = [
 "startRecording",
 "stopRecording",
 "startRunning",
+"stopRunning",
 "inputs",
-"outputs"
+"outputs",
+"train"
 ];

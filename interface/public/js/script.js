@@ -1,6 +1,9 @@
 var robot;
 var fftData = new Array(256);
-var loudness=0;
+var loudness = 0;
+var minSoundLevel=1;
+var maxSoundlevel=200;
+var chartScaleFactor=3;
 
 window.onload = function() {
 	console.log('Setting up socket connections:');
@@ -106,38 +109,38 @@ $(document).ready(function() {
 	manager.on('added', function(evt, nipple) {
 		nipple.on('dir:up', function(evt) {
 			robot.emit('move', {
-				'motor1' : 200,
-				'motor2' : 200,
-				'motor1dir' : 1,
-				'motor2dir' : 1,
+				'motor1': 200,
+				'motor2': 200,
+				'motor1dir': 1,
+				'motor2dir': 1,
 			});
 			console.log("up");
 		});
 		nipple.on('dir:down', function(evt) {
 			robot.emit('move', {
-				'motor1' : 200,
-				'motor2' : 200,
-				'motor1dir' : 0,
-				'motor2dir' : 0,
+				'motor1': 200,
+				'motor2': 200,
+				'motor1dir': 0,
+				'motor2dir': 0,
 			});
 			console.log("down");
 		});
 		nipple.on('dir:left', function(evt) {
 			robot.emit('move', {
-				'motor1' : 120,
-				'motor2' : 120,
-				'motor1dir' : 0,
-				'motor2dir' : 1,
+				'motor1': 120,
+				'motor2': 120,
+				'motor1dir': 0,
+				'motor2dir': 1,
 			});
 			console.log("left");
 
 		});
 		nipple.on('dir:right', function(evt) {
 			robot.emit('move', {
-				'motor1' : 120,
-				'motor2' : 120,
-				'motor1dir' : 1,
-				'motor2dir' : 0,
+				'motor1': 120,
+				'motor2': 120,
+				'motor1dir': 1,
+				'motor2dir': 0,
 			});
 			console.log("right");
 
@@ -179,6 +182,12 @@ function moveServo(angle) {
 	robot.emit('moveServo', angle);
 }
 
+function changeSoundLevels(){
+	minSoundLevel= $("#minSoundLevel").val()/10;
+	maxSoundLevel= $("#maxSoundLevel").val()/1;
+	robot.emit('changeSoundLevels', {min:minSoundLevel,max:maxSoundLevel});
+}
+
 function setup() {
 	var canvas = createCanvas(window.innerWidth, 100);
 	canvas.parent('viz');
@@ -188,6 +197,7 @@ function setup() {
 function draw() {
 	drawchart();
 	drawAxis();
+	drawSoundLevels();
 }
 
 function logEvent(payload) {
@@ -212,18 +222,32 @@ function drawchart() {
 	for (var i = 0; i < 256; i++) {
 		line(i * barwidth, height + fftData[i] * 500, i * barwidth, height);
 	}
-	if (loudness>200){
-		stroke(255,0,0)
-	}else{
-		stroke(0,200,0)
+	if (loudness > maxSoundlevel) {
+		stroke(255, 0, 0)
+	} else {
+		stroke(0, 200, 0)
 	}
 	strokeWeight(10)
-	line(0, height-loudness/3, 0, height);
+	line(0, height - loudness/chartScaleFactor, 0, height);
 }
 
-function drawAxis(){
+function drawAxis() {
 	noStroke(0);
-	for (var i=0; i<20; i++){
-		text (i*20*3, 0, height-i*20);
+	for (var i = 0; i < 20; i++) {
+		text(i * 20 * chartScaleFactor, 0, height - i * 20);
 	}
+}
+
+function drawSoundLevels(){
+	strokeWeight(1);
+	stroke(10, 10, 10);
+
+	var minSoundY=height-minSoundLevel/3;
+	var maxSoundY=height-maxSoundLevel/3;
+
+	line(0,minSoundY,width,minSoundY);
+	text(minSoundLevel,width-50, minSoundY );
+
+	line(0,maxSoundY,width,maxSoundY);
+	text(maxSoundLevel, width-50, maxSoundY );
 }

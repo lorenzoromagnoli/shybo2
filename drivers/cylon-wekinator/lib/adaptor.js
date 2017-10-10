@@ -39,6 +39,12 @@ Adaptor.prototype.connect = function(callback) {
     Cylon.Logger.log("Connected to wekinator");
   });
 
+	this.wekinator.on("osc", (a)=>{
+			// When we recieve a message from Wekinator, log it
+			//console.log(a);
+			this.emit('wek_class', a.args[0]);
+		});
+
   callback();
 };
 

@@ -69,6 +69,10 @@
 			<button id="stopRec">stop recording</button>
 			<button id="startRec">start recording</button>
 			<button id="playLastRecording">play recording</button>
+			<h5 class="section-title">minimum sound level</h5>
+			<input type="range" min="0" max="20" id="minSoundLevel" oninput="changeSoundLevels()" default="1">
+			<h5 class="section-title">scared level</h5>
+			<input type="range" min="20" max="250" id="maxSoundLevel" oninput="changeSoundLevels()" default="200">
 		</section>
 		<section class="wekinator">
 			<h5 class="section-title">wekinator</h5>

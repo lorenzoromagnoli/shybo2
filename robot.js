@@ -90,6 +90,9 @@ Cylon.robot({
 		my.wekinatorClass=0;
 		my.wekinatorOldClass=0;
 
+		my.noiseLevel=200;
+		my.minimumSoundLevel=1;
+
 		my.colorwheel=['#15af00','#00e8d1', '#0073c8', '#9500ff', '#7d007d', '#ff0000', '#e15a00', '#e1e600']
 
 		after((3).seconds(), function() {
@@ -136,6 +139,10 @@ Cylon.robot({
 				}
 			});
 
+			my.wekinator.on('wek_class', function(payload) {
+				my.wekinatorClass=payload;
+			});
+
 			//when receive a new color from the sensor, copy it to the ledstrip
 			my.myArduino.on('color', function(payload) {
 				console.log(payload);
@@ -167,32 +174,14 @@ Cylon.robot({
 			var loudness = my.microphone.getSoundLevel();
 			my.emit('fft', fftData);
 			my.emit('loudness', loudness);
-			my.wekinator.inputs(fftData);
+			if (loudness>my.minimumSoundLevel){
+				my.wekinator.inputs(fftData);
+			}
 		});
 
 		every((.05).seconds(), function() {
 			my.stateMachine();
 		});
-
-
-
-		// every((4).seconds(), function() {
-		// 	my.myArduino.motorWrite(0, 100, 1);
-		// 	my.myArduino.motorWrite(1, 100, 1);
-		// 	after((1).seconds(), function() {
-		// 		my.myArduino.motorWrite(1, 100, 0);
-		// 		my.myArduino.motorWrite(0, 100, 0);
-		// 		after((2).seconds(), function() {
-		// 			my.myArduino.motorStop();
-		// 		});
-		// 	});
-		// });
-		// every((4).seconds(), function() {
-		// 	my.myArduino.ledsControl(2, 6, 3, 100, 10);
-		// 	after((2).seconds(), function() {
-		// 		my.myArduino.ledsControl(1, 7);
-		// 	});
-		// });
 
 		my.goToState(0);
 	},
@@ -204,13 +193,16 @@ Cylon.robot({
 
 				break;
 			case 1: //shybo listen to wek
-				if (this.microphone.getSoundLevel() > 200) {
+				if (this.microphone.getSoundLevel() > this.noiseLevel) {
 					this.goToState(2);
+				}else{
+					if (this.wekinatorClass!=this.wekinatorOldClass){
+						this.myArduino.setFullColor(0,this.colorwheel[this.wekinatorClass]);
+						this.wekinatorOldClass=this.wekinatorClass;
+					}
 				}
 				break;
 			case 2: //shybo is scared
-
-
 				break;
 			case 3: //shybo in training sound mode
 				this.myArduino.readAnalogue(this.pot_pin);
@@ -220,7 +212,6 @@ Cylon.robot({
 					this.myArduino.colorwheel(1,this.wekinatorClass);
 					this.myArduino.setFullColor(0,this.colorwheel[this.wekinatorClass]);
 					this.wekinatorOldClass=this.wekinatorClass;
-
 				}
 				if (this.recordButtonStatus){
 					this.goToState(4)
@@ -248,13 +239,17 @@ Cylon.robot({
 					this.reset();
 					this.myArduino.servoShakeStop();
 					this.myArduino.ledsControl(1, 'scanner', '#0000ff', '#000000', 100, 100);
+					this.wekinator.stopRunning();
 					break;
 				case 1: //the robot is calm
 					this.myArduino.servoShakeStop();
 					this.myArduino.servoWrite(20);
 					this.myArduino.ledsControl(0, 'fade', '#ffffff', '#000000', 100, 30);
 					this.myArduino.setFullColor(1, '#000000');
-					this.wekinator.startRunning();
+					this.wekinator.train();
+					after((2).seconds(), () => {
+						this.wekinator.startRunning();
+					});
 					break;
 				case 2: //shybo gets scared and start shaking
 					this.myArduino.servoShakeStart();
@@ -265,9 +260,11 @@ Cylon.robot({
 					break;
 				case 3: //shybo await the user for selecting a class to be associated with the sound
 					this.wekinator.stopRecording();
+					this.wekinator.stopRunning();
 					break;
 				case 4: // goes into recording mode, trigger wekinator start
 					this.wekinator.startRecording();
+					this.wekinator.stopRunning();
 					break;
 			}
 		}
@@ -307,6 +304,12 @@ Cylon.robot({
 				});
 			});
 		}
+	},
+
+	changeSoundLevels:function(data){
+		console.log("changing sound level");
+		this.noiseLevel=data.min;
+		this.minimumSoundLevel=data.max;
 	},
 
 	getColorSensor: function() {
