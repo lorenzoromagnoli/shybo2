@@ -3,7 +3,8 @@
 var Cylon = require("cylon");
 // init serial port
 var SerialPort = require('serialport');
-
+const rgbHex = require('rgb-hex');
+var hexToRgb = require('hex-rgb');
 
 var Adaptor = module.exports = function Adaptor(opts) {
 	Adaptor.__super__.constructor.apply(this, arguments);
@@ -151,15 +152,23 @@ Adaptor.prototype.motorStop = function() {
 }
 
 Adaptor.prototype.setFullColor = function(ledStripIndex, color) {
-	Cylon.Logger.log("setting color: red" + hexToRgb(color).r + ", green: " + hexToRgb(color).g + ", blue: " + hexToRgb(color).b);
-	var message = 'LD/' + ledStripIndex + '/' + 'static/' + hexToRgb(color).r + '/' + hexToRgb(color).g + '/' + hexToRgb(color).b + '/' + '\r' + '\n';
+	Cylon.Logger.log("setting color: red" + hexToRgb(color)[0]+ ", green: " + hexToRgb(color)[1] + ", blue: " + hexToRgb(color)[2]);
+	var message = 'LD/' + ledStripIndex + '/' + 'static/' + hexToRgb(color)[0] + '/' + hexToRgb(color)[1] + '/' + hexToRgb(color)[2] + '/' + '\r' + '\n';
 	this.send(message);
 	Cylon.Logger.log("written " + message + " to myArduino");
 }
 
+Adaptor.prototype.setFullColorRGB = function(ledStripIndex, r,g,b) {
+	Cylon.Logger.log("setting color: red" + r + ", green: " + g + ", blue: " + b);
+	var message = 'LD/' + ledStripIndex + '/' + 'static/' + r + '/' + g + '/' + b + '/' + '\r' + '\n';
+	this.send(message);
+	Cylon.Logger.log("written " + message + " to myArduino");
+}
+
+
 Adaptor.prototype.ledsControl = function(ledStripIndex, animation, color1, color2, steps, interval) {
 	Cylon.Logger.log("writing to ledstrip: "+ledStripIndex+", animation: " + animation + ", color1: " + color1 + ", color2: " + color2 + ", steps: " + steps + ", interval: " + interval);
-	var message = 'LD/' + ledStripIndex + '/' + animation + '/' + hexToRgb(color1).r + '/' + hexToRgb(color1).g + '/' + hexToRgb(color1).b + '/' + hexToRgb(color2).r + '/' + hexToRgb(color2).g + '/' + hexToRgb(color2).b + '/' + steps + '/' + interval + '\r' + '\n';
+	var message = 'LD/' + ledStripIndex + '/' + animation + '/' + hexToRgb(color1)[0] + '/' + hexToRgb(color1)[1] + '/' + hexToRgb(color1)[2] + '/' + hexToRgb(color2)[0] + '/' + hexToRgb(color2)[1] + '/' + hexToRgb(color2)[2] + '/' + steps + '/' + interval + '\r' + '\n';
 	this.send(message);
 	Cylon.Logger.log("written " + message + " to myArduino");
 }
@@ -173,7 +182,7 @@ Adaptor.prototype.colorwheel = function(ledStripIndex, offset) {
 
 Adaptor.prototype.ledCount = function(ledStripIndex, color1, color2, number) {
 	Cylon.Logger.log("writing to ledstrip: "+ledStripIndex+" , animation: count, color1: " + color1 + ", color2: " + color2 + ", number: " + number);
-	var message = 'LD/' + ledStripIndex + '/COUNT/' + hexToRgb(color1).r + '/' + hexToRgb(color1).g + '/' + hexToRgb(color1).b + '/' + hexToRgb(color2).r + '/' + hexToRgb(color2).g + '/' + hexToRgb(color2).b + '/' + number + '\r' + '\n';
+	var message = 'LD/' + ledStripIndex + '/COUNT/' + hexToRgb(color1)[0] + '/' + hexToRgb(color1)[1] + '/' + hexToRgb(color1)[2] + '/' + hexToRgb(color2)[0] + '/' + hexToRgb(color2)[1] + '/' + hexToRgb(color2)[2] + '/' + number + '\r' + '\n';
 	this.send(message);
 	Cylon.Logger.log("written " + message + " to myArduino");
 }
@@ -213,21 +222,32 @@ Adaptor.prototype.readColorSensor = function() {
 Adaptor.prototype.parseSerial = function(data) {
 	if (data.indexOf('ok') != -1) {
 		this.processQueue();
-		console.log('-');
+	//	console.log('-');
 	} else {
 		var message = data.split("/");
-		console.log(data);
+		//console.log(data);
 		if (message[0] == 'BE') {
+			console.log(data);
 			this.emit('button', {
 				'pin': message[1],
 				'value': message[2]
 			});
 		} else if (message[0] == 'CE') {
-			this.emit('color', {
-				'red': message[1],
-				'green': message[2],
-				'blue': message[3],
-			});
+			console.log(data);
+			if(parseInt(message[1])<256 &&parseInt(message[2])<256 &&parseInt(message[3])<256){
+				this.emit('color', {
+					'red': parseInt(message[1]),
+					'green': parseInt(message[2]),
+					'blue': parseInt(message[3]),
+				});
+			}else{
+				this.emit('color', {
+					'red': 0,
+					'green': 0,
+					'blue': 0,
+				});
+			}
+
 		} else if (message[0] == 'AR') {
 			this.emit('analogue', {
 				'pin': message[1],
@@ -235,22 +255,4 @@ Adaptor.prototype.parseSerial = function(data) {
 			});
 		}
 	}
-}
-
-function componentToHex(c) {
-	var hex = c.toString(16);
-	return hex.length == 1 ? "0" + hex : hex;
-}
-
-function rgbToHex(r, g, b) {
-	return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
-
-function hexToRgb(hex) {
-	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-	return result ? {
-		r: parseInt(result[1], 16),
-		g: parseInt(result[2], 16),
-		b: parseInt(result[3], 16)
-	} : null;
 }

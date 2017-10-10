@@ -4,7 +4,8 @@ var app = express()
 var path = require("path");
 var cors = require('cors')
 const fileUpload = require('express-fileupload');
-
+const rgbHex = require('rgb-hex');
+var hexRgb = require('hex-rgb');
 
 app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname + '/interface/index.html'));
@@ -132,9 +133,10 @@ Cylon.robot({
 		my.noiseLevel = 200;
 		my.minimumSoundLevel = 1;
 
+		my.colorSensorColor={ red: 0, green: 0, blue: 0 };
 
-		my.colorwheel = ['#15af00', '#00e8d1', '#0073c8', '#9500ff', '#7d007d', '#ff0000', '#e15a00', '#e1e600']
-
+		my.colorwheel = ['#15af00', '#00e8d1', '#0073c8', '#9500ff', '#7d007d', '#ff0000', '#e15a00', '#e1e600'];
+		my.savedColors =['#000000','#000000','#000000','#000000','#000000','#000000','#000000','#000000',];
 
 		my.audio.on("complete", function() {
 			// console.log("Done playing this nice sound.");
@@ -189,10 +191,11 @@ Cylon.robot({
 				my.wekinatorClass = payload;
 			});
 
-			//when receive a new color from the sensor, copy it to the ledstrip
+			//when receive a new color from the sensor
 			my.myArduino.on('color', function(payload) {
 				console.log(payload);
 				my.emit('color_changed', payload);
+				my.colorSensorColor=payload;
 			});
 
 			//when I receive fft event from the microphone module reemit it
@@ -274,13 +277,20 @@ Cylon.robot({
 				if (this.soundClass != this.soundOldClass) {
 					this.myArduino.ledCount(1, '#ff0000', '#0000ff',this.soundClass);
 					this.playSound(this.soundClass);
+					this.myArduino.setFullColor(0, this.savedColors[this.soundClass]);
 					this.soundOldClass = this.soundClass;
+				}
+				if (this.recordButtonStatus) {
+					this.goToState(6)
 				}
 				break;
 			case 6: //shybo should be reading colors
+				this.savedColors[this.soundClass]='#'+rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue);
+
 				if (!this.recordButtonStatus) {
-					this.goToState(6)
+					this.goToState(5)
 				}
+
 				break;
 
 			default:
@@ -319,6 +329,7 @@ Cylon.robot({
 					});
 					break;
 				case 3: //shybo await the user for selecting a class to be associated with the sound
+					this.wekinatorOldClass=-1; //forcing reading on changs
 					this.wekinator.stopRecording();
 					this.wekinator.stopRunning();
 					break;
@@ -327,11 +338,12 @@ Cylon.robot({
 					this.wekinator.stopRunning();
 					break;
 				case 5:
-					this.myArduino.setFullColor(0, '#00ff00');
+					this.soundOldClass=-1;//forcing reading on changs
+					this.myArduino.setFullColor(0, this.savedColors[this.soundClass]);
 					break;
 				case 6:
-
-					break;
+					this.myArduino.readColorSensor();
+				break;
 
 			}
 		}
@@ -419,3 +431,19 @@ Cylon.robot({
 	}
 
 }).start();
+
+function componentToHex(c) {
+	var hex = c.toString(16);
+	return hex.length == 1 ? "0" + hex : hex;
+}
+function rgbToHex(r, g, b) {
+	return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+function hexToRgb(hex) {
+	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	return result ? {
+		r: parseInt(result[1], 16),
+		g: parseInt(result[2], 16),
+		b: parseInt(result[3], 16)
+	} : null;
+}
