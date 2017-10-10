@@ -94,6 +94,16 @@ Adaptor.prototype.getSoundLevel = function() {
 	return (this.fftOut.reduce((a, b) => Math.abs(a)+ Math.abs(b), 0));
 }
 
+Adaptor.prototype.enableOutput = function() {
+	this.disableMicrophone();
+	this.engine.setMute(false);
+}
+
+Adaptor.prototype.enableInput = function() {
+	this.engine.setMute(true);
+	this.enableMicrophone();
+}
+
 Adaptor.prototype.disableMicrophone = function() {
 	// this.engine.setOptions({
 	// 	'inputDevice': -1

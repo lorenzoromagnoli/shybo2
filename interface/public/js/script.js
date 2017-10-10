@@ -213,6 +213,10 @@ function logEvent(payload) {
 	$('#messages').prepend($('<hr />'));
 }
 
+function playSound(index){
+	robot.emit('playSound', index);
+}
+
 function drawchart() {
 	background(255);
 	var barwidth = width / 256 * 2;
@@ -251,3 +255,27 @@ function drawSoundLevels(){
 	line(0,maxSoundY,width,maxSoundY);
 	text(maxSoundLevel, width-50, maxSoundY );
 }
+
+
+var form = document.forms.namedItem("uploadForm");
+console.log(form);
+form.addEventListener('submit', function(ev) {
+
+  var oOutput = document.querySelector("div"),
+      oData = new FormData(form);
+
+  oData.append("CustomField", "This is some extra data");
+
+  var oReq = new XMLHttpRequest();
+  oReq.open("POST", "upload/", true);
+  oReq.onload = function(oEvent) {
+    if (oReq.status == 200) {
+      oOutput.innerHTML = "Uploaded!";
+    } else {
+      oOutput.innerHTML = "Error " + oReq.status + " occurred when trying to upload your file.<br \/>";
+    }
+  };
+
+  oReq.send(oData);
+  ev.preventDefault();
+}, false);

@@ -17,6 +17,7 @@
     "cylon-myArduino": "file:./drivers/cylon-myArduino",
     "cylon-wekinator": "file:./drivers/cylon-wekinator",
     "express": "^4.15.5",
+    "express-fileupload": "^0.3.0",
     "install": "^0.10.1",
     "path": "^0.12.7"
   }

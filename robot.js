@@ -3,10 +3,46 @@ var express = require('express')
 var app = express()
 var path = require("path");
 var cors = require('cors')
+const fileUpload = require('express-fileupload');
+
 
 app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname + '/interface/index.html'));
 })
+
+app.use(fileUpload());
+
+app.post('/upload', function(req, res) {
+  if (!req.files){
+		return res.status(400).send('No files were uploaded.');
+	}else{
+		//console.log(req.files);
+			// let files=[];
+	  // // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+		 for (var i=0; i<8; i++){
+			 if (req.files['sound'+i]){
+				 	console.log( i,req.files['sound'+i].name);
+					req.files['sound'+i].mv('./assets/sound/sound'+i+'.mp3', function(err) {
+				    if (err){
+							console.log(err);
+							return res.status(500).send(err);
+						}
+				  });
+			 }
+		 }
+		res.send('File uploaded!');
+
+		// console.log(req.files.1);
+		//
+	  // // Use the mv() method to place the file somewhere on your server
+	  // sampleFile.mv('/assets/sound/'+sampleFile+'.jpg', function(err) {
+	  //   if (err)
+	  //     return res.status(500).send(err);
+		//
+	  //   res.send('File uploaded!');
+	  // });
+	}
+});
 
 app.use('/', express.static(path.join(__dirname, '/interface/public')))
 
@@ -94,6 +130,12 @@ Cylon.robot({
 		my.minimumSoundLevel=1;
 
 		my.colorwheel=['#15af00','#00e8d1', '#0073c8', '#9500ff', '#7d007d', '#ff0000', '#e15a00', '#e1e600']
+
+
+		my.audio.on("complete", function(){
+	       console.log("Done playing this nice sound.");
+				 my.microphone.enableInput();
+	   });
 
 		after((3).seconds(), function() {
 			my.myArduino.registerToButtonEvent(record_button_Pin);
@@ -333,8 +375,9 @@ Cylon.robot({
 		});
 	},
 
-	playSound: function() {
-		my.audio.play('./assets/sound/meow.mp3');
+	playSound: function(index) {
+		this.microphone.enableOutput();
+		this.audio.play('./assets/sound/sound'+index+'.mp3');
 	},
 
 	doAThing: function() {

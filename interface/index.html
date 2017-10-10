@@ -31,24 +31,22 @@
 				</button>
 		</section>
 		<section class="bodyColor">
-			<h5 class="section-title">body Color</h5>
-			color 1: <input id='colorpicker1' class="colorpicker" /> color 2: <input id='colorpicker2' class="colorpicker" />
+			<h5 class="section-title">body Color</h5> color 1: <input id='colorpicker1' class="colorpicker" /> color 2: <input id='colorpicker2' class="colorpicker" />
 			<br /> interval: <br />
 			<input type="range" id="bodyColorAnimationInterval" min="0" max="1000">
 			<br /> steps: <br />
-			<input type="range" id="bodyColorAnimationSteps"min="0" max="180">
+			<input type="range" id="bodyColorAnimationSteps" min="0" max="180">
 			<br />
 			<input type="radio" name="bodyColorAnimation" value="static" checked> static<br>
 			<input type="radio" name="bodyColorAnimation" value="fade"> fade <br>
 			<input type="radio" name="bodyColorAnimation" value="blink"> blink <br><br>
 		</section>
 		<section class="frontColor">
-			<h5 class="section-title">front Color</h5>
-			color 1: <input id='colorpicker1' class="colorpicker" /> color 2: <input id='colorpicker2' class="colorpicker" />
+			<h5 class="section-title">front Color</h5> color 1: <input id='colorpicker1' class="colorpicker" /> color 2: <input id='colorpicker2' class="colorpicker" />
 			<br /> interval: <br />
 			<input type="range" id="frontColorAnimationInterval" min="1" max="1000">
 			<br /> steps: <br />
-			<input type="range" id="frontColorAnimationSteps"min="1" max="180">
+			<input type="range" id="frontColorAnimationSteps" min="1" max="180">
 			<br />
 			<input type="radio" name="frontColorAnimation" value="static" checked> static<br>
 			<input type="radio" name="frontColorAnimation" value="fade"> fade <br>
@@ -85,10 +83,35 @@
 			<input type="range" min="0" max="180" onchange="moveServo(this.value)">
 		</section>
 		</div>
+		<section class="sounds">
+			<h5 class="section-title">sounds</h5>
+			<form  ref='uploadForm' id='uploadForm' method="POST" enctype="multipart/form-data" name="uploadForm">
+				1<input type="file" name="sound1" accept=".mp3,audio/*"><button class="play" onclick="playSound(1)">play</button><br>
+				2<input type="file" name="sound2" accept=".mp3,audio/*"><button class="play" onclick="playSound(2)">play</button><br>
+				3<input type="file" name="sound3" accept=".mp3,audio/*"><button class="play" onclick="playSound(3)">play</button><br>
+				4<input type="file" name="sound4" accept=".mp3,audio/*"><button class="play" onclick="playSound(4)">play</button><br>
+				5<input type="file" name="sound5" accept=".mp3,audio/*"><button class="play" onclick="playSound(5)">play</button><br>
+				6<input type="file" name="sound6" accept=".mp3,audio/*"><button class="play" onclick="playSound(6)">play</button><br>
+				7<input type="file" name="sound7" accept=".mp3,audio/*"><button class="play" onclick="playSound(7)">play</button><br>
+				8<input type="file" name="sound8" accept=".mp3,audio/*"><button class="play" onclick="playSound(8)">play</button><br>
+				<input type="submit">
+				<div></div>
 
-		<div id="log">
-			<ul id="messages"></ul>
-		</div>
+				<form ref='uploadForm'
+      id='uploadForm'
+      action='http://localhost:4000/upload'
+      method='post'
+      encType="multipart/form-data">
+        <input type="file" name="sampleFile" />
+        <input type='submit' value='Upload!' />
+    </form>
+
+		</section>
+	</div>
+
+	<div id="log">
+		<ul id="messages"></ul>
+	</div>
 </body>
 
 
