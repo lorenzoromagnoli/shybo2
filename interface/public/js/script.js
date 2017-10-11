@@ -1,8 +1,12 @@
 var robot;
 var fftData = new Array(256);
 var loudness = 0;
+
 var minSoundLevel=1;
 var maxSoundlevel=200;
+var minSoundY;
+var maxSoundY;
+
 var chartScaleFactor=3;
 
 window.onload = function() {
@@ -183,15 +187,18 @@ function moveServo(angle) {
 }
 
 function changeSoundLevels(){
-	minSoundLevel= $("#minSoundLevel").val()/10;
-	maxSoundLevel= $("#maxSoundLevel").val()/1;
+	 minSoundLevel= parseFloat($("#minSoundLevel").val()/10);
+	 maxSoundLevel= parseInt($("#maxSoundLevel").val());
 	robot.emit('changeSoundLevels', {min:minSoundLevel,max:maxSoundLevel});
+	console.log(minSoundLevel,maxSoundLevel);
 }
 
 function setup() {
 	var canvas = createCanvas(window.innerWidth, 100);
 	canvas.parent('viz');
 	//background(255,0,2);
+	minSoundY=height-minSoundLevel/3;
+	maxSoundY=height-maxSoundLevel/3;
 }
 
 function draw() {
@@ -246,14 +253,14 @@ function drawSoundLevels(){
 	strokeWeight(1);
 	stroke(10, 10, 10);
 
-	var minSoundY=height-minSoundLevel/3;
-	var maxSoundY=height-maxSoundLevel/3;
+	scaledMinSoundY=height-minSoundLevel/3;
+	scaledMaxSoundY=height-maxSoundLevel/3;
 
-	line(0,minSoundY,width,minSoundY);
-	text(minSoundLevel,width-50, minSoundY );
+	line(0,scaledMinSoundY,width,scaledMinSoundY);
+	text(minSoundLevel,width-50, scaledMinSoundY );
 
-	line(0,maxSoundY,width,maxSoundY);
-	text(maxSoundLevel, width-50, maxSoundY );
+	line(0,scaledMaxSoundY,width,scaledMaxSoundY);
+	text(maxSoundLevel, width-50, scaledMaxSoundY );
 }
 
 

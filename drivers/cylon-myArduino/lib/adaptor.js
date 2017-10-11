@@ -152,6 +152,7 @@ Adaptor.prototype.motorStop = function() {
 }
 
 Adaptor.prototype.setFullColor = function(ledStripIndex, color) {
+	console.log(color);
 	Cylon.Logger.log("setting color: red" + hexToRgb(color)[0]+ ", green: " + hexToRgb(color)[1] + ", blue: " + hexToRgb(color)[2]);
 	var message = 'LD/' + ledStripIndex + '/' + 'static/' + hexToRgb(color)[0] + '/' + hexToRgb(color)[1] + '/' + hexToRgb(color)[2] + '/' + '\r' + '\n';
 	this.send(message);

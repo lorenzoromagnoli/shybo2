@@ -6,6 +6,8 @@ var cors = require('cors')
 const fileUpload = require('express-fileupload');
 const rgbHex = require('rgb-hex');
 var hexRgb = require('hex-rgb');
+var cd = require('color-difference');
+
 
 app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname + '/interface/index.html'));
@@ -138,6 +140,8 @@ Cylon.robot({
 		my.colorwheel = ['#15af00', '#00e8d1', '#0073c8', '#9500ff', '#7d007d', '#ff0000', '#e15a00', '#e1e600'];
 		my.savedColors =['#000000','#000000','#000000','#000000','#000000','#000000','#000000','#000000',];
 
+		my.colorSensor;
+
 		my.audio.on("complete", function() {
 			// console.log("Done playing this nice sound.");
 			my.microphone.enableInput();
@@ -243,10 +247,11 @@ Cylon.robot({
 				break;
 			case 1: //shybo listen to wek
 				if (this.microphone.getSoundLevel() > this.noiseLevel) {
+					console.log(this.microphone.getSoundLevel(),this.noiseLevel);
 					this.goToState(2);
 				} else {
 					if (this.wekinatorClass != this.wekinatorOldClass) {
-						this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass]);
+						this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass-1]);
 						this.wekinatorOldClass = this.wekinatorClass;
 					}
 				}
@@ -310,6 +315,8 @@ Cylon.robot({
 					this.myArduino.servoShakeStop();
 					this.myArduino.ledsControl(1, 'scanner', '#0000ff', '#000000', 100, 100);
 					this.wekinator.stopRunning();
+					clearInterval(this.colorSensor);
+
 					break;
 				case 1: //the robot is calm
 					this.myArduino.servoShakeStop();
@@ -317,6 +324,18 @@ Cylon.robot({
 					this.myArduino.ledsControl(0, 'fade', '#ffffff', '#000000', 100, 30);
 					this.myArduino.setFullColor(1, '#000000');
 					this.wekinator.train();
+
+					this.colorSensor=every((1).seconds(),()=>{
+						this.myArduino.readColorSensor();
+						after((.5).seconds(),()=>{
+							var similarColor=this.lookForSimilarColor('#'+rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue));
+							console.log("similarColor",similarColor);
+							if (similarColor.index!=-1){
+								this.playSound(similarColor.index);
+							}
+						});
+					});
+
 					after((2).seconds(), () => {
 						this.wekinator.startRunning();
 					});
@@ -327,22 +346,27 @@ Cylon.robot({
 					after((2).seconds(), () => {
 						this.goToState(1);
 					});
+					clearInterval(this.colorSensor);
 					break;
 				case 3: //shybo await the user for selecting a class to be associated with the sound
 					this.wekinatorOldClass=-1; //forcing reading on changs
 					this.wekinator.stopRecording();
 					this.wekinator.stopRunning();
+					clearInterval(this.colorSensor);
 					break;
 				case 4: // goes into recording mode, trigger wekinator start
 					this.wekinator.startRecording();
 					this.wekinator.stopRunning();
+					clearInterval(this.colorSensor);
 					break;
 				case 5:
 					this.soundOldClass=-1;//forcing reading on changs
 					this.myArduino.setFullColor(0, this.savedColors[this.soundClass]);
+					clearInterval(this.colorSensor);
 					break;
 				case 6:
 					this.myArduino.readColorSensor();
+					clearInterval(this.colorSensor);
 				break;
 
 			}
@@ -387,8 +411,8 @@ Cylon.robot({
 
 	changeSoundLevels: function(data) {
 		console.log("changing sound level");
-		this.noiseLevel = data.min;
-		this.minimumSoundLevel = data.max;
+		this.noiseLevel = data.max;
+		this.minimumSoundLevel = data.min;
 	},
 
 	getColorSensor: function() {
@@ -428,6 +452,21 @@ Cylon.robot({
 	stop: function() {
 		this.myArduino.motorStop();
 
+	},
+	lookForSimilarColor:function(color){
+		var similarColor={index:0, difference:100};
+		for (var i=0; i<this.savedColors.length; i++){
+			var colorDifference=cd.compare(color,this.savedColors[i]);
+			if (colorDifference<similarColor.difference ){
+				similarColor.index=i;
+				similarColor.difference=colorDifference;
+			}
+		}
+		if (similarColor.difference <15){
+			return similarColor;
+		}else{
+			return -1;
+		}
 	}
 
 }).start();
