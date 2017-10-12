@@ -313,7 +313,7 @@ Cylon.robot({
 				case 0: //the robot is off
 					this.reset();
 					this.myArduino.servoShakeStop();
-					this.myArduino.ledsControl(1, 'scanner', '#0000ff', '#000000', 100, 100);
+					this.myArduino.ledsControl(1, 'scanner', '#0000aa', '#000000', 100, 100);
 					this.wekinator.stopRunning();
 					clearInterval(this.colorSensor);
 
