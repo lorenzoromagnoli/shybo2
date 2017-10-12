@@ -234,6 +234,11 @@ Cylon.robot({
 			my.stateMachine();
 		});
 
+		every((1).seconds(), function() {
+			my.microphone.forceSync();
+		});
+
+
 		my.goToState(0);
 	},
 
