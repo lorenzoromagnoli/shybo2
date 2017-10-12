@@ -352,6 +352,7 @@ Cylon.robot({
 					this.wekinatorOldClass=-1; //forcing reading on changs
 					this.wekinator.stopRecording();
 					this.wekinator.stopRunning();
+					this.microphone.enableInput();
 					clearInterval(this.colorSensor);
 					break;
 				case 4: // goes into recording mode, trigger wekinator start
