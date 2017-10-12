@@ -104,7 +104,7 @@ Cylon.robot({
 
 
 	work: function(my) {
-		
+
 		//wait some second before sending data to the serial port
 
 		var record_button_Pin = 2;
@@ -222,9 +222,9 @@ Cylon.robot({
 
 		every((.05).seconds(), function() {
 			var fftData = my.microphone.getFFTData();
-			var loudness = my.microphone.getSoundLevel();
+			//var loudness = my.microphone.getSoundLevel();
 			my.emit('fft', fftData);
-			my.emit('loudness', loudness);
+			//my.emit('loudness', loudness);
 			if (loudness > my.minimumSoundLevel) {
 				my.wekinator.inputs(fftData);
 			}
@@ -304,6 +304,7 @@ Cylon.robot({
 		console.log("_________________");
 		console.log("going to state" + state);
 		console.log("_________________");
+
 
 		if (this.state != state) {
 			this.state = state;
