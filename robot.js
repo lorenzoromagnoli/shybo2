@@ -308,6 +308,7 @@ Cylon.robot({
 
 		if (this.state != state) {
 			this.state = state;
+			this.microphone.forceSync();
 			switch (this.state) {
 				case 0: //the robot is off
 					this.reset();

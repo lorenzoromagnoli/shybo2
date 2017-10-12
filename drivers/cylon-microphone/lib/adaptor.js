@@ -116,3 +116,7 @@ Adaptor.prototype.enableMicrophone = function() {
 	//  		'inputChannels': 1
 	//  })
 }
+
+Adaptor.prototype.forceSync = function() {
+	  this.engine.synchronize();
+}
