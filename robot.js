@@ -225,9 +225,9 @@ Cylon.robot({
 			//var loudness = my.microphone.getSoundLevel();
 			my.emit('fft', fftData);
 			//my.emit('loudness', loudness);
-			if (loudness > my.minimumSoundLevel) {
-				my.wekinator.inputs(fftData);
-			}
+			// if (loudness > my.minimumSoundLevel) {
+			// 	my.wekinator.inputs(fftData);
+			// }
 		});
 
 		every((.05).seconds(), function() {
