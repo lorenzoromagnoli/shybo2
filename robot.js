@@ -222,12 +222,12 @@ Cylon.robot({
 
 		every((.05).seconds(), function() {
 			var fftData = my.microphone.getFFTData();
-			//var loudness = my.microphone.getSoundLevel();
+			var loudness = my.microphone.getSoundLevel();
 			my.emit('fft', fftData);
-			//my.emit('loudness', loudness);
-			// if (loudness > my.minimumSoundLevel) {
-			// 	my.wekinator.inputs(fftData);
-			// }
+			my.emit('loudness', loudness);
+			if (loudness > my.minimumSoundLevel) {
+				my.wekinator.inputs(fftData);
+			}
 		});
 
 		every((.05).seconds(), function() {
