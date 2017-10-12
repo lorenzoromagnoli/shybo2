@@ -104,12 +104,7 @@ Cylon.robot({
 
 
 	work: function(my) {
-		// constantly(function() {
-		// 	// my.stateMachine();
-		// });
-
-		//my.microphone.startRecording();
-
+		
 		//wait some second before sending data to the serial port
 
 		var record_button_Pin = 2;
@@ -142,9 +137,12 @@ Cylon.robot({
 
 		my.colorSensor;
 
+		my.soundIsPlaying=false;
+
 		my.audio.on("complete", function() {
 			// console.log("Done playing this nice sound.");
 			my.microphone.enableInput();
+			my.soundIsPlaying=false;
 		});
 
 		after((3).seconds(), function() {
@@ -280,7 +278,7 @@ Cylon.robot({
 				this.myArduino.readAnalogue(this.pot_pin);
 				this.soundClass = Math.floor((this.potValue / 1024) * 8);
 				if (this.soundClass != this.soundOldClass) {
-					this.myArduino.ledCount(1, '#ff0000', '#0000ff',this.soundClass);
+					this.myArduino.ledCount(1, '#aaaaaa', '#000000',this.soundClass);
 					this.playSound(this.soundClass);
 					this.myArduino.setFullColor(0, this.savedColors[this.soundClass]);
 					this.soundOldClass = this.soundClass;
@@ -437,8 +435,13 @@ Cylon.robot({
 	},
 
 	playSound: function(index) {
+		if (this.soundIsPlaying){
+			this.audio.stop();
+			console.log("stopping sound");
+		}
 		this.microphone.enableOutput();
 		this.audio.play('./assets/sound/sound' + index + '.mp3');
+		this.soundIsPlaying=true;
 	},
 
 	doAThing: function() {

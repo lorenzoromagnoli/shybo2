@@ -86,7 +86,9 @@ void parse (String inputString) {
       parsed_red = getValue(inputString, '/', 3).toInt();
       parsed_green = getValue(inputString, '/', 4).toInt();
       parsed_blue = getValue(inputString, '/', 5).toInt();
-      ledStrips[ledStripIndex].setFullColor(newColor(parsed_red, parsed_green, parsed_blue));
+      //ledStrips[ledStripIndex].setFullColor(newColor(parsed_red, parsed_green, parsed_blue));
+      ledStrips[ledStripIndex].fadeToColor(newColor(parsed_red, parsed_green, parsed_blue), 10, 10, FORWARD);
+
     } else if (animation.equalsIgnoreCase("COLORWHEEL")) {
       index = getValue(inputString, '/', 3).toInt();
       ledStrips[ledStripIndex].colorWheel(colorwheel8,8,index);

@@ -102,16 +102,17 @@ Adaptor.prototype.enableOutput = function() {
 Adaptor.prototype.enableInput = function() {
 	this.engine.setMute(true);
 	this.enableMicrophone();
+
 }
 
 Adaptor.prototype.disableMicrophone = function() {
-	// this.engine.setOptions({
-	// 	'inputDevice': -1
-	// })
+	//  this.engine.setOptions({
+	//  	'inputChannels': 0
+	//  })
 }
 
 Adaptor.prototype.enableMicrophone = function() {
-	// this.engine.setOptions({
-	// 	'inputDevice': 1
-	// })
+	//  this.engine.setOptions({
+	//  		'inputChannels': 1
+	//  })
 }

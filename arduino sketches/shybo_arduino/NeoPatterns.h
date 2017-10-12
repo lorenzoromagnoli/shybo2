@@ -52,14 +52,14 @@ class NeoPatterns : public Adafruit_NeoPixel {
 
 
     void setPixelColorGamma(uint16_t n, uint8_t r, uint8_t g, uint8_t b) {
-      setPixelColor(n,pgm_read_byte(&gamma8[r]),pgm_read_byte(&gamma8[g]),pgm_read_byte(&gamma8[b]));
+      setPixelColor(n, pgm_read_byte(&gamma8[r]), pgm_read_byte(&gamma8[g]), pgm_read_byte(&gamma8[b]));
     }
     void setPixelColorGamma(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w) {
-      setPixelColor(n,pgm_read_byte(&gamma8[r]), pgm_read_byte(&gamma8[g]),pgm_read_byte(&gamma8[b]),w);
+      setPixelColor(n, pgm_read_byte(&gamma8[r]), pgm_read_byte(&gamma8[g]), pgm_read_byte(&gamma8[b]), w);
     }
     void setPixelColorGamma(uint16_t n, uint32_t c) {
-      uint8_t *p, r = (uint8_t)(c >> 16),g = (uint8_t)(c >>  8),b = (uint8_t)c;
-      setPixelColor(n,pgm_read_byte(&gamma8[r]),pgm_read_byte(&gamma8[g]),pgm_read_byte(&gamma8[b]));
+      uint8_t *p, r = (uint8_t)(c >> 16), g = (uint8_t)(c >>  8), b = (uint8_t)c;
+      setPixelColor(n, pgm_read_byte(&gamma8[r]), pgm_read_byte(&gamma8[g]), pgm_read_byte(&gamma8[b]));
     }
 
     // Update the pattern
