@@ -7,7 +7,7 @@ const fileUpload = require('express-fileupload');
 const rgbHex = require('rgb-hex');
 var hexRgb = require('hex-rgb');
 var cd = require('color-difference');
-
+var osc = require('osc');
 
 app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname + '/interface/index.html'));
@@ -81,9 +81,9 @@ Cylon.robot({
 		myArduino: {
 			adaptor: 'myArduino'
 		},
-		microphone: {
-			adaptor: 'microphone'
-		}
+		// microphone: {
+		// 	adaptor: 'microphone'
+		// }
 
 	},
 
@@ -141,9 +141,44 @@ Cylon.robot({
 
 		my.audio.on("complete", function() {
 			// console.log("Done playing this nice sound.");
-			my.microphone.enableInput();
+			// my.microphone.enableInput();
 			my.soundIsPlaying=false;
 		});
+
+
+		my.udpPort = new osc.UDPPort({
+			// This is the port we're listening on.
+	 	localAddress: "127.0.0.1",
+		localPort: 9001,
+
+		 // This is where sclang is listening for OSC messages.
+		 remoteAddress: "127.0.0.1",
+		 remotePort: 9000,
+		 metadata: true
+		});
+
+		my.fft=[];
+		my.loudness;
+
+		my.udpPort.on("message", function (oscMessage) {
+			console.log ("received");
+
+			if (oscMessage.address=='/fft'){
+				my.loudness=oscMessage.args[0];
+				for (var i=1; i<oscMessage.args.length; i++){
+					my.fft[i-1]=oscMessage.args[i].value;
+				}
+			}
+
+
+		});
+
+		my.udpPort.on("error", function (err) {
+		    console.log(err);
+		});
+
+		my.udpPort.open();
+
 
 		after((3).seconds(), function() {
 			my.myArduino.registerToButtonEvent(record_button_Pin);
@@ -200,11 +235,11 @@ Cylon.robot({
 				my.colorSensorColor=payload;
 			});
 
-			//when I receive fft event from the microphone module reemit it
-			my.myArduino.on('fft', function(payload) {
-				console.log("got fft");
-				console.log(payload.data);
-			});
+			// //when I receive fft event from the microphone module reemit it
+			// my.myArduino.on('fft', function(payload) {
+			// 	console.log("got fft");
+			// 	console.log(payload.data);
+			// });
 
 			//when I receive fft event from the microphone module reemit it
 			my.myArduino.on('event', function(payload) {
@@ -213,21 +248,23 @@ Cylon.robot({
 			});
 
 			//when I receive fft event from the microphone module reemit it
-			my.microphone.on('recording_saved', function(file) {
-				my.microphone.playback(file);
-				console.log(file);
-			});
+			// my.microphone.on('recording_saved', function(file) {
+			// 	my.microphone.playback(file);
+			// 	console.log(file);
+			// });
+
 
 		});
 
-		every((.05).seconds(), function() {
-			var fftData = my.microphone.getFFTData();
-			var loudness = my.microphone.getSoundLevel();
-			my.emit('fft', fftData);
-			my.emit('loudness', loudness);
-			if (loudness > my.minimumSoundLevel) {
-				my.wekinator.inputs(fftData);
-			}
+		every((.1).seconds(), function() {
+			// var fftData = my.microphone.getFFTData();
+			// var loudness = my.microphone.getSoundLevel();
+			 my.emit('fft', my.fft);
+			 my.emit('loudness', my.loudness);
+			// if (loudness > my.minimumSoundLevel) {
+			// 	my.wekinator.inputs(fftData);
+			// }
+			my.getFFT();
 		});
 
 		every((.05).seconds(), function() {
@@ -249,20 +286,20 @@ Cylon.robot({
 
 				break;
 			case 1: //shybo listen to wek
-				if (this.microphone.getSoundLevel() > this.noiseLevel) {
-					console.log(this.microphone.getSoundLevel(),this.noiseLevel);
-					this.goToState(2);
-				} else {
-					if (this.wekinatorClass != this.wekinatorOldClass) {
-						this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass-1]);
-						this.wekinatorOldClass = this.wekinatorClass;
-					}
-				}
+				// // if (this.microphone.getSoundLevel() > this.noiseLevel) {
+				// 	console.log(this.microphone.getSoundLevel(),this.noiseLevel);
+				// 	this.goToState(2);
+				// } else {
+				// 	if (this.wekinatorClass != this.wekinatorOldClass) {
+				// 		this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass-1]);
+				// 		this.wekinatorOldClass = this.wekinatorClass;
+				// 	}
+				// }
 				break;
 			case 2: //shybo is scared
 				break;
 			case 3: //shybo in training sound mode
-				this.myArduino.readAnalogue(this.pot_pin);
+				// this.myArduino.readAnalogue(this.pot_pin);
 				this.wekinatorClass = Math.floor((this.potValue / 1024) * 8);
 				if (this.wekinatorClass != this.wekinatorOldClass) {
 					this.wekinator.outputs([this.wekinatorClass + 1]);
@@ -313,7 +350,7 @@ Cylon.robot({
 
 		if (this.state != state) {
 			this.state = state;
-			this.microphone.forceSync();
+			// this.microphone.forceSync();
 			switch (this.state) {
 				case 0: //the robot is off
 					this.reset();
@@ -357,7 +394,7 @@ Cylon.robot({
 					this.wekinatorOldClass=-1; //forcing reading on changs
 					this.wekinator.stopRecording();
 					this.wekinator.stopRunning();
-					this.microphone.enableInput();
+					// this.microphone.enableInput();
 					clearInterval(this.colorSensor);
 					break;
 				case 4: // goes into recording mode, trigger wekinator start
@@ -394,26 +431,26 @@ Cylon.robot({
 		this.myArduino.setFullColor(data.ledStripIndex, data.color1);
 	},
 
-	startRecording: function() {
-		console.log("start recording");
-		if (this.microphone.status == 0) {
-			this.microphone.startRecording();
-		} else if (this.microphone.status == 2) {
-			this.microphone.resumeRecording();
-		}
-	},
+	// startRecording: function() {
+	// 	console.log("start recording");
+	// 	if (this.microphone.status == 0) {
+	// 		this.microphone.startRecording();
+	// 	} else if (this.microphone.status == 2) {
+	// 		this.microphone.resumeRecording();
+	// 	}
+	// },
 
-	stopRecording: function() {
-		console.log("stop recording");
-		if (this.microphone.status == 1) {
-			this.microphone.pauseRecording(() => {
-				this.microphone.createNewFile((lastFile, newFile) => {
-					console.log(lastFile, newFile);
-					this.audio.play(lastFile);
-				});
-			});
-		}
-	},
+	// stopRecording: function() {
+	// 	console.log("stop recording");
+	// 	if (this.microphone.status == 1) {
+	// 		this.microphone.pauseRecording(() => {
+	// 			this.microphone.createNewFile((lastFile, newFile) => {
+	// 				console.log(lastFile, newFile);
+	// 				this.audio.play(lastFile);
+	// 			});
+	// 		});
+	// 	}
+	// },
 
 	changeSoundLevels: function(data) {
 		console.log("changing sound level");
@@ -447,7 +484,7 @@ Cylon.robot({
 			this.audio.stop();
 			console.log("stopping sound");
 		}
-		this.microphone.enableOutput();
+		// this.microphone.enableOutput();
 		this.audio.play('./assets/sound/sound' + index + '.mp3');
 		this.soundIsPlaying=true;
 	},
@@ -463,6 +500,28 @@ Cylon.robot({
 	stop: function() {
 		this.myArduino.motorStop();
 
+	},
+
+	getFFT:function(){
+		var msg = {
+        address: "/run_bastard",
+        args: [
+            {
+                type: "i",
+                value: 256
+            },
+
+        ]
+    };
+    //console.log("Sending message", msg.address, msg.args, "to", this.udpPort.options.remoteAddress + ":" + this.udpPort.options.remotePort);
+    this.udpPort.send(msg);
+	},
+	stopFFT:function(){
+		var msg = {
+        address: "/stop",
+    };
+    //console.log("Sending message", msg.address, msg.args, "to", this.udpPort.options.remoteAddress + ":" + this.udpPort.options.remotePort);
+    this.udpPort.send(msg);
 	},
 	lookForSimilarColor:function(color){
 		var similarColor={index:0, difference:100};

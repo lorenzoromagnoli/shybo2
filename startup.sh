@@ -8,6 +8,9 @@ export DISPLAY=":1"
 #open wekinator
 java -jar ./utils/wekinator/WekiMini.jar ./assets/wek/test/WekinatorProject/WekinatorProject.wekproj &
 
+#lounch dj impostore script
+python utils/osc_audio_djImpostore.py &
+
 #louch robot forever
 #forever start ./robot.js -o ./log/output.log -e ./log/error.log
 

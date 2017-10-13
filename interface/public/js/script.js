@@ -25,6 +25,7 @@ window.onload = function() {
 	robot.on('message', function(payload) {
 
 		if (payload.name == 'fft') {
+			//console.log(payload.data);
 			if (payload.data) {
 				fftData = payload.data;
 				//drawchart();
@@ -231,7 +232,7 @@ function drawchart() {
 	strokeWeight(2)
 	stroke(150);
 	for (var i = 0; i < 256; i++) {
-		line(i * barwidth, height + fftData[i] * 500, i * barwidth, height);
+		line(i * barwidth, height + fftData[i]/2, i * barwidth, height);
 	}
 	if (loudness > maxSoundlevel) {
 		stroke(255, 0, 0)
