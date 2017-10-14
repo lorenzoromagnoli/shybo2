@@ -18,4 +18,4 @@ export DISPLAY=":1"
 # node ./robot.js &
 
 
-. utils/parallel_commands.sh parallel_commands "java -jar ./utils/wekinator/WekiMini.jar ./assets/wek/test/WekinatorProject/WekinatorProject.wekproj" "python utils/osc_audio_djImpostore.py" "node ./robot.js"
+. ./utils/parallel_commands.sh parallel_commands "java -jar ./utils/wekinator/WekiMini.jar ./assets/wek/test/WekinatorProject/WekinatorProject.wekproj" "python utils/osc_audio_djImpostore.py" "node ./robot.js"
