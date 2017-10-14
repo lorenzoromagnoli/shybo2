@@ -116,14 +116,14 @@ def run_bastard(addr, tags, data, client_address):
     # print(magnitudes.size)
     # print(magnitudes[0].size)
 
-    magnitudesAVG=np.average(magnitudes, axis=0)
+    # magnitudesAVG=np.average(magnitudes, axis=0)
     # print(magnitudesAVG)
 
     oscmsg = OSC.OSCMessage()
     oscmsg.setAddress("/fft")
     oscmsg.append(loudness);
-    #oscmsg.append(magnitudes[0]);
-    oscmsg.append(magnitudesAVG);
+    oscmsg.append(magnitudes[0]);
+    #oscmsg.append(magnitudesAVG);
 
     #print(magnitudesAVG.size())
     client.send(oscmsg)
