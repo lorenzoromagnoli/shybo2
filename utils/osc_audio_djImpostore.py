@@ -5,7 +5,7 @@ import threading
 import numpy as np
 from scipy.fftpack import fft
 
-fft_size = 256  #+ alto e' questo valore, + aumenta la risoluzione in frequenza e diminuisce la risoluzione nel tempo
+fft_size = 128  #+ alto e' questo valore, + aumenta la risoluzione in frequenza e diminuisce la risoluzione nel tempo
 hop_size = fft_size/4
 window = np.hanning(fft_size)  #per spettro + "bello" provare anche finestra blackman_harris
 tol = 1e-14                                                      # threshold used to compute phase
