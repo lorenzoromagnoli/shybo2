@@ -161,7 +161,7 @@ Cylon.robot({
 		my.loudness;
 
 		my.udpPort.on("message", function (oscMessage) {
-			console.log ("received");
+			//console.log ("received");
 
 			if (oscMessage.address=='/fft'){
 				my.loudness=oscMessage.args[0];
@@ -256,16 +256,16 @@ Cylon.robot({
 
 		});
 
-		every((.2).seconds(), function() {
-			// var fftData = my.microphone.getFFTData();
-			// var loudness = my.microphone.getSoundLevel();
-			 my.emit('fft', my.fft);
-			 my.emit('loudness', my.loudness);
-			// if (loudness > my.minimumSoundLevel) {
-			// 	my.wekinator.inputs(fftData);
-			// }
-			my.getFFT();
-		});
+		// every((.2).seconds(), function() {
+		// 	// var fftData = my.microphone.getFFTData();
+		// 	// var loudness = my.microphone.getSoundLevel();
+		// 	 my.emit('fft', my.fft);
+		// 	 my.emit('loudness', my.loudness);
+		// 	// if (loudness > my.minimumSoundLevel) {
+		// 	// 	my.wekinator.inputs(fftData);
+		// 	// }
+		// 	my.getFFT();
+		// });
 
 		every((.05).seconds(), function() {
 			my.stateMachine();
