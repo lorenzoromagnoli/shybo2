@@ -118,9 +118,8 @@ def run_bastard(addr, tags, data, client_address):
     oscmsg.setAddress("/fft")
     oscmsg.append(loudness);
     oscmsg.append(magnitudes[0]);
-    #oscmsg.append(loudness)
-    #oscmsg.append(magnitudes)
-    # print(oscmsg.items())
+
+    print(oscmsg.items())
     client.send(oscmsg)
 
 server.addMsgHandler('/run_bastard', run_bastard)
