@@ -25,7 +25,7 @@ window.onload = function() {
 	robot.on('message', function(payload) {
 
 		if (payload.name == 'fft') {
-			console.log(payload.data);
+			//console.log(payload.data);
 			if (payload.data) {
 				fftData = payload.data;
 				//drawchart();
