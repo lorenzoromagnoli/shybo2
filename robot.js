@@ -498,14 +498,13 @@ Cylon.robot({
 		this.myArduino.motorStop();
 
 	},
-
 	getFFT:function(){
 		var msg = {
         address: "/run_bastard",
         args: [
             {
                 type: "i",
-                value: 512
+                value: 1024
             },
 
         ]
