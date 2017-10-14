@@ -25,7 +25,7 @@ window.onload = function() {
 	robot.on('message', function(payload) {
 
 		if (payload.name == 'fft') {
-			//console.log(payload.data);
+			console.log(payload.data);
 			if (payload.data) {
 				fftData = payload.data;
 				//drawchart();
@@ -227,12 +227,12 @@ function playSound(index){
 
 function drawchart() {
 	background(255);
-	var barwidth = width / 256 * 2;
+	var barwidth = width / fftData.length * 2;
 	fill(0);
 	strokeWeight(2)
 	stroke(150);
-	for (var i = 0; i < 256; i++) {
-		line(i * barwidth, height + fftData[i]/2, i * barwidth, height);
+	for (var i = 0; i < fftData.length; i++) {
+		line(i * barwidth,  fftData[i]*-1, i * barwidth, height);
 	}
 	if (loudness > maxSoundlevel) {
 		stroke(255, 0, 0)
@@ -263,7 +263,6 @@ function drawSoundLevels(){
 	line(0,scaledMaxSoundY,width,scaledMaxSoundY);
 	text(maxSoundLevel, width-50, scaledMaxSoundY );
 }
-
 
 var form = document.forms.namedItem("uploadForm");
 console.log(form);
