@@ -508,7 +508,7 @@ Cylon.robot({
         args: [
             {
                 type: "i",
-                value: 256
+                value: 8000
             },
 
         ]
