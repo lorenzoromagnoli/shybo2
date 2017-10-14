@@ -109,17 +109,23 @@ def run_bastard(addr, tags, data, client_address):
     loudness = np.sqrt(np.mean(rec_buffer**2))
     magnitudes, phases = stftAnal(rec_buffer, window, fft_size, hop_size)
 
+    # magnitudes=10**(magnitudes/20)
+
     # print(loudness)
     # print(magnitudes[0])
     # print(magnitudes.size)
     # print(magnitudes[0].size)
 
+    magnitudesAVG=np.average(magnitudes, axis=0)
+    print(magnitudesAVG)
+
     oscmsg = OSC.OSCMessage()
     oscmsg.setAddress("/fft")
     oscmsg.append(loudness);
-    oscmsg.append(magnitudes[0]);
+    #oscmsg.append(magnitudes[0]);
+    oscmsg.append(magnitudesAVG);
 
-    print(oscmsg.items())
+    #print(magnitudesAVG.size())
     client.send(oscmsg)
 
 server.addMsgHandler('/run_bastard', run_bastard)
