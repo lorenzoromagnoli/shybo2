@@ -126,5 +126,5 @@ server.addMsgHandler('/run_bastard', run_bastard)
 server.addMsgHandler('/quit', quit_handler)
 
 th = threading.Thread(target = server.serve_forever)
-th.daemon = True
+th.daemon = False
 th.start()
