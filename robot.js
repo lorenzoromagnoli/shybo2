@@ -169,8 +169,6 @@ Cylon.robot({
 					my.fft[i-1]=oscMessage.args[i].value;
 				}
 			}
-
-
 		});
 
 		my.udpPort.on("error", function (err) {
@@ -256,16 +254,16 @@ Cylon.robot({
 
 		});
 
-		// every((.2).seconds(), function() {
-		// 	// var fftData = my.microphone.getFFTData();
-		// 	// var loudness = my.microphone.getSoundLevel();
-		// 	 my.emit('fft', my.fft);
-		// 	 my.emit('loudness', my.loudness);
-		// 	// if (loudness > my.minimumSoundLevel) {
-		// 	// 	my.wekinator.inputs(fftData);
-		// 	// }
-		// 	my.getFFT();
-		// });
+		every((.1).seconds(), function() {
+			// var fftData = my.microphone.getFFTData();
+			// var loudness = my.microphone.getSoundLevel();
+			 my.emit('fft', my.fft);
+			 my.emit('loudness', my.loudness);
+			// if (loudness > my.minimumSoundLevel) {
+			// 	my.wekinator.inputs(fftData);
+			// }
+			my.getFFT();
+		});
 
 		every((.05).seconds(), function() {
 			my.stateMachine();
@@ -274,7 +272,6 @@ Cylon.robot({
 		// every((1).seconds(), function() {
 		// 	my.microphone.forceSync();
 		// });
-
 
 		my.goToState(0);
 	},
