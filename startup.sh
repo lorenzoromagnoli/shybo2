@@ -18,5 +18,5 @@
 # node ./robot.js &
 
 
-. utils/parallel_commands.sh parallel_commands "sudo Xvfb :1 -screen 0 1024x768x24 </dev/null&&
-# export DISPLAY=":1"" "java -jar ./utils/wekinator/WekiMini.jar ./assets/wek/test/WekinatorProject/WekinatorProject.wekproj" "python utils/osc_audio_djImpostore.py" "node ./robot.js"
+. utils/parallel_commands.sh parallel_commands "sudo Xvfb :1 -screen 0 1024x768x24 </dev/null &
+export DISPLAY=":1"" "java -jar ./utils/wekinator/WekiMini.jar ./assets/wek/test/WekinatorProject/WekinatorProject.wekproj" "python utils/osc_audio_djImpostore.py" "node ./robot.js"
