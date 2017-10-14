@@ -256,7 +256,7 @@ Cylon.robot({
 
 		});
 
-		every((.1).seconds(), function() {
+		every((.2).seconds(), function() {
 			// var fftData = my.microphone.getFFTData();
 			// var loudness = my.microphone.getSoundLevel();
 			 my.emit('fft', my.fft);
