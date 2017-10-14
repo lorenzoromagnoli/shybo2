@@ -161,14 +161,14 @@ Cylon.robot({
 		my.loudness;
 
 		my.udpPort.on("message", function (oscMessage) {
-			//console.log ("received");
+			console.log ("received");
 
-			if (oscMessage.address=='/fft'){
-				my.loudness=oscMessage.args[0];
-				for (var i=1; i<oscMessage.args.length; i++){
-					my.fft[i-1]=oscMessage.args[i].value;
-				}
-			}
+			// if (oscMessage.address=='/fft'){
+			// 	my.loudness=oscMessage.args[0];
+			// 	for (var i=1; i<oscMessage.args.length; i++){
+			// 		my.fft[i-1]=oscMessage.args[i].value;
+			// 	}
+			// }
 
 
 		});
