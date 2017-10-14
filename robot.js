@@ -114,8 +114,8 @@ Cylon.robot({
 		my.soundClass = 0;
 		my.soundOldClass = 0;
 
-		my.noiseLevel = 200;
-		my.minimumSoundLevel = 1;
+		my.noiseLevel = 0.7;
+		my.minimumSoundLevel = 0.1;
 
 		my.colorSensorColor = {
 			red: 0,
@@ -153,10 +153,9 @@ Cylon.robot({
 
 		my.udpPort.on("message", function(oscMessage) {
 			//console.log ("received");
-
 			if (oscMessage.address == '/fft') {
-				my.loudness = oscMessage.args[0];
-				for (var i = 1; i < oscMessage.args.length; i++) {
+				my.loudness = oscMessage.args[0].value;
+				for (var i = 1; i < oscMessage.args.length-1; i++) {
 					my.fft[i - 1] = oscMessage.args[i].value;
 				}
 			}
@@ -214,7 +213,8 @@ Cylon.robot({
 				my.emit('loudness', my.loudness);
 
 				if (my.loudness > my.minimumSoundLevel) {
-					my.wekinator.inputs(my.fftData);
+					//console.log(my.fft);
+					my.wekinator.inputs(my.fft);
 				}
 			});
 
