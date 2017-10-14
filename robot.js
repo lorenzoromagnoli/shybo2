@@ -19,9 +19,6 @@ app.post('/upload', function(req, res) {
 	if (!req.files) {
 		return res.status(400).send('No files were uploaded.');
 	} else {
-		//console.log(req.files);
-		// let files=[];
-		// // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
 		for (var i = 0; i < 8; i++) {
 			if (req.files['sound' + i]) {
 				console.log(i, req.files['sound' + i].name);
@@ -34,16 +31,6 @@ app.post('/upload', function(req, res) {
 			}
 		}
 		res.send('File uploaded!');
-
-		// console.log(req.files.1);
-		//
-		// // Use the mv() method to place the file somewhere on your server
-		// sampleFile.mv('/assets/sound/'+sampleFile+'.jpg', function(err) {
-		//   if (err)
-		//     return res.status(500).send(err);
-		//
-		//   res.send('File uploaded!');
-		// });
 	}
 });
 
@@ -130,49 +117,53 @@ Cylon.robot({
 		my.noiseLevel = 200;
 		my.minimumSoundLevel = 1;
 
-		my.colorSensorColor={ red: 0, green: 0, blue: 0 };
+		my.colorSensorColor = {
+			red: 0,
+			green: 0,
+			blue: 0
+		};
 
 		my.colorwheel = ['#15af00', '#00e8d1', '#0073c8', '#9500ff', '#7d007d', '#ff0000', '#e15a00', '#e1e600'];
-		my.savedColors =['#000000','#000000','#000000','#000000','#000000','#000000','#000000','#000000',];
+		my.savedColors = ['#000000', '#000000', '#000000', '#000000', '#000000', '#000000', '#000000', '#000000', ];
 
 		my.colorSensor;
 
-		my.soundIsPlaying=false;
+		my.soundIsPlaying = false;
 
 		my.audio.on("complete", function() {
 			// console.log("Done playing this nice sound.");
 			// my.microphone.enableInput();
-			my.soundIsPlaying=false;
+			my.soundIsPlaying = false;
 		});
 
 
 		my.udpPort = new osc.UDPPort({
 			// This is the port we're listening on.
-	 	localAddress: "127.0.0.1",
-		localPort: 9001,
+			localAddress: "127.0.0.1",
+			localPort: 9001,
 
-		 // This is where sclang is listening for OSC messages.
-		 remoteAddress: "127.0.0.1",
-		 remotePort: 9000,
-		 metadata: true
+			// This is where sclang is listening for OSC messages.
+			remoteAddress: "127.0.0.1",
+			remotePort: 9000,
+			metadata: true
 		});
 
-		my.fft=[];
+		my.fft = [];
 		my.loudness;
 
-		my.udpPort.on("message", function (oscMessage) {
+		my.udpPort.on("message", function(oscMessage) {
 			//console.log ("received");
 
-			if (oscMessage.address=='/fft'){
-				my.loudness=oscMessage.args[0];
-				for (var i=1; i<oscMessage.args.length; i++){
-					my.fft[i-1]=oscMessage.args[i].value;
+			if (oscMessage.address == '/fft') {
+				my.loudness = oscMessage.args[0];
+				for (var i = 1; i < oscMessage.args.length; i++) {
+					my.fft[i - 1] = oscMessage.args[i].value;
 				}
 			}
 		});
 
-		my.udpPort.on("error", function (err) {
-		    console.log(err);
+		my.udpPort.on("error", function(err) {
+			console.log(err);
 		});
 
 		my.udpPort.open();
@@ -216,6 +207,22 @@ Cylon.robot({
 				//my.myArduino.readColorSensor();
 			});
 
+			every((.1).seconds(), function() {
+				my.getFFT();
+
+				my.emit('fft', my.fft);
+				my.emit('loudness', my.loudness);
+
+				if (my.loudness > my.minimumSoundLevel) {
+					my.wekinator.inputs(my.fftData);
+				}
+			});
+
+			every((.05).seconds(), function() {
+				my.stateMachine();
+			});
+
+
 			my.myArduino.on('analogue', function(payload) {
 				if (payload.pin == my.pot_pin) {
 					my.potValue = payload.value;
@@ -230,48 +237,9 @@ Cylon.robot({
 			my.myArduino.on('color', function(payload) {
 				console.log(payload);
 				my.emit('color_changed', payload);
-				my.colorSensorColor=payload;
+				my.colorSensorColor = payload;
 			});
-
-			// //when I receive fft event from the microphone module reemit it
-			// my.myArduino.on('fft', function(payload) {
-			// 	console.log("got fft");
-			// 	console.log(payload.data);
-			// });
-
-			//when I receive fft event from the microphone module reemit it
-			my.myArduino.on('event', function(payload) {
-				console.log("event");
-				console.log(payload);
-			});
-
-			//when I receive fft event from the microphone module reemit it
-			// my.microphone.on('recording_saved', function(file) {
-			// 	my.microphone.playback(file);
-			// 	console.log(file);
-			// });
-
-
 		});
-
-		every((.1).seconds(), function() {
-			// var fftData = my.microphone.getFFTData();
-			// var loudness = my.microphone.getSoundLevel();
-			 my.emit('fft', my.fft);
-			 my.emit('loudness', my.loudness);
-			// if (loudness > my.minimumSoundLevel) {
-			// 	my.wekinator.inputs(fftData);
-			// }
-			my.getFFT();
-		});
-
-		every((.05).seconds(), function() {
-			my.stateMachine();
-		});
-
-		// every((1).seconds(), function() {
-		// 	my.microphone.forceSync();
-		// });
 
 		my.goToState(0);
 	},
@@ -283,20 +251,19 @@ Cylon.robot({
 
 				break;
 			case 1: //shybo listen to wek
-				// // if (this.microphone.getSoundLevel() > this.noiseLevel) {
-				// 	console.log(this.microphone.getSoundLevel(),this.noiseLevel);
-				// 	this.goToState(2);
-				// } else {
-				// 	if (this.wekinatorClass != this.wekinatorOldClass) {
-				// 		this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass-1]);
-				// 		this.wekinatorOldClass = this.wekinatorClass;
-				// 	}
-				// }
+				if (this.loudness > this.noiseLevel) {
+					this.goToState(2);
+				} else {
+					if (this.wekinatorClass != this.wekinatorOldClass) {
+						this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass - 1]);
+						this.wekinatorOldClass = this.wekinatorClass;
+					}
+				}
 				break;
 			case 2: //shybo is scared
 				break;
 			case 3: //shybo in training sound mode
-				// this.myArduino.readAnalogue(this.pot_pin);
+				this.myArduino.readAnalogue(this.pot_pin);
 				this.wekinatorClass = Math.floor((this.potValue / 1024) * 8);
 				if (this.wekinatorClass != this.wekinatorOldClass) {
 					this.wekinator.outputs([this.wekinatorClass + 1]);
@@ -317,7 +284,7 @@ Cylon.robot({
 				this.myArduino.readAnalogue(this.pot_pin);
 				this.soundClass = Math.floor((this.potValue / 1024) * 8);
 				if (this.soundClass != this.soundOldClass) {
-					this.myArduino.ledCount(1, '#aaaaaa', '#000000',this.soundClass);
+					this.myArduino.ledCount(1, '#aaaaaa', '#000000', this.soundClass);
 					this.playSound(this.soundClass);
 					this.myArduino.setFullColor(0, this.savedColors[this.soundClass]);
 					this.soundOldClass = this.soundClass;
@@ -327,7 +294,7 @@ Cylon.robot({
 				}
 				break;
 			case 6: //shybo should be reading colors
-				this.savedColors[this.soundClass]='#'+rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue);
+				this.savedColors[this.soundClass] = '#' + rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue);
 
 				if (!this.recordButtonStatus) {
 					this.goToState(5)
@@ -364,12 +331,12 @@ Cylon.robot({
 					this.myArduino.setFullColor(1, '#000000');
 					this.wekinator.train();
 
-					this.colorSensor=every((1).seconds(),()=>{
+					this.colorSensor = every((1).seconds(), () => {
 						this.myArduino.readColorSensor();
-						after((.5).seconds(),()=>{
-							var similarColor=this.lookForSimilarColor('#'+rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue));
-							console.log("similarColor",similarColor);
-							if (similarColor.index!=-1){
+						after((.5).seconds(), () => {
+							var similarColor = this.lookForSimilarColor('#' + rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue));
+							console.log("similarColor", similarColor);
+							if (similarColor.index != -1) {
 								this.playSound(similarColor.index);
 							}
 						});
@@ -388,10 +355,9 @@ Cylon.robot({
 					clearInterval(this.colorSensor);
 					break;
 				case 3: //shybo await the user for selecting a class to be associated with the sound
-					this.wekinatorOldClass=-1; //forcing reading on changs
+					this.wekinatorOldClass = -1; //forcing reading on changs
 					this.wekinator.stopRecording();
 					this.wekinator.stopRunning();
-					// this.microphone.enableInput();
 					clearInterval(this.colorSensor);
 					break;
 				case 4: // goes into recording mode, trigger wekinator start
@@ -400,14 +366,14 @@ Cylon.robot({
 					clearInterval(this.colorSensor);
 					break;
 				case 5:
-					this.soundOldClass=-1;//forcing reading on changs
+					this.soundOldClass = -1; //forcing reading on changs
 					this.myArduino.setFullColor(0, this.savedColors[this.soundClass]);
 					clearInterval(this.colorSensor);
 					break;
 				case 6:
 					this.myArduino.readColorSensor();
 					clearInterval(this.colorSensor);
-				break;
+					break;
 
 			}
 		}
@@ -477,13 +443,13 @@ Cylon.robot({
 	},
 
 	playSound: function(index) {
-		if (this.soundIsPlaying){
+		if (this.soundIsPlaying) {
 			this.audio.stop();
 			console.log("stopping sound");
 		}
 		// this.microphone.enableOutput();
 		this.audio.play('./assets/sound/sound' + index + '.mp3');
-		this.soundIsPlaying=true;
+		this.soundIsPlaying = true;
 	},
 
 	doAThing: function() {
@@ -498,39 +464,41 @@ Cylon.robot({
 		this.myArduino.motorStop();
 
 	},
-	getFFT:function(){
+	getFFT: function() {
 		var msg = {
-        address: "/run_bastard",
-        args: [
-            {
-                type: "i",
-                value: 256
-            },
+			address: "/run_bastard",
+			args: [{
+					type: "i",
+					value: 256
+				},
 
-        ]
-    };
-    //console.log("Sending message", msg.address, msg.args, "to", this.udpPort.options.remoteAddress + ":" + this.udpPort.options.remotePort);
-    this.udpPort.send(msg);
+			]
+		};
+		//console.log("Sending message", msg.address, msg.args, "to", this.udpPort.options.remoteAddress + ":" + this.udpPort.options.remotePort);
+		this.udpPort.send(msg);
 	},
-	stopFFT:function(){
+	stopFFT: function() {
 		var msg = {
-        address: "/stop",
-    };
-    //console.log("Sending message", msg.address, msg.args, "to", this.udpPort.options.remoteAddress + ":" + this.udpPort.options.remotePort);
-    this.udpPort.send(msg);
+			address: "/stop",
+		};
+		//console.log("Sending message", msg.address, msg.args, "to", this.udpPort.options.remoteAddress + ":" + this.udpPort.options.remotePort);
+		this.udpPort.send(msg);
 	},
-	lookForSimilarColor:function(color){
-		var similarColor={index:0, difference:100};
-		for (var i=0; i<this.savedColors.length; i++){
-			var colorDifference=cd.compare(color,this.savedColors[i]);
-			if (colorDifference<similarColor.difference ){
-				similarColor.index=i;
-				similarColor.difference=colorDifference;
+	lookForSimilarColor: function(color) {
+		var similarColor = {
+			index: 0,
+			difference: 100
+		};
+		for (var i = 0; i < this.savedColors.length; i++) {
+			var colorDifference = cd.compare(color, this.savedColors[i]);
+			if (colorDifference < similarColor.difference) {
+				similarColor.index = i;
+				similarColor.difference = colorDifference;
 			}
 		}
-		if (similarColor.difference <15){
+		if (similarColor.difference < 15) {
 			return similarColor;
-		}else{
+		} else {
 			return -1;
 		}
 	}
@@ -541,9 +509,11 @@ function componentToHex(c) {
 	var hex = c.toString(16);
 	return hex.length == 1 ? "0" + hex : hex;
 }
+
 function rgbToHex(r, g, b) {
 	return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
+
 function hexToRgb(hex) {
 	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 	return result ? {
