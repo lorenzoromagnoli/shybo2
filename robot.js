@@ -211,9 +211,9 @@ Cylon.robot({
 
 				my.emit('fft', my.fft);
 				my.emit('loudness', my.loudness);
+				console.log(my.loudness);
 
 				if (my.loudness > my.minimumSoundLevel) {
-					console.log(my.loudness);
 					my.wekinator.inputs(my.fft);
 				}
 			});
