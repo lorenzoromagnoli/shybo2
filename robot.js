@@ -161,7 +161,7 @@ Cylon.robot({
 		my.loudness;
 
 		my.udpPort.on("message", function (oscMessage) {
-			console.log ("received");
+			//console.log ("received");
 
 			if (oscMessage.address=='/fft'){
 				my.loudness=oscMessage.args[0];
