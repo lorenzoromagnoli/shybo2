@@ -33,16 +33,16 @@ void draw() {
   background(255);  
   sendMessage();
 
-  delay(100);
+  delay(10);
   drawData();
 }
 
 void drawData(){
   stroke(0);
  for (int i=1; i<fft.length; i++){
-   line(i,height+fft[i], i, height);
+   //println(fft[i]*1000000);
+   line(i,fft[i]*-1, i, height);
  }
-
 }
 
 
@@ -62,12 +62,10 @@ void mousePressed() {
 void keyPressed() {
   /* in the following different ways of creating osc messages are shown by example */
   OscMessage myMessage = new OscMessage("/quit");
-  myMessage.add(8000); /* add an int to the osc message */
 
   /* send the message */
   oscP5.send(myMessage, myRemoteLocation); 
 }
-
 
 /* incoming osc message are forwarded to the oscEvent method. */
 void oscEvent(OscMessage theOscMessage) {

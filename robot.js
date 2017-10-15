@@ -326,6 +326,7 @@ Cylon.robot({
 				case 1: //the robot is calm
 					this.myArduino.servoShakeStop();
 					this.myArduino.servoWrite(20);
+
 					this.myArduino.ledsControl(0, 'fade', '#ffffff', '#000000', 100, 30);
 					this.myArduino.setFullColor(1, '#000000');
 					this.wekinator.train();
