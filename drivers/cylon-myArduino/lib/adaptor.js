@@ -53,7 +53,7 @@ Adaptor.prototype.connect = function(callback) {
 			Cylon.Logger.log("connecting to " + this.SerialPortName);
 
 			this.connector = this.myArduino = this.port = new SerialPort(this.SerialPortName, {
-				baudRate: 57600
+				baudRate: 115200
 			}, (err) => {
 				if (err) {
 					Cylon.Logger.log("connection to serial port didn't work");

@@ -47,7 +47,7 @@ uint32_t colorArray[]={ bianco, giallo, arancione,rosso, viola, azzurro, spento,
 uint32_t colorwheel8[] = {verde, verdeacqua, azzurro, violone, viola, rosso, arancione, giallo};
 
 void setup() {
-  Serial.begin(57600);
+  Serial.begin(115200);
   
   bodyLeds.begin();
   frontLeds.begin();
