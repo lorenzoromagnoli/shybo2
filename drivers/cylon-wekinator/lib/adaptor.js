@@ -41,8 +41,13 @@ Adaptor.prototype.connect = function(callback) {
 
 	this.wekinator.on("osc", (a)=>{
 			// When we recieve a message from Wekinator, log it
-			console.log(a);
-			this.emit('wek_class', a.args[0]);
+			//console.log(a);
+			if (a.address=='/wek/outputs'){
+				this.emit('wek_class', a.args[0]);
+				//console.log(a.args[0]);
+			}else if (a.address=='/outputs-1'){
+				//console.log(a.args);
+			}
 		});
 
   callback();
