@@ -36,6 +36,12 @@ void parse (String inputString) {
     digitalWrite(pin, value);
 
   } 
+  if (command.equalsIgnoreCase("DR")) {
+    //debug("digitalWrite");
+    int pin = getValue(inputString, '/', 1).toInt();
+    int value= digitalRead(pin);
+    emitButtonEvent(pin,value);
+  } 
   else if (command.equalsIgnoreCase("RI")) { //set analog pin as input
     //debug("readButton");
     int pin = getValue(inputString, '/', 1).toInt();
@@ -122,7 +128,11 @@ void parse (String inputString) {
       }else if (animation.equalsIgnoreCase("COUNT")) {
         ledStrips[ledStripIndex].countTo(color1,color2,interval);
         //debug("starting blink animation");
+      }else if (animation.equalsIgnoreCase("FADETO")) {
+        ledStrips[ledStripIndex].fadeToColor(color2,steps,interval, FORWARD);
+        //debug("starting blink animation");
       }
+      
       else {
         //debug("didn't recognize animation");
       }

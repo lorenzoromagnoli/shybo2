@@ -56,9 +56,8 @@ void setup() {
   initMotors();
   initColorSensor();
   
-  delay (2000);
-
-  ledStrips[1].fade(bianco,  giallo,  100,  100,  FORWARD);
+  delay (1000);
+  ledStrips[1].scanner(newColor(100, 100, 100),  2000);
 }
 
 void loop() {

@@ -176,6 +176,22 @@ Cylon.robot({
 			my.myArduino.registerToButtonEvent(play_mode_Pin);
 			my.myArduino.setInput(my.pot_pin);
 
+			//done with all the initialization show it visualizing a white fade.
+			my.myArduino.ledsControl(1, 'fadeto', '#000000', '#ffffff', 100, 100);
+
+			//set to the default state 0
+			my.goToState(0);
+
+			//wait a couple of seconds and then read the mode switch
+			after((3).seconds(), function(){
+				my.myArduino.digitalRead(off_button_pin);
+				my.myArduino.digitalRead(teach_color_mode_Pin);
+				my.myArduino.digitalRead(teach_sound_mode_Pin);
+				my.myArduino.digitalRead(play_mode_Pin);
+			})
+
+
+
 			my.myArduino.on('button', function(payload) {
 				console.log(payload);
 
@@ -240,7 +256,6 @@ Cylon.robot({
 			});
 		});
 
-		my.goToState(0);
 	},
 
 	stateMachine: function() {
