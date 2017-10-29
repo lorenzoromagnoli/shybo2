@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #sleep 8
 
 #create a virtual monitor if on raspi
