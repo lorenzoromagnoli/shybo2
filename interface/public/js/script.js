@@ -114,8 +114,8 @@ $(document).ready(function() {
 	manager.on('added', function(evt, nipple) {
 		nipple.on('dir:up', function(evt) {
 			robot.emit('move', {
-				'motor1': 200,
-				'motor2': 200,
+				'motor1': 255,
+				'motor2': 255,
 				'motor1dir': 1,
 				'motor2dir': 1,
 			});
@@ -123,8 +123,8 @@ $(document).ready(function() {
 		});
 		nipple.on('dir:down', function(evt) {
 			robot.emit('move', {
-				'motor1': 200,
-				'motor2': 200,
+				'motor1': 255,
+				'motor2': 255,
 				'motor1dir': 0,
 				'motor2dir': 0,
 			});
@@ -132,8 +132,8 @@ $(document).ready(function() {
 		});
 		nipple.on('dir:left', function(evt) {
 			robot.emit('move', {
-				'motor1': 120,
-				'motor2': 120,
+				'motor1': 255,
+				'motor2': 255,
 				'motor1dir': 0,
 				'motor2dir': 1,
 			});
@@ -142,8 +142,8 @@ $(document).ready(function() {
 		});
 		nipple.on('dir:right', function(evt) {
 			robot.emit('move', {
-				'motor1': 120,
-				'motor2': 120,
+				'motor1': 255,
+				'motor2': 255,
 				'motor1dir': 1,
 				'motor2dir': 0,
 			});
