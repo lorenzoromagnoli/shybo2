@@ -226,7 +226,7 @@ Adaptor.prototype.parseSerial = function(data) {
 	//	console.log('-');
 	} else {
 		var message = data.split("/");
-		console.log(data);
+		//console.log(data);
 		if (message[0] == 'BE') {
 			console.log(data);
 			this.emit('button', {

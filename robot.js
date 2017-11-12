@@ -9,7 +9,7 @@ var hexRgb = require('hex-rgb');
 var cd = require('color-difference');
 var osc = require('osc');
 
-var nColors=5;
+var nColors = 5;
 
 app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname + '/interface/index.html'));
@@ -126,14 +126,14 @@ Cylon.robot({
 		};
 
 
-		var arancione='#ff9100';
-		var giallo='#ffe600';
-		var verde='#19af00';
-		var azzurro='#0073c8';
-		var viola='#d232d2';
+		var arancione = '#ff9100';
+		var giallo = '#ffe600';
+		var verde = '#19af00';
+		var azzurro = '#0073c8';
+		var viola = '#d232d2';
 
 		my.colorwheel = [arancione, giallo, verde, azzurro, viola];
-		my.savedColors = ['#000000', '#000000', '#000000', '#000000', '#000000' ];
+		my.savedColors = ['#000000', '#000000', '#000000', '#000000', '#000000'];
 
 		my.colorSensor;
 
@@ -164,7 +164,7 @@ Cylon.robot({
 			//console.log ("received");
 			if (oscMessage.address == '/fft') {
 				my.loudness = oscMessage.args[0].value;
-				for (var i = 1; i < oscMessage.args.length-1; i++) {
+				for (var i = 1; i < oscMessage.args.length - 1; i++) {
 					my.fft[i - 1] = oscMessage.args[i].value;
 				}
 			}
@@ -192,7 +192,7 @@ Cylon.robot({
 			my.goToState(0);
 
 			//wait a couple of seconds and then read the mode switch
-			after((3).seconds(), function(){
+			after((3).seconds(), function() {
 				my.myArduino.digitalRead(off_button_pin);
 				my.myArduino.digitalRead(teach_color_mode_Pin);
 				my.myArduino.digitalRead(teach_sound_mode_Pin);
@@ -290,7 +290,7 @@ Cylon.robot({
 				this.wekinatorClass = Math.floor((this.potValue / 1024) * nColors);
 				if (this.wekinatorClass != this.wekinatorOldClass) {
 					this.wekinator.outputs([this.wekinatorClass + 1]);
-					this.myArduino.colorwheel(1, this.wekinatorClass+3);
+					this.myArduino.colorwheel(1, this.wekinatorClass + 3);
 					this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass]);
 					this.wekinatorOldClass = this.wekinatorClass;
 				}
@@ -307,7 +307,7 @@ Cylon.robot({
 				this.myArduino.readAnalogue(this.pot_pin);
 				this.soundClass = Math.floor((this.potValue / 1024) * nColors);
 				if (this.soundClass != this.soundOldClass) {
-					this.myArduino.ledCount(1, '#aaaaaa', '#000000', this.soundClass);
+					this.myArduino.ledCount(1, '#aaaaaa', '#000000', this.soundClass + 1);
 					this.playSound(this.soundClass);
 					this.myArduino.setFullColor(0, this.savedColors[this.soundClass]);
 					this.soundOldClass = this.soundClass;
@@ -467,10 +467,16 @@ Cylon.robot({
 	},
 
 	playSound: function(index) {
-		if (this.soundIsPlaying) {
+
+		try {
 			this.audio.stop();
-			console.log("stopping sound");
+		} catch (e) {
+			console.log(e);
 		}
+		// if (this.soundIsPlaying) {
+		// 	this.audio.stop();
+		// 	console.log("stopping sound");
+		// }
 		// this.microphone.enableOutput();
 		this.audio.play('./assets/sound/sound' + index + '.mp3');
 		this.soundIsPlaying = true;
