@@ -242,7 +242,7 @@ Cylon.robot({
 				my.emit('fft', my.fft);
 				my.emit('loudness', my.loudness);
 
-				console.log(my.loudness);
+				//console.log(my.loudness);
 				if (my.loudness > my.minimumSoundLevel) {
 					my.wekinator.inputs(my.fft);
 				}
@@ -366,8 +366,8 @@ Cylon.robot({
 						this.myArduino.readColorSensor();
 						after((.5).seconds(), () => {
 							var similarColor = this.lookForSimilarColor('#' + rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue),(similarColor)=>{
-								console.log("similarColor", similarColor);
 								if (similarColor.index != -1) {
+									console.log("similarColor", similarColor);
 									console.log("playing sound"+similarColor.index);
 									this.playSound(similarColor.index);
 								}
