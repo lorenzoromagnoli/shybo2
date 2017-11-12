@@ -539,6 +539,12 @@ Cylon.robot({
 			this.audio.play('./assets/sound/bipbip.mp3');
 			this.soundIsPlaying = true;
 
+			try {
+				this.audio.stop();
+			} catch (e) {
+				console.log(e);
+			}
+
 			after((1).seconds(), function() {
 				callback(similarColor);
 			});
