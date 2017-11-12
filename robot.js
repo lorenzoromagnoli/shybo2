@@ -11,6 +11,8 @@ var osc = require('osc');
 
 var servoBasePosition=16;
 
+var colorTreshold=10;
+
 var nColors = 5;
 
 app.get('/', function(req, res) {
@@ -531,7 +533,7 @@ Cylon.robot({
 				similarColor.difference = colorDifference;
 			}
 		}
-		if (similarColor.difference < 15) {
+		if (similarColor.difference < colorTreshold) {
 			this.audio.play('./assets/sound/bipbip.mp3');
 			this.soundIsPlaying = true;
 
