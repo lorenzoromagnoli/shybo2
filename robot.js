@@ -363,6 +363,7 @@ Cylon.robot({
 							var similarColor = this.lookForSimilarColor('#' + rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue),(similarColor)=>{
 								console.log("similarColor", similarColor);
 								if (similarColor.index != -1) {
+									console.log("playing sound"+similarColor.index);
 									this.playSound(similarColor.index);
 								}
 							});
@@ -375,7 +376,7 @@ Cylon.robot({
 					break;
 				case 2: //shybo gets scared and start shaking
 					this.myArduino.servoShakeStart();
-					this.myArduino.ledsControl(0, 'fade', '#ff0000', '#000000', 50, 30);
+					this.myArduino.ledsControl(0, 'fade', '#ff0000', '#000000', 50, 5);
 					after((2).seconds(), () => {
 						this.goToState(1);
 					});
@@ -538,7 +539,8 @@ Cylon.robot({
 			});
 
 		} else {
-			callback(-1);
+			similarColor.index=-1
+			callback(similarColor);
 			//return -1;
 		}
 	}
