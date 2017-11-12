@@ -16,7 +16,7 @@ export DISPLAY=":1"
 #
 # #louch robot
 # node ./robot.js &
-
+#
 #!/bin/bash
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
