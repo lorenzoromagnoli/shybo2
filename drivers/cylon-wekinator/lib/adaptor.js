@@ -43,7 +43,7 @@ Adaptor.prototype.connect = function(callback) {
 			// When we recieve a message from Wekinator, log it
 			//console.log(a);
 			if (a.address=='/wek/outputs'){
-				this.emit('wek_class', a.args);
+				this.emit('wek_class', a.args[0]);
 			}else if (a.address=='/outputs-1'){
 			}
 		});

@@ -280,6 +280,7 @@ Cylon.robot({
 					this.goToState(2);
 				} else {
 					if (this.wekinatorClass != this.wekinatorOldClass) {
+						console.log(this.wekinatorClass,this.wekinatorOldClass);
 						this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass - 1]);
 						this.wekinatorOldClass = this.wekinatorClass;
 					}
