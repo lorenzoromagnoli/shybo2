@@ -121,7 +121,8 @@ Cylon.robot({
 		my.soundOldClass = 0;
 
 		my.noiseLevel = 0.2;
-		my.minimumSoundLevel = 0.005;
+		my.minimumSoundLevel = 0.01;
+
 
 		my.colorSensorColor = {
 			red: 0,
@@ -241,6 +242,7 @@ Cylon.robot({
 				my.emit('fft', my.fft);
 				my.emit('loudness', my.loudness);
 
+				console.log(my.minimumSoundLevel);
 				if (my.loudness > my.minimumSoundLevel) {
 					my.wekinator.inputs(my.fft);
 				}
