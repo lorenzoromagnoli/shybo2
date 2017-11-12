@@ -34,9 +34,9 @@ uint32_t newColor(uint8_t r, uint8_t g, uint8_t b, uint8_t w) {
 // Colori belli belli
 uint32_t bianco = newColor(255, 255, 255);
 uint32_t giallo = newColor(255, 230, 0);
-uint32_t arancione = newColor(225, 90, 0);
+uint32_t arancione = newColor(225, 145, 0);
 uint32_t rosso = newColor(255, 0, 0);
-uint32_t viola = newColor(125, 0, 125);
+uint32_t viola = newColor(210, 50, 210);
 uint32_t azzurro = newColor(0, 115, 200);
 uint32_t verde = newColor(25, 175, 0);
 uint32_t spento = newColor(0, 0, 0);
@@ -44,7 +44,7 @@ uint32_t violone = newColor(149, 0, 255);
 uint32_t verdeacqua = newColor(0, 232, 209);
 
 uint32_t colorArray[]={ bianco, giallo, arancione,rosso, viola, azzurro, spento, violone, verdeacqua };
-uint32_t colorwheel8[] = {verde, verdeacqua, azzurro, violone, viola, rosso, arancione, giallo};
+uint32_t colorwheel5[] = { arancione,giallo, verde, azzurro, viola};
 
 void setup() {
   Serial.begin(115200);
@@ -66,6 +66,7 @@ void loop() {
   ledStrips[0].update();
   ledStrips[1].update();
   servoUpdate();
+  delay(2);
 }
 
 //------------------------------------------------------------

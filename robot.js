@@ -9,6 +9,8 @@ var hexRgb = require('hex-rgb');
 var cd = require('color-difference');
 var osc = require('osc');
 
+var nColors=5;
+
 app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname + '/interface/index.html'));
 })
@@ -19,7 +21,7 @@ app.post('/upload', function(req, res) {
 	if (!req.files) {
 		return res.status(400).send('No files were uploaded.');
 	} else {
-		for (var i = 0; i < 8; i++) {
+		for (var i = 0; i < nColors; i++) {
 			if (req.files['sound' + i]) {
 				console.log(i, req.files['sound' + i].name);
 				req.files['sound' + i].mv('./assets/sound/sound' + i + '.mp3', function(err) {
@@ -123,8 +125,15 @@ Cylon.robot({
 			blue: 0
 		};
 
-		my.colorwheel = ['#15af00', '#00e8d1', '#0073c8', '#9500ff', '#7d007d', '#ff0000', '#e15a00', '#e1e600'];
-		my.savedColors = ['#000000', '#000000', '#000000', '#000000', '#000000', '#000000', '#000000', '#000000', ];
+
+		var arancione='#ff9100';
+		var giallo='#ffe600';
+		var verde='#19af00';
+		var azzurro='#0073c8';
+		var viola='#d232d2';
+
+		my.colorwheel = [arancione, giallo, verde, azzurro, viola];
+		my.savedColors = ['#000000', '#000000', '#000000', '#000000', '#000000' ];
 
 		my.colorSensor;
 
@@ -278,10 +287,10 @@ Cylon.robot({
 				break;
 			case 3: //shybo in training sound mode
 				this.myArduino.readAnalogue(this.pot_pin);
-				this.wekinatorClass = Math.floor((this.potValue / 1024) * 8);
+				this.wekinatorClass = Math.floor((this.potValue / 1024) * nColors);
 				if (this.wekinatorClass != this.wekinatorOldClass) {
 					this.wekinator.outputs([this.wekinatorClass + 1]);
-					this.myArduino.colorwheel(1, this.wekinatorClass);
+					this.myArduino.colorwheel(1, this.wekinatorClass+3);
 					this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass]);
 					this.wekinatorOldClass = this.wekinatorClass;
 				}
@@ -296,7 +305,7 @@ Cylon.robot({
 				break;
 			case 5: //shybo is in train sound Mode
 				this.myArduino.readAnalogue(this.pot_pin);
-				this.soundClass = Math.floor((this.potValue / 1024) * 8);
+				this.soundClass = Math.floor((this.potValue / 1024) * nColors);
 				if (this.soundClass != this.soundOldClass) {
 					this.myArduino.ledCount(1, '#aaaaaa', '#000000', this.soundClass);
 					this.playSound(this.soundClass);
