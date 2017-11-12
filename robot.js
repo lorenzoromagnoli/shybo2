@@ -527,7 +527,13 @@ Cylon.robot({
 			}
 		}
 		if (similarColor.difference < 15) {
+			this.audio.play('./assets/sound/bipbip.mp3');
+			this.soundIsPlaying = true;
+
+			after((1).seconds(), function() {
 			return similarColor;
+			}
+
 		} else {
 			return -1;
 		}
