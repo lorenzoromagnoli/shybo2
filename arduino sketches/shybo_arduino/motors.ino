@@ -10,9 +10,9 @@ int BIN2 = 8; //Direction
 
 int motorstandby = 9;
 
-int cappelloChiuso=76;
-int cappelloQuasiChiuso=60;
-int cappelloAperto=46;
+int cappelloChiuso=40;
+int cappelloQuasiChiuso=33;
+int cappelloAperto=16;
 
 boolean shaking=false;
 boolean shakeStatus;
@@ -20,7 +20,7 @@ boolean shakeStatus;
 //servomotor
 Adafruit_TiCoServo servo;
 int SERVO_PIN=10;
-#define SERVO_MIN 750 // 1 ms pulse
+#define SERVO_MIN 760 // 1 ms pulse
 #define SERVO_MAX 3000 // 2 ms pulse
 
 int servoPosition;
@@ -36,7 +36,7 @@ void initMotors() {
   pinMode(BIN2, OUTPUT);
 
   servo.attach(SERVO_PIN, SERVO_MIN, SERVO_MAX);
-
+  moveServoTo(cappelloAperto,500);
 }
 
 void moveMotor(int motor, int speed, int direction) {

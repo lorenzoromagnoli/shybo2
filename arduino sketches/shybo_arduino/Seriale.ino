@@ -97,7 +97,7 @@ void parse (String inputString) {
 
     } else if (animation.equalsIgnoreCase("COLORWHEEL")) {
       index = getValue(inputString, '/', 3).toInt();
-      ledStrips[ledStripIndex].colorWheel(colorwheel5,8,index);
+      ledStrips[ledStripIndex].colorWheel(colorwheel5 ,8,index);
     } else {
 
       parsed_red = getValue(inputString, '/', 3).toInt();

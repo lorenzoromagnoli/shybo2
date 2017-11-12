@@ -9,6 +9,8 @@ var hexRgb = require('hex-rgb');
 var cd = require('color-difference');
 var osc = require('osc');
 
+var servoBasePosition=16;
+
 var nColors = 5;
 
 app.get('/', function(req, res) {
@@ -349,7 +351,7 @@ Cylon.robot({
 					break;
 				case 1: //the robot is calm
 					this.myArduino.servoShakeStop();
-					this.myArduino.servoWrite(20);
+					this.myArduino.servoWrite(servoBasePosition);
 
 					this.myArduino.ledsControl(0, 'fade', '#ffffff', '#000000', 100, 30);
 					this.myArduino.setFullColor(1, '#000000');
@@ -358,11 +360,12 @@ Cylon.robot({
 					this.colorSensor = every((1).seconds(), () => {
 						this.myArduino.readColorSensor();
 						after((.5).seconds(), () => {
-							var similarColor = this.lookForSimilarColor('#' + rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue));
-							console.log("similarColor", similarColor);
-							if (similarColor.index != -1) {
-								this.playSound(similarColor.index);
-							}
+							var similarColor = this.lookForSimilarColor('#' + rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue),(similarColor)=>{
+								console.log("similarColor", similarColor);
+								if (similarColor.index != -1) {
+									this.playSound(similarColor.index);
+								}
+							});
 						});
 					});
 
@@ -514,7 +517,7 @@ Cylon.robot({
 		//console.log("Sending message", msg.address, msg.args, "to", this.udpPort.options.remoteAddress + ":" + this.udpPort.options.remotePort);
 		this.udpPort.send(msg);
 	},
-	lookForSimilarColor: function(color) {
+	lookForSimilarColor: function(color, callback) {
 		var similarColor = {
 			index: 0,
 			difference: 100
@@ -531,11 +534,12 @@ Cylon.robot({
 			this.soundIsPlaying = true;
 
 			after((1).seconds(), function() {
-			return similarColor;
-			}
+				callback(similarColor);
+			});
 
 		} else {
-			return -1;
+			callback(-1);
+			//return -1;
 		}
 	}
 
