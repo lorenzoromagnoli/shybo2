@@ -282,7 +282,7 @@ Cylon.robot({
 					this.goToState(2);
 				} else {
 					if (this.soundIsPlaying) {
-						console.log(playSound);
+						console.log("playSound");
 					} else {
 						if (this.wekinatorClass != this.wekinatorOldClass) {
 							console.log(this.wekinatorClass, this.wekinatorOldClass);
