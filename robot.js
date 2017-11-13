@@ -400,7 +400,7 @@ Cylon.robot({
 					break;
 				case 4: // goes into recording mode, trigger wekinator start
 					this.wekinator.startRecording();
-					this.myArduino.ledsControl(0, 'scanner', '#990000', '#000000', 50, 5);
+					this.myArduino.ledsControl(1, 'scanner', '#990000', '#000000', 50, 5);
 					this.wekinator.stopRunning();
 					clearInterval(this.colorSensor);
 					break;
