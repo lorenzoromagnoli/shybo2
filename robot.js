@@ -341,6 +341,11 @@ Cylon.robot({
 		console.log("going to state" + state);
 		console.log("_________________");
 
+		try {
+			this.audio.stop();
+		} catch (e) {
+			console.log(e);
+		}
 
 		if (this.state != state) {
 			this.state = state;
@@ -381,7 +386,7 @@ Cylon.robot({
 					break;
 				case 2: //shybo gets scared and start shaking
 					this.myArduino.servoShakeStart();
-					this.myArduino.ledsControl(0, 'fade', '#ff0000', '#000000', 50, 5);
+					this.myArduino.ledsControl(0, 'fade', '#990000', '#000000', 50, 5);
 					after((2).seconds(), () => {
 						this.goToState(1);
 					});
@@ -395,6 +400,7 @@ Cylon.robot({
 					break;
 				case 4: // goes into recording mode, trigger wekinator start
 					this.wekinator.startRecording();
+					this.myArduino.ledsControl(0, 'scanner', '#990000', '#000000', 50, 5);
 					this.wekinator.stopRunning();
 					clearInterval(this.colorSensor);
 					break;
