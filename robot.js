@@ -9,10 +9,8 @@ var hexRgb = require('hex-rgb');
 var cd = require('color-difference');
 var osc = require('osc');
 
-var servoBasePosition=16;
-
-var colorTreshold=10;
-
+var servoBasePosition = 16;
+var colorTreshold = 10;
 var nColors = 5;
 
 app.get('/', function(req, res) {
@@ -283,10 +281,14 @@ Cylon.robot({
 				if (this.loudness > this.noiseLevel) {
 					this.goToState(2);
 				} else {
-					if (this.wekinatorClass != this.wekinatorOldClass) {
-						console.log(this.wekinatorClass,this.wekinatorOldClass);
-						this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass - 1]);
-						this.wekinatorOldClass = this.wekinatorClass;
+					if (this.soundIsPlaying) {
+						console.log(playSound);
+					} else {
+						if (this.wekinatorClass != this.wekinatorOldClass) {
+							console.log(this.wekinatorClass, this.wekinatorOldClass);
+							this.myArduino.setFullColor(0, this.colorwheel[this.wekinatorClass - 1]);
+							this.wekinatorOldClass = this.wekinatorClass;
+						}
 					}
 				}
 				break;
@@ -370,10 +372,10 @@ Cylon.robot({
 					this.colorSensor = every((1).seconds(), () => {
 						this.myArduino.readColorSensor();
 						after((.5).seconds(), () => {
-							var similarColor = this.lookForSimilarColor('#' + rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue),(similarColor)=>{
+							var similarColor = this.lookForSimilarColor('#' + rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue), (similarColor) => {
 								if (similarColor.index != -1) {
 									console.log("similarColor", similarColor);
-									console.log("playing sound"+similarColor.index);
+									console.log("playing sound" + similarColor.index);
 									this.playSound(similarColor.index);
 								}
 							});
@@ -542,21 +544,22 @@ Cylon.robot({
 			}
 		}
 		if (similarColor.difference < colorTreshold) {
-			this.audio.play('./assets/sound/bipbip.mp3');
-			this.soundIsPlaying = true;
 
 			try {
 				this.audio.stop();
 			} catch (e) {
-				console.log(e);
+				console.log("no sound was playing");
 			}
+
+			this.audio.play('./assets/sound/bipbip.mp3');
+			this.soundIsPlaying = true;
 
 			after((1).seconds(), function() {
 				callback(similarColor);
 			});
 
 		} else {
-			similarColor.index=-1
+			similarColor.index = -1
 			callback(similarColor);
 			//return -1;
 		}
