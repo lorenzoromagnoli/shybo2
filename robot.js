@@ -544,7 +544,8 @@ Cylon.robot({
 			}
 		}
 		if (similarColor.difference < colorTreshold) {
-
+			//set the face to white
+			this.myArduino.ledsControl(0, 'fade', '#ffffff', '#000000', 100, 30);
 			try {
 				this.audio.stop();
 			} catch (e) {
