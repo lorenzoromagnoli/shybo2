@@ -543,6 +543,7 @@ Cylon.robot({
 		},60000+Math.random(30000));
 	},
 
+
 	moveRandom: function() {
 		n_animations = 3;
 		var index = Math.floor(Math.random() * (n_animations + 1)); //The maximum is inclusive and the minimum is inclusive
