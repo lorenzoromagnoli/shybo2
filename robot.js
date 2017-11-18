@@ -13,6 +13,8 @@ var servoBasePosition = 16;
 var colorTreshold = 10;
 var nColors = 5;
 
+var boringDelay=180000;
+
 app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname + '/interface/index.html'));
 })
@@ -188,7 +190,7 @@ Cylon.robot({
 
 		this.boredomInterval=setTimeout(()=>{
 			my.moveRandom()
-		},60000+Math.random(30000));
+		},boringDelay+Math.random(30000));
 
 		after((3).seconds(), function() {
 			my.myArduino.registerToButtonEvent(record_button_Pin);
@@ -539,8 +541,9 @@ Cylon.robot({
 		clearInterval(this.boredomInterval);
 
 		this.boredomInterval=setTimeout(()=>{
-			my.moveRandom()
-		},60000+Math.random(30000));
+			my.moveRandom();
+			my.clearBoredInterval();
+		},boringDelay+Math.random(30000));
 	},
 
 
