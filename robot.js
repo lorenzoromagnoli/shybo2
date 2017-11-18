@@ -183,11 +183,6 @@ Cylon.robot({
 		my.udpPort.open();
 
 
-		every((10).seconds(), function() {
-			my.moveRandom();
-		});
-
-
 		this.boredomInterval=setTimeout(()=>{
 			my.moveRandom()
 		},boringDelay+Math.random(30000));
