@@ -127,6 +127,8 @@ Cylon.robot({
 			blue: 0
 		};
 
+		my.boredomInterval;
+
 
 		var arancione = '#ff9100';
 		var giallo = '#ffe600';
@@ -178,6 +180,15 @@ Cylon.robot({
 
 		my.udpPort.open();
 
+
+		every((10).seconds(), function() {
+			my.moveRandom();
+		});
+
+
+		this.boredomInterval=setTimeout(()=>{
+			my.moveRandom()
+		},60000+Math.random(30000));
 
 		after((3).seconds(), function() {
 			my.myArduino.registerToButtonEvent(record_button_Pin);
@@ -345,6 +356,8 @@ Cylon.robot({
 		console.log("going to state" + state);
 		console.log("_________________");
 
+
+		this.clearBoredInterval();
 		try {
 			this.audio.stop();
 		} catch (e) {
@@ -442,7 +455,6 @@ Cylon.robot({
 		this.myArduino.setFullColor(0, '#000000');
 	},
 
-
 	controlLedsAnimation: function(data) {
 		this.myArduino.ledsControl(data.ledStripIndex, data.animation, data.color1, data.color2, data.steps, data.interval);
 	},
@@ -522,6 +534,73 @@ Cylon.robot({
 		this.myArduino.motorWrite(1, data.motor1, data.motor1dir);
 		this.myArduino.motorWrite(2, data.motor2, data.motor2dir);
 	},
+
+	clearBoredInterval:function(){
+		clearInterval(this.boredomInterval);
+
+		this.boredomInterval=setTimeout(()=>{
+			my.moveRandom()
+		},60000+Math.random(30000));
+	},
+
+	moveRandom: function() {
+		n_animations = 3;
+		var index = Math.floor(Math.random() * (n_animations + 1)); //The maximum is inclusive and the minimum is inclusive
+
+		if (index == 0) {
+			this.move({
+				'motor1': 100,
+				motor1dir: 1,
+				'motor2': 100,
+				motor2dir: 1
+			});
+			after((.5).seconds(), () => {
+				this.move({
+					'motor1': 100,
+					motor1dir: 0,
+					'motor2': 100,
+					motor2dir: 0
+				});
+				after((.5).seconds(), () => {
+					this.move({
+						'motor1': 0,
+						motor1dir: 0,
+						'motor2': 0,
+						motor2dir: 0
+					});
+				});
+			});
+		} else if (index == 1) {
+			this.myArduino.servoWrite(servoBasePosition+10);
+			after((1).seconds(), () => {
+				this.myArduino.servoWrite(servoBasePosition);
+			});
+		} else if (index == 2) {
+			this.move({
+				'motor1': 100,
+				motor1dir: 0,
+				'motor2': 100,
+				motor2dir: 1
+			});
+			after((.5).seconds(), () => {
+				this.move({
+					'motor1': 100,
+					motor1dir: 1,
+					'motor2': 100,
+					motor2dir: 0
+				});
+				after((.5).seconds(), () => {
+					this.move({
+						'motor1': 0,
+						motor1dir: 0,
+						'motor2': 0,
+						motor2dir: 0
+					});
+				});
+			});
+		}
+	},
+
 	stop: function() {
 		this.myArduino.motorStop();
 
