@@ -10,16 +10,21 @@ int BIN2 = 8; //Direction
 
 int motorstandby = 9;
 
-int cappelloChiuso=40;
-int cappelloQuasiChiuso=33;
-int cappelloAperto=16;
+int cappelloChiuso = 40;
+int cappelloQuasiChiuso = 33;
+int cappelloAperto = 16;
 
-boolean shaking=false;
+boolean shaking = false;
 boolean shakeStatus;
+
+long lastServoMove = 0;
+int detachServoAfter = 1000;
+boolean servoAttached = false;
 
 //servomotor
 Adafruit_TiCoServo servo;
-int SERVO_PIN=10;
+int SERVO_PIN = 10;
+
 #define SERVO_MIN 760 // 1 ms pulse
 #define SERVO_MAX 3000 // 2 ms pulse
 
@@ -36,7 +41,8 @@ void initMotors() {
   pinMode(BIN2, OUTPUT);
 
   servo.attach(SERVO_PIN, SERVO_MIN, SERVO_MAX);
-  moveServoTo(cappelloAperto,500);
+  servoAttached = true;
+  moveServoTo(cappelloAperto, 500);
 }
 
 void moveMotor(int motor, int speed, int direction) {
@@ -44,7 +50,7 @@ void moveMotor(int motor, int speed, int direction) {
   //motor: 0 for B 1 for A
   //speed: 0 is off, and 255 is full speed
   //direction: 0 clockwise, 1 counter-clockwise
-      digitalWrite(motorstandby, HIGH);
+  digitalWrite(motorstandby, HIGH);
 
   boolean inPin1 = LOW;
   boolean inPin2 = HIGH;
@@ -65,14 +71,26 @@ void moveMotor(int motor, int speed, int direction) {
   }
 }
 
-void moveServo(int angle){
+void moveServo(int angle) {
+  if (servoAttached == false) {
+    servo.attach(SERVO_PIN, SERVO_MIN, SERVO_MAX);
+    Serial.println("reattaching Servo");
+    servoAttached = true;
+  }
   int pulse = map(angle, 0, 180, SERVO_MIN, SERVO_MAX);    // Scale to servo range
-  servo.write(pulse);  
+  servo.write(pulse);
+  lastServoMove = millis();
 }
 
 void moveServoTo (int angle, int d) {
-  servoPosition = servo.read();
+  if (servoAttached == false) {
+    servo.attach(SERVO_PIN, SERVO_MIN, SERVO_MAX);
+    Serial.println("reattaching Servo");
+    servoAttached = true;
+  }
+    lastServoMove = millis();
 
+  servoPosition = servo.read();
   if (servoPosition != angle) {
 
     if (servoPosition < angle) {
@@ -89,11 +107,18 @@ void moveServoTo (int angle, int d) {
   }
 }
 
-void servoUpdate(){
-  if (shaking){
+void servoUpdate() {
+  if (shaking) {
     shake();
   }
+  if (millis() - lastServoMove > detachServoAfter && servoAttached == true) {
+    servo.detach();
+    servoAttached = false;
+    Serial.println("detaching Servo");
+
+  }
 }
+
 void shake() {
   if (shakeStatus) {
     moveServoTo (cappelloChiuso, 2);
@@ -103,10 +128,10 @@ void shake() {
   shakeStatus = !shakeStatus;
 }
 
-void startShaking(){
-  shaking=true;
+void startShaking() {
+  shaking = true;
 }
-void stopShaking(){
-  shaking=false;
+void stopShaking() {
+  shaking = false;
 }
 

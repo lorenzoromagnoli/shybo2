@@ -100,10 +100,10 @@ Cylon.robot({
 
 		var record_button_Pin = 2;
 
-		var off_button_pin = 17;
-		var teach_color_mode_Pin = 15;
-		var teach_sound_mode_Pin = 14;
-		var play_mode_Pin = 9;
+		var teach_sound_pin = 17;
+		var sound_to_color_pin = 15;
+		var teach_color_pin = 14;
+		var color_to_sound_pin = 9;
 
 		my.pot_pin = 16;
 		my.potValue = 0;
@@ -120,7 +120,6 @@ Cylon.robot({
 
 		my.noiseLevel = 0.2;
 		my.minimumSoundLevel = 0.01;
-
 
 		my.colorSensorColor = {
 			red: 0,
@@ -182,10 +181,10 @@ Cylon.robot({
 
 		after((3).seconds(), function() {
 			my.myArduino.registerToButtonEvent(record_button_Pin);
-			my.myArduino.registerToButtonEvent(off_button_pin);
-			my.myArduino.registerToButtonEvent(teach_color_mode_Pin);
-			my.myArduino.registerToButtonEvent(teach_sound_mode_Pin);
-			my.myArduino.registerToButtonEvent(play_mode_Pin);
+			my.myArduino.registerToButtonEvent(teach_sound_pin);
+			my.myArduino.registerToButtonEvent(sound_to_color_pin);
+			my.myArduino.registerToButtonEvent(teach_color_pin);
+			my.myArduino.registerToButtonEvent(color_to_sound_pin);
 			my.myArduino.setInput(my.pot_pin);
 
 			//done with all the initialization show it visualizing a white fade.
@@ -196,12 +195,11 @@ Cylon.robot({
 
 			//wait a couple of seconds and then read the mode switch
 			after((3).seconds(), function() {
-				my.myArduino.digitalRead(off_button_pin);
-				my.myArduino.digitalRead(teach_color_mode_Pin);
-				my.myArduino.digitalRead(teach_sound_mode_Pin);
-				my.myArduino.digitalRead(play_mode_Pin);
+				my.myArduino.digitalRead(teach_sound_pin);
+				my.myArduino.digitalRead(sound_to_color_pin);
+				my.myArduino.digitalRead(teach_color_pin);
+				my.myArduino.digitalRead(color_to_sound_pin);
 			})
-
 
 
 			my.myArduino.on('button', function(payload) {
@@ -214,22 +212,18 @@ Cylon.robot({
 				} else if (payload.pin == record_button_Pin && payload.value == 1) {
 					my.recordButtonStatus = 0;
 					// 	my.microphone.stopRecording();
-				} else if (payload.pin == off_button_pin && payload.value == 0) {
-					console.log("bye bye");
-					my.emit('mode_changed', 'off');
-					my.goToState(0);
-				} else if (payload.pin == teach_color_mode_Pin && payload.value == 0) {
-					console.log("entering teach color mode");
-					my.emit('mode_changed', 'teach_color');
-					my.goToState(5);
-				} else if (payload.pin == teach_sound_mode_Pin && payload.value == 0) {
+				} else if (payload.pin == teach_sound_pin && payload.value == 0) {
 					console.log("entering teach sound mode");
-					my.emit('mode_changed', 'teach_sound');
 					my.goToState(3);
-				} else if (payload.pin == play_mode_Pin && payload.value == 0) {
-					console.log("entering play mode");
-					my.emit('mode_changed', 'play');
+				} else if (payload.pin == sound_to_color_pin && payload.value == 0) {
+					console.log("entering sound to color mode");
 					my.goToState(1);
+				} else if (payload.pin == teach_color_pin && payload.value == 0) {
+					console.log("entering teach sound mode");
+					my.goToState(5);
+				} else if (payload.pin == color_to_sound_pin && payload.value == 0) {
+					console.log("entering color to sound mode");
+					my.goToState(7);
 				}
 				//my.myArduino.readColorSensor();
 			});
@@ -312,7 +306,7 @@ Cylon.robot({
 					this.goToState(3)
 				}
 				break;
-			case 5: //shybo is in train sound Mode
+			case 5: //shybo is in train color Mode
 				this.myArduino.readAnalogue(this.pot_pin);
 				this.soundClass = Math.floor((this.potValue / 1024) * nColors);
 				if (this.soundClass != this.soundOldClass) {
@@ -332,6 +326,8 @@ Cylon.robot({
 					this.goToState(5)
 				}
 
+				case 7: //you can select sound
+
 				break;
 
 			default:
@@ -346,7 +342,7 @@ Cylon.robot({
 		try {
 			this.audio.stop();
 		} catch (e) {
-			console.log(e);
+			//console.log(e);
 		}
 
 		if (this.state != state) {
@@ -368,19 +364,6 @@ Cylon.robot({
 					this.myArduino.ledsControl(0, 'fade', '#ffffff', '#000000', 100, 30);
 					this.myArduino.setFullColor(1, '#000000');
 					this.wekinator.train();
-
-					this.colorSensor = every((1).seconds(), () => {
-						this.myArduino.readColorSensor();
-						after((.5).seconds(), () => {
-							var similarColor = this.lookForSimilarColor('#' + rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue), (similarColor) => {
-								if (similarColor.index != -1) {
-									console.log("similarColor", similarColor);
-									console.log("playing sound" + similarColor.index);
-									this.playSound(similarColor.index);
-								}
-							});
-						});
-					});
 
 					after((2).seconds(), () => {
 						this.wekinator.startRunning();
@@ -415,7 +398,21 @@ Cylon.robot({
 					this.myArduino.readColorSensor();
 					clearInterval(this.colorSensor);
 					break;
-
+				case 7: //in this state Shybo looks for new color and plays sound accordingly.
+					this.myArduino.ledsControl(0, 'fadeto', '#000000', '#ffffff', 10, 10);
+					this.colorSensor = every((1).seconds(), () => {
+						this.myArduino.readColorSensor();
+						after((.5).seconds(), () => {
+							var similarColor = this.lookForSimilarColor('#' + rgbHex(this.colorSensorColor.red, this.colorSensorColor.green, this.colorSensorColor.blue), (similarColor) => {
+								if (similarColor.index != -1) {
+									console.log("similarColor", similarColor);
+									console.log("playing sound" + similarColor.index);
+									this.playSound(similarColor.index);
+								}
+							});
+						});
+					});
+					break;
 			}
 		}
 

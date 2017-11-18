@@ -173,6 +173,7 @@ void parse (String inputString) {
 
   }else if (command.equalsIgnoreCase("SS")) {
     int status = getValue(inputString, '/', 1).toInt();
+    debug("shake");
     if (status==0){
       stopShaking();
     }else if (status==1){

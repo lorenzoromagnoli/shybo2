@@ -14,7 +14,7 @@ void initColorSensor() {
     Serial.println("Found color sensor");
   } else {
     Serial.println("No TCS34725 found ... check your connections");
-    while (1); // halt!
+    //while (1); // halt!
   }
 }
 

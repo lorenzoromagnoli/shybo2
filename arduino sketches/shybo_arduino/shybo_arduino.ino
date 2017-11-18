@@ -46,6 +46,14 @@ uint32_t verdeacqua = newColor(0, 232, 209);
 uint32_t colorArray[]={ bianco, giallo, arancione,rosso, viola, azzurro, spento, violone, verdeacqua };
 uint32_t colorwheel5[] = { arancione,giallo, verde, azzurro, viola};
 
+
+int record_button_Pin = 2;
+int off_button_pin = 17;
+int teach_color_mode_Pin = 15;
+int teach_sound_mode_Pin = 14;
+int play_mode_Pin = 9;
+
+    
 void setup() {
   Serial.begin(115200);
   
@@ -55,6 +63,8 @@ void setup() {
   initButtons();
   initMotors();
   initColorSensor();
+
+  InitButtons();
   
   delay (1000);
   ledStrips[1].scanner(newColor(100, 100, 100),  2000);
@@ -67,6 +77,16 @@ void loop() {
   ledStrips[1].update();
   servoUpdate();
   delay(2);
+}
+
+
+//this sequence of commands should be invoked by the raspi when ready... However, adding them here in the setup prevents the robot from faulty initializations. 
+void InitButtons(){
+  registerNewButton(record_button_Pin);
+  registerNewButton(off_button_pin);
+  registerNewButton(teach_color_mode_Pin);
+  registerNewButton(teach_sound_mode_Pin);
+  registerNewButton(play_mode_Pin);
 }
 
 //------------------------------------------------------------
