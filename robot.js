@@ -101,9 +101,9 @@ Cylon.robot({
 		var record_button_Pin = 2;
 
 		var teach_sound_pin = 17;
-		var sound_to_color_pin = 15;
+		var sound_to_color_pin = 9;
 		var teach_color_pin = 14;
-		var color_to_sound_pin = 9;
+		var color_to_sound_pin = 15;
 
 		my.pot_pin = 16;
 		my.potValue = 0;
@@ -212,6 +212,7 @@ Cylon.robot({
 				} else if (payload.pin == record_button_Pin && payload.value == 1) {
 					my.recordButtonStatus = 0;
 					// 	my.microphone.stopRecording();
+
 				} else if (payload.pin == teach_sound_pin && payload.value == 0) {
 					console.log("entering teach sound mode");
 					my.goToState(3);
@@ -326,8 +327,13 @@ Cylon.robot({
 					this.goToState(5)
 				}
 
-				case 7: //you can select sound
+			case 7: //you can select sound
+				if (this.loudness > this.noiseLevel) {
+					this.goToState(8);
+				}
+				break;
 
+			case 8: //shybo is scared and then return to state 7
 				break;
 
 			default:
@@ -399,7 +405,10 @@ Cylon.robot({
 					clearInterval(this.colorSensor);
 					break;
 				case 7: //in this state Shybo looks for new color and plays sound accordingly.
+					this.myArduino.servoShakeStop();
+					this.myArduino.servoWrite(servoBasePosition);
 					this.myArduino.ledsControl(0, 'fadeto', '#000000', '#ffffff', 10, 10);
+
 					this.colorSensor = every((1).seconds(), () => {
 						this.myArduino.readColorSensor();
 						after((.5).seconds(), () => {
@@ -412,6 +421,15 @@ Cylon.robot({
 							});
 						});
 					});
+
+					break;
+				case 8: //shybo gets scared and start shaking
+					this.myArduino.servoShakeStart();
+					this.myArduino.ledsControl(0, 'fade', '#990000', '#000000', 50, 5);
+					after((2).seconds(), () => {
+						this.goToState(7);
+					});
+					clearInterval(this.colorSensor);
 					break;
 			}
 		}
