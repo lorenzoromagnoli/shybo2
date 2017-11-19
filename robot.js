@@ -450,12 +450,16 @@ Cylon.robot({
 		this.stop();
 		this.myArduino.setFullColor(1, '#000000');
 		this.myArduino.setFullColor(0, '#000000');
+		this.clearBoredInterval();
+
 	},
 
 	controlLedsAnimation: function(data) {
+		this.clearBoredInterval();
 		this.myArduino.ledsControl(data.ledStripIndex, data.animation, data.color1, data.color2, data.steps, data.interval);
 	},
 	controlLeds: function(data) {
+		this.clearBoredInterval();
 		this.myArduino.setFullColor(data.ledStripIndex, data.color1);
 	},
 
@@ -521,6 +525,7 @@ Cylon.robot({
 		// this.microphone.enableOutput();
 		this.audio.play('./assets/sound/sound' + index + '.mp3');
 		this.soundIsPlaying = true;
+		this.clearBoredInterval();
 	},
 
 	doAThing: function() {
