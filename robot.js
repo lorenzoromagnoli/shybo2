@@ -536,8 +536,8 @@ Cylon.robot({
 		clearInterval(this.boredomInterval);
 
 		this.boredomInterval=setTimeout(()=>{
-			my.moveRandom();
-			my.clearBoredInterval();
+			this.moveRandom();
+			this.clearBoredInterval();
 		},boringDelay+Math.random(30000));
 	},
 
