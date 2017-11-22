@@ -538,13 +538,15 @@ Cylon.robot({
 	},
 
 	clearBoredInterval:function(){
+		console.log(this.boredomInterval);
 		clearInterval(this.boredomInterval);
 		var delay=boringDelay+Math.random(30000);
 		console.log(delay);
 
 		this.boredomInterval=setTimeout(()=>{
-			this.moveRandom();
 			this.clearBoredInterval();
+			this.moveRandom();
+
 		},delay);
 	},
 
