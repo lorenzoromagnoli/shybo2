@@ -182,10 +182,10 @@ Cylon.robot({
 
 		my.udpPort.open();
 
-
 		this.boredomInterval=setTimeout(()=>{
 			my.moveRandom()
 		},boringDelay+Math.random(30000));
+
 
 		after((3).seconds(), function() {
 			my.myArduino.registerToButtonEvent(record_button_Pin);
@@ -539,11 +539,13 @@ Cylon.robot({
 
 	clearBoredInterval:function(){
 		clearInterval(this.boredomInterval);
+		var delay=boringDelay+Math.random(30000);
+		console.log(delay);
 
 		this.boredomInterval=setTimeout(()=>{
 			this.moveRandom();
 			this.clearBoredInterval();
-		},boringDelay+Math.random(30000));
+		},delay);
 	},
 
 

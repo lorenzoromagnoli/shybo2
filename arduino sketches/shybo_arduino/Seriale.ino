@@ -169,7 +169,7 @@ void parse (String inputString) {
   } else if (command.equalsIgnoreCase("SW")) {
     //debug("writing servo");
     int angle = getValue(inputString, '/', 1).toInt();
-    moveServo(angle);
+    moveServoTo(angle,30000);
 
   }else if (command.equalsIgnoreCase("SS")) {
     int status = getValue(inputString, '/', 1).toInt();

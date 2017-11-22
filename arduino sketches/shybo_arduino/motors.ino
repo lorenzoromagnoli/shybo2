@@ -12,7 +12,7 @@ int motorstandby = 9;
 
 int cappelloChiuso = 40;
 int cappelloQuasiChiuso = 33;
-int cappelloAperto = 16;
+int cappelloAperto = 23;
 
 boolean shaking = false;
 boolean shakeStatus;
@@ -80,6 +80,7 @@ void moveServo(int angle) {
   int pulse = map(angle, 0, 180, SERVO_MIN, SERVO_MAX);    // Scale to servo range
   servo.write(pulse);
   lastServoMove = millis();
+  servoPosition=angle;
 }
 
 void moveServoTo (int angle, int d) {
@@ -90,18 +91,20 @@ void moveServoTo (int angle, int d) {
   }
     lastServoMove = millis();
 
-  servoPosition = servo.read();
+  //servoPosition = servo.read();
   if (servoPosition != angle) {
 
     if (servoPosition < angle) {
       for (int pos = servoPosition; pos <= angle; pos += 1) {
-        servo.write(pos);
-        //delay(d);
+        moveServo( pos);
+        delayMicroseconds(d);
+        Serial.println(pos);
       }
     } else {
       for (int pos = servoPosition; pos >= angle; pos -= 1) {
-        servo.write(pos);
-        //delay(d);
+        moveServo( pos);
+        delayMicroseconds(d);
+        Serial.println(pos);
       }
     }
   }
@@ -121,9 +124,9 @@ void servoUpdate() {
 
 void shake() {
   if (shakeStatus) {
-    moveServoTo (cappelloChiuso, 2);
+    moveServoTo (cappelloChiuso, 1);
   } else {
-    moveServoTo (cappelloQuasiChiuso, 2);
+    moveServoTo (cappelloQuasiChiuso, 1);
   }
   shakeStatus = !shakeStatus;
 }
