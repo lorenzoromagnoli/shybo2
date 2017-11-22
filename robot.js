@@ -537,7 +537,7 @@ Cylon.robot({
 
 	clearBoredInterval:function(){
 		console.log(this.boredomInterval);
-		clearInterval(this.boredomInterval);
+		clearTimeout(this.boredomInterval);
 		var delay=boringDelay+parseInt(Math.random(30000));
 		console.log(delay);
 
