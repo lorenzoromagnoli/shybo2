@@ -120,7 +120,7 @@ Cylon.robot({
 		my.soundClass = 0;
 		my.soundOldClass = 0;
 
-		my.noiseLevel = 0.2;
+		my.noiseLevel = 0.3;
 		my.minimumSoundLevel = 0.01;
 
 		my.colorSensorColor = {
