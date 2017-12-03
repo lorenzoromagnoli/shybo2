@@ -380,6 +380,7 @@ Cylon.robot({
 					this.wekinator.train();
 
 					after((2).seconds(), () => {
+						console.log("start wekinator play mode");
 						this.wekinator.startRunning();
 					});
 					break;
@@ -536,7 +537,7 @@ Cylon.robot({
 	},
 
 	clearBoredInterval:function(){
-		console.log(this.boredomInterval);
+		//console.log(this.boredomInterval);
 		clearTimeout(this.boredomInterval);
 		var delay=boringDelay+parseInt(Math.random(30000));
 		console.log(delay);
