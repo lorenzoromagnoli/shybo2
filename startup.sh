@@ -24,4 +24,4 @@ parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 cd "$parent_path"
 
-. ./utils/parallel_commands.sh parallel_commands "java -jar ./utils/wekinator/WekiMini.jar ./assets/wek/shybo/shybo.wekproj" "python utils/osc_audio_djImpostore.py" "node ./robot.js"
+. ./utils/parallel_commands.sh "java -jar ./utils/wekinator/WekiMini.jar ./assets/wek/shybo/shybo.wekproj" "python utils/osc_audio_djImpostore.py" "node ./robot.js"
