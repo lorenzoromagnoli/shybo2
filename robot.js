@@ -379,7 +379,7 @@ Cylon.robot({
 					this.myArduino.setFullColor(1, '#000000');
 					this.wekinator.train();
 
-					after((2).seconds(), () => {
+					after((4).seconds(), () => {
 						console.log("start wekinator play mode");
 						this.wekinator.startRunning();
 					});
